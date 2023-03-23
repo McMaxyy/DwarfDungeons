@@ -1,74 +1,93 @@
 package stages;
 
-import java.awt.BorderLayout;
-import java.awt.Button;
+import java.awt.Color;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Random;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import javax.swing.JLabel;
-import javax.swing.ButtonGroup;
 
 import main.GameWindow;
 import constants.Player;
+import constants.Weapons;
 import constants.Enemies;
 
 public class FightScene extends JPanel implements ActionListener {
 	
 	private GameWindow window;
-	private JLabel pic1;
-	private Player player = new Player(window);
-	private Enemies enemy = new Enemies(window);
+	private LevelSelector level = new LevelSelector(window, 0);
+	private Player player = new Player();
+	private Enemies enemy = new Enemies();
+	private Weapons weapon = new Weapons();
 	private JLabel lblPlayerHP= new JLabel();
 	private JLabel lblEnemyHP= new JLabel();
-	private JButton returnButton, attackButton, fleeButton, quitButton, menuButton;
-	JButton[] buttons = new JButton[] {attackButton, fleeButton, quitButton, menuButton};
+	private JButton returnButton, attackButton, fleeButton, quitButton, menuButton, turnButton;
+	private JButton[] buttons = new JButton[] {attackButton, fleeButton, quitButton, menuButton, turnButton};
+	private JButton[] actionButtons = new JButton[] {attackButton, fleeButton};
 	String youLost = "You\nLost";
 	String youWon = "You\nWon";
+	private boolean turn, fightOver;
+	private Random rand = new Random();
+	private int enemySelectRand = rand.nextInt(2);
+	private int currentLevel;
+	private int turnCounter;
+	private boolean playerWin;
+	private JLabel lblDamageDealt = new JLabel();
 
-	public FightScene(GameWindow window) throws IOException{
+	public FightScene(GameWindow window, int levelIndex){
 		this.window = window;
+		turnCounter = player.getTurnCount();
+		turn = true;
+		currentLevel = levelIndex;
+		weapon.weaponOne();		
 		
 		Font f = new Font("Serif", Font.PLAIN, 18);
-		enemy.enemyOne();
+		Border blackline = BorderFactory.createLineBorder(Color.black);
 		
-		// Player image
-		BufferedImage img = null;
-		try {
-		    img = ImageIO.read(new File("res/chr.png"));
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-		JLabel pic1 = new JLabel(new ImageIcon(img));
-		pic1.setSize(100, 150);
-		Image dimg = img.getScaledInstance(pic1.getWidth(), pic1.getHeight(),
-		        Image.SCALE_SMOOTH);
-		ImageIcon imageIcon = new ImageIcon(dimg);
-		pic1.setIcon(imageIcon);		
-		add(pic1);		
-		pic1.setBounds(350, 500, pic1.getWidth(), pic1.getHeight());	
+		if (enemySelectRand == 0)
+			enemy.enemyOne();
+		else
+			enemy.enemyTwo();
+		
+		if(currentLevel == 1)
+			player.playerOne();
+		
+		
+		// Enemy image
+		JLabel enemyImg = new JLabel();
+		enemyImg = enemy.getEnemyIcon();
+		add(enemyImg);
+		enemyImg.setBounds(50, 100, enemyImg.getWidth(), enemyImg.getHeight());
+		
+		//Player image
+		JLabel playerImg = new JLabel();
+		playerImg = player.getPlayerIcon();
+		add(playerImg);
+		playerImg.setBounds(350, 500, playerImg.getWidth(), playerImg.getHeight());
 		
 		setLayout(null);
-		
-		
+				
 		// HP labels
 		player.playerShowHP(lblPlayerHP);
-		lblPlayerHP.setBounds(200, 100, 100, 50);		
+		lblPlayerHP.setBounds(200, 500, 100, 50);
 		add(lblPlayerHP);
 		
 		enemy.enemyShowHP(lblEnemyHP);
-		lblEnemyHP.setBounds(200, 50, 100, 50);		
+		lblEnemyHP.setBounds(200, 100, 100, 50);		
 		add(lblEnemyHP);
+		
+		// Damage dealt labels
+		lblDamageDealt.setBounds(120, 350, 250, 20);
+		lblDamageDealt.setBorder(blackline);
+		lblDamageDealt.setHorizontalAlignment(SwingConstants.CENTER);
+		lblDamageDealt.setVerticalAlignment(SwingConstants.CENTER);
+		add(lblDamageDealt);
 		
 		// Buttons				
 		quitButton = new JButton();
@@ -88,6 +107,7 @@ public class FightScene extends JPanel implements ActionListener {
         // Lost game button
         returnButton = new JButton();
         returnButton.setFont(f);
+        returnButton.setFocusable(false);
         returnButton.setActionCommand("Return");
         returnButton.addActionListener(this);
         returnButton.setBounds(200, 300, 100, 100);
@@ -109,10 +129,22 @@ public class FightScene extends JPanel implements ActionListener {
         fleeButton.setBounds(50, 600, 100, 50);
         add(fleeButton);
         
+        turnButton = new JButton();
+        turnButton.setActionCommand("Turn");
+        turnButton.setText("End turn");
+        turnButton.addActionListener(this);
+        turnButton.setBounds(370, 430, 100, 30);
+        add(turnButton);
+        
+        
         buttons[0] = attackButton;
         buttons[1] = fleeButton;
         buttons[2] = quitButton;
         buttons[3] = menuButton;
+        buttons[4] = turnButton;
+        
+        actionButtons[0] = attackButton;
+        actionButtons[1] = fleeButton;
         
         disableButtonFocus();
 	}
@@ -127,26 +159,41 @@ public class FightScene extends JPanel implements ActionListener {
         	window.showMainMenu();
         }
 		else if (command.equals("Return")) {
-        	window.showHomeScreen();
+			if(playerWin)
+				currentLevel++;
+        	window.showLevelSelector(currentLevel);
         }
 		else if (command.equals("Attack")) {
-			enemy.enemyLoseHP();
-			enemy.enemyShowHP(lblEnemyHP);
-			lblEnemyHP.repaint();
-			isEnemyDead();
-//        	player.playerLoseHP();
-//        	player.playerShowHP(lblPlayerHP);
-//        	lblPlayerHP.repaint();
-//        	isPlayerDead();
-        } 
+			turnCounter--;
+			System.out.println(turnCounter);
+			playerAttack();
+        }
+		else if (command.equals("Flee")) {
+			if (rand.nextInt(2) == 0)
+				window.showLevelSelector(currentLevel);
+			else {
+				disableActionButtons();
+				lblDamageDealt.setText("You failed to escape.");
+				lblDamageDealt.repaint();
+				}
+        	}
+		else if (command.equals("Turn")) {
+        	enemyAttack();
+        	enableActionButtons();
+        	turnCounter = player.getTurnCount();
+        }
 	}
 	
 	public void isPlayerDead() {
 		if(player.getPlayerHP() <= 0) {
 			returnButton.setText("<html>" + youLost.replaceAll("\\n", "<br>") + "</html>");
 			returnButton.setVisible(true);
+			fightOver = true;
+			currentLevel = 1;
+			playerWin = false;
 			for(JButton button : buttons)
 				button.setEnabled(false);
+			lblDamageDealt.setVisible(false);
 		}			
 	}
 	
@@ -154,15 +201,61 @@ public class FightScene extends JPanel implements ActionListener {
 		if(enemy.getEnemyHP() <= 0) {
 			returnButton.setText("<html>" + youWon.replaceAll("\\n", "<br>") + "</html>");
 			returnButton.setVisible(true);
+			fightOver = true;
+			playerWin = true;
 			for(JButton button : buttons)
-				button.setEnabled(false);
+				button.setEnabled(false);	
+			lblDamageDealt.setVisible(false);
 		}			
 	}
 	
-	private void disableButtonFocus() {
-		
+	private void disableButtonFocus() {		
 		for(JButton button : buttons)
-			button.setFocusable(false);		
+			button.setFocusable(false);			
+	}
+	
+	private void disableActionButtons() {
+		for(JButton button : actionButtons)
+			button.setEnabled(false);			
+	}
+	
+	private void enableActionButtons() {
+		for(JButton button : actionButtons)
+			button.setEnabled(true);			
+	}
+	
+	private void enemyAttack() {
+		player.playerLoseHP(enemy.getEnemyStrength());
+    	player.playerShowHP(lblPlayerHP);
+    	lblPlayerHP.repaint();
+		lblDamageDealt.setText("Enemy dealt: " + enemy.getEnemyStrength()  + " damage");
+		lblDamageDealt.repaint();
+    	isPlayerDead();
+    	turn = true;
+//    	if (!fightOver)
+//    		battlePhase();   		
+	}
+	
+	private void playerAttack(){
+		if(player.playerAttack()) {
+			enemy.enemyLoseHP(player.getPlayerStrength() + weapon.getWeaponDamage());
+			enemy.enemyShowHP(lblEnemyHP);
+			lblEnemyHP.repaint();
+			lblDamageDealt.setText("You dealt: " + (player.getPlayerStrength() + weapon.getWeaponDamage())  + " damage");
+			lblDamageDealt.repaint();
+		}
+		isEnemyDead();
+		turn = false;		
+//		if (!fightOver)
+//    		battlePhase();
+		if(turnCounter <= 0)
+			disableActionButtons();
+		
+		
+	}
+	
+	private void endTurn() {
+		disableActionButtons();
 	}
 	
 }

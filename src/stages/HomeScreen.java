@@ -45,7 +45,7 @@ public class HomeScreen extends JPanel implements ActionListener {
             System.exit(0);
         }
         else if (command.equals("Levels")) {
-            window.showLevelSelector();
+            window.showLevelSelector(1);
         }
     }
 }

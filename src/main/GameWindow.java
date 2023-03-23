@@ -12,10 +12,10 @@ import stages.MainMenu;
 
 public class GameWindow extends JFrame {
 	
-    private MainMenu mainMenu;
-    private HomeScreen homeScreen;
-    private LevelSelector levelSelector;
-    private FightScene fightScene;
+    private static MainMenu mainMenu;
+    private static HomeScreen homeScreen;
+    private static LevelSelector levelSelector;
+    private static FightScene fightScene;
 
     public GameWindow() {
         super("My Text-Based RPG Game");
@@ -32,25 +32,25 @@ public class GameWindow extends JFrame {
     }
     
     public void showHomeScreen() {
-        HomeScreen homeScreen = new HomeScreen(this);
+        homeScreen = new HomeScreen(this);
         setContentPane(homeScreen);
         revalidate();
     }
     
     public void showMainMenu() {
-    	MainMenu mainMenu = new MainMenu(this);
+    	mainMenu = new MainMenu(this);
         setContentPane(mainMenu);
         revalidate();
     }
     
-    public void showLevelSelector() {
-    	LevelSelector levelSelector = new LevelSelector(this);
+    public void showLevelSelector(int currentLevel) {
+    	levelSelector = new LevelSelector(this, currentLevel);
         setContentPane(levelSelector);
         revalidate();
     }
     
-    public void showFightScene() throws IOException {
-    	FightScene fightScene = new FightScene(this);
+    public void showFightScene(int levelIndex){
+    	fightScene = new FightScene(this, levelIndex);
         setContentPane(fightScene);
         revalidate();
     }
