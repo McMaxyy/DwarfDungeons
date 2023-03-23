@@ -33,6 +33,12 @@ public class HomeScreen extends JPanel implements ActionListener {
         levelSelectButton.addActionListener(this);
         levelSelectButton.setBounds(200, 200, 100, 50);
         add(levelSelectButton);
+        
+        JButton slotMachineButton = new JButton("Slot");
+        slotMachineButton.setActionCommand("Slot");
+        slotMachineButton.addActionListener(this);
+        slotMachineButton.setBounds(200, 300, 100, 50);
+        add(slotMachineButton);
     }
 
     @Override
@@ -46,6 +52,9 @@ public class HomeScreen extends JPanel implements ActionListener {
         }
         else if (command.equals("Levels")) {
             window.showLevelSelector(1);
+        }
+        else if (command.equals("Slot")) {
+            window.showSlotMachine();
         }
     }
 }

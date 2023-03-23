@@ -1,7 +1,5 @@
 package main;
 
-import java.io.IOException;
-
 import javax.swing.JFrame;
 import javax.swing.JRootPane;
 
@@ -9,6 +7,7 @@ import stages.FightScene;
 import stages.HomeScreen;
 import stages.LevelSelector;
 import stages.MainMenu;
+import stages.SlotMachine;
 
 public class GameWindow extends JFrame {
 	
@@ -16,6 +15,7 @@ public class GameWindow extends JFrame {
     private static HomeScreen homeScreen;
     private static LevelSelector levelSelector;
     private static FightScene fightScene;
+    private static SlotMachine slotMachine;
 
     public GameWindow() {
         super("My Text-Based RPG Game");
@@ -52,6 +52,12 @@ public class GameWindow extends JFrame {
     public void showFightScene(int levelIndex){
     	fightScene = new FightScene(this, levelIndex);
         setContentPane(fightScene);
+        revalidate();
+    }
+    
+    public void showSlotMachine(){
+    	slotMachine = new SlotMachine(this);
+        setContentPane(slotMachine);
         revalidate();
     }
 }

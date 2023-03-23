@@ -31,6 +31,18 @@ public class LevelSelector extends JPanel implements ActionListener{
 			break;
 		}
 		
+		JButton menuButton = new JButton("Main menu");  
+        menuButton.setActionCommand("Main menu");
+        menuButton.addActionListener(this);
+        menuButton.setBounds(25, 25, 100, 30);
+        add(menuButton);
+              
+        JButton quitButton = new JButton("Quit");
+        quitButton.setActionCommand("Quit");
+        quitButton.addActionListener(this);
+        quitButton.setBounds(375, 25, 100, 30);
+        add(quitButton);
+		
 		levelOne.setActionCommand("Level One");
 		levelOne.setText("Level One");
 		levelOne.addActionListener(this);
@@ -55,6 +67,12 @@ public class LevelSelector extends JPanel implements ActionListener{
 		else if(command.equals("Level Two")) {
 			levelIndex = 2;
 			window.showFightScene(levelIndex);      	
-        }		
+        }
+		else if (command.equals("Main menu")) {
+        	window.showMainMenu();
+        } 
+        else if (command.equals("Quit")) {
+            System.exit(0);
+        }
 	}
 }

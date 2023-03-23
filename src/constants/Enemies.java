@@ -29,14 +29,14 @@ public class Enemies {
 	
 	public void enemyOne() {
 		selectedEnemy = 1;
-		setEnemyHP(50);
+		setEnemyHP(20);
 		setEnemyStrength(1);
 		enemyIcon = entity.loadEnemyImg(selectedEnemy);
 	}
 	
 	public void enemyTwo() {
 		selectedEnemy = 2;
-		setEnemyHP(8);
+		setEnemyHP(30);
 		setEnemyStrength(2);
 		enemyIcon = entity.loadEnemyImg(selectedEnemy);
 	}

@@ -9,7 +9,8 @@ public class Player {
 
 	private static int playerHP;
 	private static int playerStrength;
-	private static int turnCount = 3;
+	private static int turnCount = 4;
+	private static int playerCoins;
 	private final int attackButtonCost = 1;
 	private int selectedPlayer;
 	protected JLabel lblPlayerHP;
@@ -27,6 +28,14 @@ public class Player {
 	
 	public void playerLoseHP(int dmg) {
 		setPlayerHP(getPlayerHP() - dmg);
+	}
+	
+	public void playerGainCoin(int coin) {
+		setPlayerCoins(getPlayerCoins() + coin);
+	}
+	
+	public void playerLoseCoin(int coin) {
+		setPlayerCoins(getPlayerCoins() - coin);
 	}
 	
 	public boolean playerAttack() {
@@ -74,6 +83,14 @@ public class Player {
 
 	public int getAttackButtonCost() {
 		return attackButtonCost;
+	}
+
+	public int getPlayerCoins() {
+		return playerCoins;
+	}
+
+	public void setPlayerCoins(int playerCoins) {
+		Player.playerCoins = playerCoins;
 	}
 
 }

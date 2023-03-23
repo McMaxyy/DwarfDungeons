@@ -39,6 +39,7 @@ public class FightScene extends JPanel implements ActionListener {
 	private int turnCounter;
 	private boolean playerWin;
 	private JLabel lblDamageDealt = new JLabel();
+	private JLabel lblTurnCounter = new JLabel();
 
 	public FightScene(GameWindow window, int levelIndex){
 		this.window = window;
@@ -73,14 +74,18 @@ public class FightScene extends JPanel implements ActionListener {
 		
 		setLayout(null);
 				
-		// HP labels
+		// Useful labels
 		player.playerShowHP(lblPlayerHP);
-		lblPlayerHP.setBounds(200, 500, 100, 50);
+		lblPlayerHP.setBounds(170, 500, 100, 50);
 		add(lblPlayerHP);
 		
 		enemy.enemyShowHP(lblEnemyHP);
 		lblEnemyHP.setBounds(200, 100, 100, 50);		
 		add(lblEnemyHP);
+		
+		lblTurnCounter.setBounds(170, 560, 120, 50);
+		lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+		add(lblTurnCounter);
 		
 		// Damage dealt labels
 		lblDamageDealt.setBounds(120, 350, 250, 20);
@@ -117,14 +122,14 @@ public class FightScene extends JPanel implements ActionListener {
         // Action buttons
         attackButton = new JButton();
         attackButton.setActionCommand("Attack");
-        attackButton.setText("Attack");
+        attackButton.setText("Attack (-" + player.getAttackButtonCost() + ")");
         attackButton.addActionListener(this);
         attackButton.setBounds(50, 500, 100, 50);
         add(attackButton);
         
         fleeButton = new JButton();
         fleeButton.setActionCommand("Flee");
-        fleeButton.setText("Flee");
+        fleeButton.setText("Flee (-" + player.getTurnCount() + ")");
         fleeButton.addActionListener(this);
         fleeButton.setBounds(50, 600, 100, 50);
         add(fleeButton);
@@ -135,8 +140,7 @@ public class FightScene extends JPanel implements ActionListener {
         turnButton.addActionListener(this);
         turnButton.setBounds(370, 430, 100, 30);
         add(turnButton);
-        
-        
+               
         buttons[0] = attackButton;
         buttons[1] = fleeButton;
         buttons[2] = quitButton;
@@ -164,8 +168,8 @@ public class FightScene extends JPanel implements ActionListener {
         	window.showLevelSelector(currentLevel);
         }
 		else if (command.equals("Attack")) {
-			turnCounter--;
-			System.out.println(turnCounter);
+			turnCounter -= player.getAttackButtonCost();
+			lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
 			playerAttack();
         }
 		else if (command.equals("Flee")) {
@@ -175,12 +179,14 @@ public class FightScene extends JPanel implements ActionListener {
 				disableActionButtons();
 				lblDamageDealt.setText("You failed to escape.");
 				lblDamageDealt.repaint();
+				lblTurnCounter.setText("Available points: " + 0 + "/" + player.getTurnCount());
 				}
         	}
 		else if (command.equals("Turn")) {
         	enemyAttack();
         	enableActionButtons();
         	turnCounter = player.getTurnCount();
+        	lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
         }
 	}
 	
@@ -188,7 +194,6 @@ public class FightScene extends JPanel implements ActionListener {
 		if(player.getPlayerHP() <= 0) {
 			returnButton.setText("<html>" + youLost.replaceAll("\\n", "<br>") + "</html>");
 			returnButton.setVisible(true);
-			fightOver = true;
 			currentLevel = 1;
 			playerWin = false;
 			for(JButton button : buttons)
@@ -201,7 +206,6 @@ public class FightScene extends JPanel implements ActionListener {
 		if(enemy.getEnemyHP() <= 0) {
 			returnButton.setText("<html>" + youWon.replaceAll("\\n", "<br>") + "</html>");
 			returnButton.setVisible(true);
-			fightOver = true;
 			playerWin = true;
 			for(JButton button : buttons)
 				button.setEnabled(false);	
@@ -231,31 +235,22 @@ public class FightScene extends JPanel implements ActionListener {
 		lblDamageDealt.setText("Enemy dealt: " + enemy.getEnemyStrength()  + " damage");
 		lblDamageDealt.repaint();
     	isPlayerDead();
-    	turn = true;
-//    	if (!fightOver)
-//    		battlePhase();   		
+    	turn = true;   		
 	}
 	
 	private void playerAttack(){
 		if(player.playerAttack()) {
-			enemy.enemyLoseHP(player.getPlayerStrength() + weapon.getWeaponDamage());
+			int x = rand.nextInt(1, player.getPlayerStrength() + weapon.getWeaponDamage() + 1);			
+			enemy.enemyLoseHP(x);
 			enemy.enemyShowHP(lblEnemyHP);
 			lblEnemyHP.repaint();
-			lblDamageDealt.setText("You dealt: " + (player.getPlayerStrength() + weapon.getWeaponDamage())  + " damage");
+			lblDamageDealt.setText("You dealt: " + x + " damage");
 			lblDamageDealt.repaint();
 		}
 		isEnemyDead();
 		turn = false;		
-//		if (!fightOver)
-//    		battlePhase();
 		if(turnCounter <= 0)
-			disableActionButtons();
-		
-		
-	}
-	
-	private void endTurn() {
-		disableActionButtons();
+			disableActionButtons();		
 	}
 	
 }
