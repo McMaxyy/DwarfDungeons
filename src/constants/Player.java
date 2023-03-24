@@ -10,7 +10,7 @@ public class Player {
 	private static int playerHP;
 	private static int playerStrength;
 	private static int turnCount = 4;
-	private static int playerCoins;
+	private static int playerCoins = 100;
 	private final int attackButtonCost = 1;
 	private int selectedPlayer;
 	protected JLabel lblPlayerHP;
