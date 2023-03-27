@@ -7,5 +7,4 @@ public class Main {
         window.setVisible(true);
 
 	}
-
 }

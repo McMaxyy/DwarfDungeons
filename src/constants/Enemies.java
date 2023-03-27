@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 public class Enemies {
 
 	private int enemyHP;
+	private int enemyMaxHP;
 	private int enemyStrength;
 	private int enemyExp;
 	protected JLabel lblEnemyHP;
@@ -26,16 +27,18 @@ public class Enemies {
 	
 	public void enemyOne() {
 		selectedEnemy = 1;
-		setEnemyHP(20);
-		setEnemyStrength(1);
+		enemyMaxHP = 20;
+		enemyHP = enemyMaxHP;
+		enemyStrength = 1;
 		enemyIcon = entity.loadEnemyImg(selectedEnemy);
 		enemyExp = 10;
 	}
 	
 	public void enemyTwo() {
 		selectedEnemy = 2;
-		setEnemyHP(30);
-		setEnemyStrength(2);
+		enemyMaxHP = 30;
+		enemyHP = enemyMaxHP;
+		enemyStrength = 2;
 		enemyIcon = entity.loadEnemyImg(selectedEnemy);
 		enemyExp = 10;
 	}
@@ -77,4 +80,13 @@ public class Enemies {
 		this.enemyExp = enemyExp;
 	}
 
+	public int getEnemyMaxHP() {
+		return enemyMaxHP;
+	}
+
+	public void setEnemyMaxHP(int enemyMaxHP) {
+		this.enemyMaxHP = enemyMaxHP;
+	}
+
+	
 }

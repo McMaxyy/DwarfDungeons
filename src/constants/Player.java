@@ -8,14 +8,13 @@ public class Player {
 
 	private static int playerMaxHP = 10;
 	private static int playerHP;
-	private static int playerStrength = 5;
+	private static int playerStrength = 4;
 	private static int turnCount = 4;
 	private static int playerCoins = 100;
 	private static int playerLevel = 1;
 	private static int playerExp = 0;
 	private final int attackButtonCost = 1;
 	private final int levelOneCap = 10;
-	private int selectedPlayer;
 	protected JLabel lblPlayerHP;
 	private Random rand = new Random();
 	private static JLabel playerIcon = new JLabel();
@@ -55,17 +54,17 @@ public class Player {
 	}
 	
 	public void increasePlayerStr() {
-		playerStrength += 1;
+		playerStrength += 2;
+		playerHP = playerMaxHP;
 	}
 	
 	public void levelUp() {		
-		playerLevel++;		
+		playerLevel++;
+		playerExp = 0;
 	}
 	
 	public void playerOne() {
-		selectedPlayer = 1;
 		playerHP = playerMaxHP;
-		playerIcon = entity.loadPlayerImg(selectedPlayer);
 	}
 
 	public int getTurnCount() {
@@ -126,6 +125,14 @@ public class Player {
 
 	public void setPlayerMaxHP(int playerMaxHP) {
 		Player.playerMaxHP = playerMaxHP;
+	}
+
+	public int getPlayerLevel() {
+		return playerLevel;
+	}
+
+	public void setPlayerLevel(int playerLevel) {
+		Player.playerLevel = playerLevel;
 	}
 	
 }

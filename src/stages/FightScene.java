@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -15,6 +17,12 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import abilities.*;
+
 import javax.swing.JLabel;
 
 import main.GameWindow;
@@ -23,24 +31,25 @@ import constants.*;
 public class FightScene extends JPanel implements ActionListener {
 	
 	private GameWindow window;
+	Gson gson;
 	private LevelSelector level = new LevelSelector(window, 0);
 	private Player player = new Player();
 	private Enemies enemy = new Enemies();
 	private Weapons weapon = new Weapons();
-	private Abilities ability = new Abilities();
+	private OverheadSwing overheadSwing = new OverheadSwing();
+	private Decapitate decapitate = new Decapitate();
 	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblTurnCounter, lblExp, lblLevelUp;
 	private JButton returnButton, attackButton, fleeButton, quitButton, menuButton, 
-			turnButton, levelUpHPButton, levelUpStrButton;
+			turnButton, levelUpHPButton, levelUpStrButton, swingButton, decapButton, saveButton;
 	private JButton[] buttons = new JButton[] {attackButton, fleeButton, quitButton, 
-			menuButton, turnButton};
-	private JButton[] actionButtons = new JButton[] {attackButton, fleeButton};
+			menuButton, turnButton, swingButton, decapButton, saveButton};
+	private JButton[] actionButtons = new JButton[] {attackButton, fleeButton, swingButton, decapButton};
 	String youLost = "You\nLost";
 	String youWon = "You\nWon";
 	private boolean turn, fightOver;
 	private Random rand = new Random();
 	private int enemySelectRand = rand.nextInt(2);
-	private int currentLevel;
-	private int turnCounter;
+	private int currentLevel, turnCounter, abilityID;
 	private boolean playerWin, leveledUp, playerAttack;
 	private Font f = new Font("Serif", Font.PLAIN, 18);
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
@@ -52,8 +61,13 @@ public class FightScene extends JPanel implements ActionListener {
 		turnCounter = player.getTurnCount();
 		turn = true;
 		currentLevel = levelIndex;
-		weapon.weaponOne();		
+		weapon.weaponOne();
+		abilityID = 0;
 		
+//		gson = new GsonBuilder()
+//				.registerTypeAdapter(Abilities.class, new AbilitiesDeserializer())
+//				.create();
+
 		if (enemySelectRand == 0)
 			enemy.enemyOne();
 		else
@@ -68,19 +82,13 @@ public class FightScene extends JPanel implements ActionListener {
 		add(enemyImg);
 		enemyImg.setBounds(50, 100, enemyImg.getWidth(), enemyImg.getHeight());
 		
-		//Player image
-//		JLabel playerImg = new JLabel();
-//		playerImg = player.getPlayerIcon();
-//		add(playerImg);
-//		playerImg.setBounds(350, 500, playerImg.getWidth(), playerImg.getHeight());
-		
 		pImg = Toolkit.getDefaultToolkit().createImage("res/IdleDwarf.gif");
 		wImg = Toolkit.getDefaultToolkit().createImage("res/IronAxe.png");
 		pAttackImg = Toolkit.getDefaultToolkit().getImage("res/DwarfAttack.gif");
 		wAttackImg = Toolkit.getDefaultToolkit().getImage("res/AxeAttack.gif");
 		
 		setLayout(null);
-						
+		
         initComponents();
         disableButtonFocus();
 	}
@@ -96,6 +104,9 @@ public class FightScene extends JPanel implements ActionListener {
             break;
         case "Main menu":
             window.showMainMenu();
+            break;
+        case "Save":
+        	saveGame();
             break;
         case "Return":
             if (playerWin) {
@@ -119,10 +130,24 @@ public class FightScene extends JPanel implements ActionListener {
                 lblTurnCounter.setText("Available points: " + 0 + "/" + player.getTurnCount());
             }
             break;
+        case "Swing":
+        	abilityID = overheadSwing.getID();
+        	turnCounter -= overheadSwing.getAbilityCost();
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            playerAttack();
+            playerAttack = true;
+        	break;
+        case "Decapitate":
+        	abilityID = decapitate.getID();
+        	turnCounter -= decapitate.getAbilityCost();
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            playerAttack();
+            playerAttack = true;
+        	break;
         case "Turn":
-            enemyAttack();
-            enableActionButtons();
+            enemyAttack();            
             turnCounter = player.getTurnCount();
+            enableActionButtons();
             lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
             break;
         case "HP up":
@@ -144,12 +169,14 @@ public class FightScene extends JPanel implements ActionListener {
 			playerWin = false;		// Will not unlock the next stage
 			for(JButton button : buttons)
 				button.setEnabled(false);
-			lblDamageDealt.setVisible(false);		
+			lblDamageDealt.setVisible(false);
 		}			
 	}
 	
 	public void isEnemyDead() {
 		if(enemy.getEnemyHP() <= 0) {
+			turnCounter = 0;
+			lblTurnCounter.setText("Available points: 0/" + player.getTurnCount());
 			player.increasePlayerExp(enemy.getEnemyExp());		// Add EXP to player	
 			lblExp.setText("Gained " + enemy.getEnemyExp() + " exp");
 			lblExp.setVisible(true);
@@ -174,12 +201,31 @@ public class FightScene extends JPanel implements ActionListener {
 	
 	private void disableActionButtons() {
 		for(JButton button : actionButtons)
-			button.setEnabled(false);			
+			button.setEnabled(false);	
 	}
 	
 	private void enableActionButtons() {
 		for(JButton button : actionButtons)
-			button.setEnabled(true);			
+			button.setEnabled(true);
+		
+		abilityButtons(player.getPlayerLevel());
+		
+		if(turnCounter < overheadSwing.getAbilityCost())
+			swingButton.setEnabled(false);
+		if(turnCounter < decapitate.getAbilityCost())
+			decapButton.setEnabled(false);
+	}
+	
+	private void abilityButtons(int level) {
+		if(level >= 2)
+			swingButton.setEnabled(true);
+		else
+			swingButton.setEnabled(false);
+		
+		if(level >= 5 && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 4))
+			decapButton.setEnabled(true);
+		else
+			decapButton.setEnabled(false);
 	}
 	
 	private void enemyAttack() {
@@ -194,11 +240,34 @@ public class FightScene extends JPanel implements ActionListener {
 	
 	private void playerAttack(){
 		if(player.playerAttack()) {
-			int x = rand.nextInt(1, player.getPlayerStrength() + weapon.getWeaponDamage() + 1);			
+			int x, y = 0;
+			
+			// Check if ability was used
+			if(abilityID != 0) {
+				switch(abilityID) {
+				case 1:
+					y = overheadSwing.getAttackPower();
+					break;
+				case 2:
+					y = decapitate.getAttackPower();
+					break;
+				}
+				x = player.getPlayerStrength() / 2 + y;
+				System.out.println(player.getPlayerStrength() / 2);
+				abilityID = 0;
+			}
+			else
+				x = rand.nextInt(1, player.getPlayerStrength() + weapon.getWeaponDamage() + 1);	
+			
+			// Damage enemy & update label
 			enemy.enemyLoseHP(x);
 			enemy.enemyShowHP(lblEnemyHP);
 			lblEnemyHP.repaint();
 			lblDamageDealt.setText("You dealt: " + x + " damage");
+			lblDamageDealt.repaint();
+		}
+		else {
+			lblDamageDealt.setText("You missed");
 			lblDamageDealt.repaint();
 		}
 		isEnemyDead();
@@ -218,6 +287,51 @@ public class FightScene extends JPanel implements ActionListener {
 		levelUpStrButton.setVisible(false);
 		returnButton.setVisible(true);
 	}
+	
+//	private void saveAbilities() {
+//		abilities[0] = overheadSwing;
+//        abilities[1] = decapitate;
+//    	
+//        // Serialize to JSON and write to file
+//        try (FileWriter writer = new FileWriter("abilities.json")) {
+//            gson.toJson(abilities, writer);
+//            gson.toJson(player.getPlayerCoins(), writer);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//	}
+	
+	private void saveGame() {
+		int[] saveS = new int[6];
+		saveS[0] = player.getPlayerMaxHP();
+		saveS[1] = player.getPlayerStrength();
+		saveS[2] = player.getTurnCount();
+		saveS[3] = player.getPlayerCoins();
+		saveS[4] = player.getPlayerLevel();
+		saveS[5] = player.getPlayerExp();
+		
+		try (FileWriter writer = new FileWriter("savegame.json")) {
+            gson.toJson(saveS, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	
+//	private void loadAbilities() {
+//		try (FileReader reader = new FileReader("abilities.json")) {
+//			abilities = gson.fromJson(reader, Abilities[].class);
+//			for (Abilities ability : abilities) {
+//			    if (ability instanceof OverheadSwing) {
+//			        overheadSwing = (OverheadSwing) ability;
+//			    } else if (ability instanceof Decapitate) {
+//			    	decapitate = (Decapitate) ability;
+//			    }
+//			}
+//		} catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//	}
 	
 	private void initComponents() {	
 		
@@ -271,7 +385,14 @@ public class FightScene extends JPanel implements ActionListener {
         menuButton.setText("Main menu");
         menuButton.addActionListener(this);
         menuButton.setBounds(25, 25, 100, 30);
-        add(menuButton);      
+        add(menuButton);    
+        
+        saveButton = new JButton();
+        saveButton.setActionCommand("Save");
+        saveButton.setText("Save game");
+        saveButton.addActionListener(this);
+        saveButton.setBounds(200, 25, 100, 30);
+        add(saveButton); 
         
         // Lost game button
         returnButton = new JButton();
@@ -295,8 +416,28 @@ public class FightScene extends JPanel implements ActionListener {
         fleeButton.setActionCommand("Flee");
         fleeButton.setText("Flee (-" + player.getTurnCount() + ")");
         fleeButton.addActionListener(this);
-        fleeButton.setBounds(50, 600, 100, 50);
+        fleeButton.setBounds(50, 560, 100, 50);
         add(fleeButton);
+        
+        swingButton = new JButton();
+        swingButton.setEnabled(false);
+        if(player.getPlayerLevel() >= overheadSwing.getRequiredLevel())
+        	swingButton.setEnabled(true);
+        swingButton.setActionCommand("Swing");
+        swingButton.setText("Swing (-" + overheadSwing.getAbilityCost() + ")");
+        swingButton.addActionListener(this);
+        swingButton.setBounds(50, 620, 100, 50);
+        add(swingButton);
+        
+        decapButton = new JButton();
+        decapButton.setEnabled(false);
+        if(player.getPlayerLevel() >= decapitate.getRequiredLevel() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 4))
+        	decapButton.setEnabled(true);
+        decapButton.setActionCommand("Decapitate");
+        decapButton.setText("Decap (-" + decapitate.getAbilityCost() + ")");
+        decapButton.addActionListener(this);
+        decapButton.setBounds(160, 620, 100, 50);
+        add(decapButton);
         
         turnButton = new JButton();
         turnButton.setActionCommand("Turn");
@@ -324,15 +465,21 @@ public class FightScene extends JPanel implements ActionListener {
         levelUpStrButton.addActionListener(this);
         levelUpStrButton.setBounds(230, 350, 80, 30);
         add(levelUpStrButton);
+        
         // Add buttons to arrays
         buttons[0] = attackButton;
         buttons[1] = fleeButton;
         buttons[2] = quitButton;
         buttons[3] = menuButton;
         buttons[4] = turnButton;
+        buttons[5] = swingButton;
+        buttons[6] = decapButton;
+        buttons[7] = saveButton;
         
         actionButtons[0] = attackButton;
         actionButtons[1] = fleeButton;
+        actionButtons[2] = swingButton;
+        actionButtons[3] = decapButton;
 	}
 	
 	@Override
@@ -353,7 +500,8 @@ public class FightScene extends JPanel implements ActionListener {
     	            public void run() {
     	                // your code here
     	            	playerAttack = false;
-    	            	enableActionButtons();
+    	            	if(turnCounter > 0)
+    	            		enableActionButtons();
     	            }
     	        }, 
     	        450
