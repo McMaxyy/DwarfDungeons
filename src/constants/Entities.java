@@ -10,10 +10,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class Entities {
-
-	public Entities() {
-		
-	}
 	
 	public JLabel loadEnemyImg(int selectedEnemy) {
 		BufferedImage img = null;
@@ -53,7 +49,7 @@ public class Entities {
 		switch(selectedPlayer) {
 			case 1:
 				try {
-					img = ImageIO.read(new File("res/chr.png"));
+					img = ImageIO.read(new File("res/Dwarf.gif"));
 				} catch (IOException e) {
 				    e.printStackTrace();
 				}
@@ -68,7 +64,7 @@ public class Entities {
 		}
 		JLabel pic1 = new JLabel(new ImageIcon(img));
 		if(selectedPlayer == 1)
-			pic1.setSize(100, 150);
+			pic1.setSize(150, 150);
 		else if(selectedPlayer == 2)
 			pic1.setSize(150, 150);
 		Image dimg = img.getScaledInstance(pic1.getWidth(), pic1.getHeight(),
@@ -78,4 +74,5 @@ public class Entities {
 		playerIcon = pic1;
 		return playerIcon;
 	}
+	
 }

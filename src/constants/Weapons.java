@@ -4,10 +4,6 @@ public class Weapons {
 
 	private static int weaponDamage;
 	
-	public Weapons() {
-		
-	}
-	
 	public void noWeapon() {
 		weaponDamage = 0;
 	}

@@ -32,7 +32,7 @@ public class SlotMachine extends JPanel implements ActionListener {
     private JLabel coins = new JLabel();
     private JLabel winnings = new JLabel();
     private Player player = new Player();
-    private int roundWinnings, spinCost, payoutMultiplier;
+    private int roundWinnings, spinCost;
     private boolean lineR1, lineR2, lineR3, lineDia1, lineDia2;
 	
 	public SlotMachine(GameWindow window) {
@@ -82,7 +82,7 @@ public class SlotMachine extends JPanel implements ActionListener {
         }
 	}
 	
-	public void spinSlot() {
+	private void spinSlot() {
 		
 		for(int i = 0; i < 3; i++) {
 			slotLvl = 1;
@@ -141,7 +141,7 @@ public class SlotMachine extends JPanel implements ActionListener {
 			spinButton.setEnabled(false);
 	}
 	
-	public void initializeComponents() {
+	private void initializeComponents() {
 		quitButton = new JButton();
 		quitButton.setFocusable(false);
 		quitButton.setText("Quit");
@@ -214,7 +214,7 @@ public class SlotMachine extends JPanel implements ActionListener {
         add(winnings);
 	}
 	
-	public void checkWinPatterns() {		
+	private void checkWinPatterns() {		
 		
 		if(slots[0][0].getText() == "A" && slots[0][1].getText() == "A" && slots[0][2].getText() == "A") {
 			payPlayer(2);
@@ -310,14 +310,14 @@ public class SlotMachine extends JPanel implements ActionListener {
         }               
     }
 	
-	public void showCostChange() {
+	private void showCostChange() {
 		changeCostButton.setVisible(false);
 		pay2Coin.setVisible(true);
 		pay3Coin.setVisible(true);
 		pay6Coin.setVisible(true);
 	}
 	
-	public void hideCostChange() {
+	private void hideCostChange() {
 		changeCostButton.setVisible(true);
 		pay2Coin.setVisible(false);
 		pay3Coin.setVisible(false);
@@ -326,12 +326,12 @@ public class SlotMachine extends JPanel implements ActionListener {
         	spinButton.setEnabled(true);
 	}
 	
-	public void repaintButtonText() {
+	private void repaintButtonText() {
 		spinButton.setText("Spin (-" + spinCost + ")");
 		changeCostButton.setText("Spin cost: " + spinCost);
 	}
 	
-	public void payPlayer(int payout) {
+	private void payPlayer(int payout) {
 		if(spinCost == 2) {
 			player.playerGainCoin(payout);
 			roundWinnings += payout;

@@ -4,26 +4,25 @@ import javax.swing.JLabel;
 
 import java.util.*;
 
-
 public class Player {
 
+	private static int playerMaxHP = 10;
 	private static int playerHP;
-	private static int playerStrength;
+	private static int playerStrength = 5;
 	private static int turnCount = 4;
 	private static int playerCoins = 100;
+	private static int playerLevel = 1;
+	private static int playerExp = 0;
 	private final int attackButtonCost = 1;
+	private final int levelOneCap = 10;
 	private int selectedPlayer;
 	protected JLabel lblPlayerHP;
 	private Random rand = new Random();
 	private static JLabel playerIcon = new JLabel();
 	private Entities entity = new Entities();
 	
-	public Player() {
-		
-	}
-	
 	public void playerShowHP(JLabel lblPlayerHP) {
-		lblPlayerHP.setText("Player HP: " + String.valueOf(getPlayerHP()));
+		lblPlayerHP.setText("Player HP: " + playerHP);
 	}
 	
 	public void playerLoseHP(int dmg) {
@@ -46,10 +45,26 @@ public class Player {
 			return false;
 	}
 	
+	public void increasePlayerExp(int x) {
+		playerExp += x;		
+	}
+	
+	public void increaseMaxHP() {
+		playerMaxHP += 2;
+		playerHP = playerMaxHP;
+	}
+	
+	public void increasePlayerStr() {
+		playerStrength += 1;
+	}
+	
+	public void levelUp() {		
+		playerLevel++;		
+	}
+	
 	public void playerOne() {
 		selectedPlayer = 1;
-		setPlayerHP(10);
-		setPlayerStrength(2);
+		playerHP = playerMaxHP;
 		playerIcon = entity.loadPlayerImg(selectedPlayer);
 	}
 
@@ -93,4 +108,24 @@ public class Player {
 		Player.playerCoins = playerCoins;
 	}
 
+	public int getPlayerExp() {
+		return playerExp;
+	}
+
+	public void setPlayerExp(int playerExp) {
+		Player.playerExp = playerExp;
+	}
+
+	public int getLevelOneCap() {
+		return levelOneCap;
+	}
+
+	public int getPlayerMaxHP() {
+		return playerMaxHP;
+	}
+
+	public void setPlayerMaxHP(int playerMaxHP) {
+		Player.playerMaxHP = playerMaxHP;
+	}
+	
 }

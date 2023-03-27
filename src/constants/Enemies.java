@@ -9,15 +9,12 @@ public class Enemies {
 
 	private int enemyHP;
 	private int enemyStrength;
+	private int enemyExp;
 	protected JLabel lblEnemyHP;
 	private Random rand = new Random();
 	private JLabel enemyIcon = new JLabel();
 	private int selectedEnemy;	
 	private Entities entity = new Entities();
-	
-	public Enemies() {
-	
-	}
 	
 	public void enemyShowHP(JLabel lblEnemyHP) {
 		lblEnemyHP.setText("Enemy HP: " + String.valueOf(getEnemyHP()));
@@ -32,6 +29,7 @@ public class Enemies {
 		setEnemyHP(20);
 		setEnemyStrength(1);
 		enemyIcon = entity.loadEnemyImg(selectedEnemy);
+		enemyExp = 10;
 	}
 	
 	public void enemyTwo() {
@@ -39,6 +37,7 @@ public class Enemies {
 		setEnemyHP(30);
 		setEnemyStrength(2);
 		enemyIcon = entity.loadEnemyImg(selectedEnemy);
+		enemyExp = 10;
 	}
 	
 	public boolean enemyAttack() {
@@ -68,6 +67,14 @@ public class Enemies {
 	
 	public JLabel getEnemyIcon() {
 		return enemyIcon;
+	}
+
+	public int getEnemyExp() {
+		return enemyExp;
+	}
+
+	public void setEnemyExp(int enemyExp) {
+		this.enemyExp = enemyExp;
 	}
 
 }
