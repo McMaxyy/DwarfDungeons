@@ -8,17 +8,18 @@ public class Player {
 
 	private static int playerMaxHP = 10;
 	private static int playerHP;
-	private static int playerStrength = 4;
+	private static int playerStrength = 2;
 	private static int turnCount = 4;
 	private static int playerCoins = 100;
 	private static int playerLevel = 1;
 	private static int playerExp = 0;
+	private static int ability1ID, ability2ID, ability3ID;
 	private final int attackButtonCost = 1;
 	private final int levelOneCap = 10;
 	protected JLabel lblPlayerHP;
 	private Random rand = new Random();
 	private static JLabel playerIcon = new JLabel();
-	private Entities entity = new Entities();
+	int x, y, z;
 	
 	public void playerShowHP(JLabel lblPlayerHP) {
 		lblPlayerHP.setText("Player HP: " + playerHP);
@@ -37,7 +38,7 @@ public class Player {
 	}
 	
 	public boolean playerAttack() {
-		int x = rand.nextInt(10);
+		x = rand.nextInt(10);
 		if(x != 0 || x != 1)
 			return true;
 		else
@@ -65,6 +66,17 @@ public class Player {
 	
 	public void playerOne() {
 		playerHP = playerMaxHP;
+		x = rand.nextInt(1, 4);
+		y = rand.nextInt(1, 4);
+		z = rand.nextInt(1, 4);
+		ability1ID = x;
+		while(y == x) {
+			y = rand.nextInt(1, 4);
+		}
+		ability2ID = y;
+		while (z == y || z == x)
+			z = rand.nextInt(1, 4);
+		ability3ID = z;
 	}
 
 	public int getTurnCount() {
@@ -133,6 +145,30 @@ public class Player {
 
 	public void setPlayerLevel(int playerLevel) {
 		Player.playerLevel = playerLevel;
+	}
+
+	public int getAbility1ID() {
+		return ability1ID;
+	}
+
+	public void setAbility1ID(int ability1id) {
+		ability1ID = ability1id;
+	}
+
+	public int getAbility2ID() {
+		return ability2ID;
+	}
+
+	public void setAbility2ID(int ability2id) {
+		ability2ID = ability2id;
+	}
+
+	public int getAbility3ID() {
+		return ability3ID;
+	}
+
+	public void setAbility3ID(int ability3id) {
+		ability3ID = ability3id;
 	}
 	
 }

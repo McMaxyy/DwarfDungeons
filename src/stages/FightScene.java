@@ -19,13 +19,11 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import abilities.*;
 
 import javax.swing.JLabel;
 
 import main.GameWindow;
+import warriorAbilities.*;
 import constants.*;
 
 public class FightScene extends JPanel implements ActionListener {
@@ -38,19 +36,22 @@ public class FightScene extends JPanel implements ActionListener {
 	private Weapons weapon = new Weapons();
 	private OverheadSwing overheadSwing = new OverheadSwing();
 	private Decapitate decapitate = new Decapitate();
+	private Riposte riposte = new Riposte();
 	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblTurnCounter, lblExp, lblLevelUp;
 	private JButton returnButton, attackButton, fleeButton, quitButton, menuButton, 
-			turnButton, levelUpHPButton, levelUpStrButton, swingButton, decapButton, saveButton;
+			turnButton, levelUpHPButton, levelUpStrButton, saveButton,ability1, ability2, 
+			ability3;
 	private JButton[] buttons = new JButton[] {attackButton, fleeButton, quitButton, 
-			menuButton, turnButton, swingButton, decapButton, saveButton};
-	private JButton[] actionButtons = new JButton[] {attackButton, fleeButton, swingButton, decapButton};
+			menuButton, turnButton, saveButton, ability1, ability2, ability3};
+	private JButton[] actionButtons = new JButton[] {attackButton, fleeButton, ability1, 
+			ability2, ability3};
 	String youLost = "You\nLost";
 	String youWon = "You\nWon";
-	private boolean turn, fightOver;
+	private boolean fightOver;
 	private Random rand = new Random();
 	private int enemySelectRand = rand.nextInt(2);
 	private int currentLevel, turnCounter, abilityID;
-	private boolean playerWin, leveledUp, playerAttack;
+	private boolean playerWin, leveledUp, playerAttack, riposteActive;
 	private Font f = new Font("Serif", Font.PLAIN, 18);
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
 	private Image pImg, wImg, pAttackImg, wAttackImg;
@@ -59,22 +60,23 @@ public class FightScene extends JPanel implements ActionListener {
 	public FightScene(GameWindow window, int levelIndex){
 		this.window = window;
 		turnCounter = player.getTurnCount();
-		turn = true;
 		currentLevel = levelIndex;
 		weapon.weaponOne();
 		abilityID = 0;
 		
-//		gson = new GsonBuilder()
-//				.registerTypeAdapter(Abilities.class, new AbilitiesDeserializer())
-//				.create();
-
+		
+		
 		if (enemySelectRand == 0)
 			enemy.enemyOne();
 		else
 			enemy.enemyTwo();
 		
 		if(currentLevel == 1)
-			player.playerOne();		
+			player.playerOne();	
+		
+		System.out.println(player.getAbility1ID());
+		System.out.println(player.getAbility2ID());
+		System.out.println(player.getAbility3ID());
 				
 		// Enemy image
 		JLabel enemyImg = new JLabel();
@@ -144,6 +146,19 @@ public class FightScene extends JPanel implements ActionListener {
             playerAttack();
             playerAttack = true;
         	break;
+        case "Riposte":
+        	if(rand.nextInt(2) == 0)
+        		abilityID = riposte.getID();
+        	else
+        		abilityID = 69;
+        	turnCounter -= riposte.getAbilityCost();
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            enemyAttack();            
+            turnCounter = player.getTurnCount();
+            enableActionButtons();
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            playerAttack = true;
+        	break;
         case "Turn":
             enemyAttack();            
             turnCounter = player.getTurnCount();
@@ -186,6 +201,7 @@ public class FightScene extends JPanel implements ActionListener {
 			for(JButton button : buttons)
 				button.setEnabled(false);	
 			lblDamageDealt.setVisible(false);
+			disableActionButtons();
 			
 			if(player.getPlayerExp() >= player.getLevelOneCap()) {	// Check if player has enough EXP to level up
 				player.levelUp();
@@ -208,34 +224,89 @@ public class FightScene extends JPanel implements ActionListener {
 		for(JButton button : actionButtons)
 			button.setEnabled(true);
 		
-		abilityButtons(player.getPlayerLevel());
+		switch(ability1.getActionCommand()) {
+	    case "Swing":
+	        if(turnCounter < overheadSwing.getAbilityCost()) {
+	            ability1.setEnabled(false);
+	        }
+	        break;
+	    case "Decapitate":
+	        if(turnCounter >= decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
+	            ability1.setEnabled(true);
+	        else 
+	            ability1.setEnabled(false);
+	        break;
+	    case "Riposte":
+	    	if(turnCounter != 1)
+	    		ability1.setEnabled(false);
+	    	break;
+	    default:
+	        break;
+		}
 		
-		if(turnCounter < overheadSwing.getAbilityCost())
-			swingButton.setEnabled(false);
-		if(turnCounter < decapitate.getAbilityCost())
-			decapButton.setEnabled(false);
-	}
-	
-	private void abilityButtons(int level) {
-		if(level >= 2)
-			swingButton.setEnabled(true);
-		else
-			swingButton.setEnabled(false);
+		switch(ability2.getActionCommand()) {
+	    case "Swing":
+	        if(turnCounter < overheadSwing.getAbilityCost()) {
+	        	ability2.setEnabled(false);
+	        }
+	        break;
+	    case "Decapitate":
+	        if(turnCounter >= decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
+	        	ability2.setEnabled(true);
+	        else 
+	        	ability2.setEnabled(false);
+	        break;
+	    case "Riposte":
+	    	if(turnCounter != 1)
+	    		ability2.setEnabled(false);
+	    	break;
+	    default:
+	        break;
+		}
 		
-		if(level >= 5 && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 4))
-			decapButton.setEnabled(true);
-		else
-			decapButton.setEnabled(false);
-	}
+		switch(ability3.getActionCommand()) {
+	    case "Swing":
+	        if(turnCounter < overheadSwing.getAbilityCost()) {
+	        	ability3.setEnabled(false);
+	        }
+	        break;
+	    case "Decapitate":
+	        if(turnCounter >= decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
+	        	ability3.setEnabled(true);
+	        else 
+	        	ability3.setEnabled(false);
+	        break;
+	    case "Riposte":
+	    	if(turnCounter != 1)
+	    		ability3.setEnabled(false);
+	    	break;
+	    default:
+	        break;
+		}
+	}	
 	
 	private void enemyAttack() {
-		player.playerLoseHP(enemy.getEnemyStrength());
-    	player.playerShowHP(lblPlayerHP);
-    	lblPlayerHP.repaint();
-		lblDamageDealt.setText("Enemy dealt: " + enemy.getEnemyStrength()  + " damage");
-		lblDamageDealt.repaint();
-    	isPlayerDead();
-    	turn = true;   		
+		if(abilityID != 3) {
+			player.playerLoseHP(enemy.getEnemyStrength());
+	    	player.playerShowHP(lblPlayerHP);
+	    	lblPlayerHP.repaint();
+	    	if(abilityID == 69)
+	    		lblDamageDealt.setText("Riposte failed and the enemy dealt: " + enemy.getEnemyStrength()  + " damage");
+	    	else
+	    		lblDamageDealt.setText("Enemy dealt: " + enemy.getEnemyStrength()  + " damage");
+			lblDamageDealt.repaint();
+	    	isPlayerDead();	
+    	}
+		else{
+			int x = enemy.getEnemyStrength() + riposte.getAttackPower();			
+			enemy.enemyLoseHP(x);
+			enemy.enemyShowHP(lblEnemyHP);
+			lblEnemyHP.repaint();
+			lblDamageDealt.setText("You reflected the attack and hit them for " + x + " damage");
+			lblDamageDealt.repaint();			
+			isEnemyDead();
+		}
+		abilityID = 0;
 	}
 	
 	private void playerAttack(){
@@ -253,7 +324,6 @@ public class FightScene extends JPanel implements ActionListener {
 					break;
 				}
 				x = player.getPlayerStrength() / 2 + y;
-				System.out.println(player.getPlayerStrength() / 2);
 				abilityID = 0;
 			}
 			else
@@ -270,8 +340,7 @@ public class FightScene extends JPanel implements ActionListener {
 			lblDamageDealt.setText("You missed");
 			lblDamageDealt.repaint();
 		}
-		isEnemyDead();
-		turn = false;		
+		isEnemyDead();		
 		if(turnCounter <= 0)
 			disableActionButtons();		
 	}
@@ -288,19 +357,6 @@ public class FightScene extends JPanel implements ActionListener {
 		returnButton.setVisible(true);
 	}
 	
-//	private void saveAbilities() {
-//		abilities[0] = overheadSwing;
-//        abilities[1] = decapitate;
-//    	
-//        // Serialize to JSON and write to file
-//        try (FileWriter writer = new FileWriter("abilities.json")) {
-//            gson.toJson(abilities, writer);
-//            gson.toJson(player.getPlayerCoins(), writer);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//	}
-	
 	private void saveGame() {
 		int[] saveS = new int[6];
 		saveS[0] = player.getPlayerMaxHP();
@@ -316,22 +372,6 @@ public class FightScene extends JPanel implements ActionListener {
             e.printStackTrace();
         }
 	}
-	
-	
-//	private void loadAbilities() {
-//		try (FileReader reader = new FileReader("abilities.json")) {
-//			abilities = gson.fromJson(reader, Abilities[].class);
-//			for (Abilities ability : abilities) {
-//			    if (ability instanceof OverheadSwing) {
-//			        overheadSwing = (OverheadSwing) ability;
-//			    } else if (ability instanceof Decapitate) {
-//			    	decapitate = (Decapitate) ability;
-//			    }
-//			}
-//		} catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//	}
 	
 	private void initComponents() {	
 		
@@ -366,7 +406,7 @@ public class FightScene extends JPanel implements ActionListener {
 		
 		// Damage dealt label
 		lblDamageDealt = new JLabel();
-		lblDamageDealt.setBounds(120, 350, 250, 20);
+		lblDamageDealt.setBounds(70, 350, 350, 20);
 		lblDamageDealt.setBorder(blackline);
 		lblDamageDealt.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDamageDealt.setVerticalAlignment(SwingConstants.CENTER);
@@ -419,25 +459,68 @@ public class FightScene extends JPanel implements ActionListener {
         fleeButton.setBounds(50, 560, 100, 50);
         add(fleeButton);
         
-        swingButton = new JButton();
-        swingButton.setEnabled(false);
-        if(player.getPlayerLevel() >= overheadSwing.getRequiredLevel())
-        	swingButton.setEnabled(true);
-        swingButton.setActionCommand("Swing");
-        swingButton.setText("Swing (-" + overheadSwing.getAbilityCost() + ")");
-        swingButton.addActionListener(this);
-        swingButton.setBounds(50, 620, 100, 50);
-        add(swingButton);
+        ability1 = new JButton();              
+        switch(player.getAbility1ID()) {
+        case 1:
+        	ability1.setActionCommand("Swing");
+        	ability1.setText("Swing (-" + overheadSwing.getAbilityCost() + ")");
+        	break;
+        case 2:
+        	ability1.setActionCommand("Decapitate");
+        	ability1.setText("Decap (-" + decapitate.getAbilityCost() + ")");
+        	ability1.setEnabled(false);
+        	break;
+        case 3:
+        	ability1.setActionCommand("Riposte");
+        	ability1.setText("Riposte (-" + riposte.getAbilityCost() + ")");
+        	ability1.setEnabled(false);
+        	break;
+        }        
+        ability1.addActionListener(this);
+        ability1.setBounds(20, 620, 100, 50);
+        add(ability1);
+      
+        ability2 = new JButton();      
+        switch(player.getAbility2ID()) {
+        case 1:
+        	ability2.setActionCommand("Swing");
+        	ability2.setText("Swing (-" + overheadSwing.getAbilityCost() + ")");
+        	break;
+        case 2:
+        	ability2.setActionCommand("Decapitate");
+        	ability2.setText("Decap (-" + decapitate.getAbilityCost() + ")");
+        	ability2.setEnabled(false);
+        	break;
+        case 3:
+        	ability2.setActionCommand("Riposte");
+        	ability2.setText("Riposte (-" + riposte.getAbilityCost() + ")");
+        	ability2.setEnabled(false);
+        	break;
+        }        
+        ability2.addActionListener(this);
+        ability2.setBounds(130, 620, 100, 50);
+        add(ability2);
         
-        decapButton = new JButton();
-        decapButton.setEnabled(false);
-        if(player.getPlayerLevel() >= decapitate.getRequiredLevel() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 4))
-        	decapButton.setEnabled(true);
-        decapButton.setActionCommand("Decapitate");
-        decapButton.setText("Decap (-" + decapitate.getAbilityCost() + ")");
-        decapButton.addActionListener(this);
-        decapButton.setBounds(160, 620, 100, 50);
-        add(decapButton);
+        ability3 = new JButton();      
+        switch(player.getAbility3ID()) {
+        case 1:
+        	ability3.setActionCommand("Swing");
+        	ability3.setText("Swing (-" + overheadSwing.getAbilityCost() + ")");
+        	break;
+        case 2:
+        	ability3.setActionCommand("Decapitate");
+        	ability3.setText("Decap (-" + decapitate.getAbilityCost() + ")");
+        	ability3.setEnabled(false);
+        	break;
+        case 3:
+        	ability3.setActionCommand("Riposte");
+        	ability3.setText("Riposte (-" + riposte.getAbilityCost() + ")");
+        	ability3.setEnabled(false);
+        	break;
+        }        
+        ability3.addActionListener(this);
+        ability3.setBounds(240, 620, 100, 50);
+        add(ability3);
         
         turnButton = new JButton();
         turnButton.setActionCommand("Turn");
@@ -472,14 +555,16 @@ public class FightScene extends JPanel implements ActionListener {
         buttons[2] = quitButton;
         buttons[3] = menuButton;
         buttons[4] = turnButton;
-        buttons[5] = swingButton;
-        buttons[6] = decapButton;
-        buttons[7] = saveButton;
+        buttons[5] = saveButton;
+        buttons[6] = ability1;
+        buttons[7] = ability2;
+        buttons[8] = ability3;
         
         actionButtons[0] = attackButton;
         actionButtons[1] = fleeButton;
-        actionButtons[2] = swingButton;
-        actionButtons[3] = decapButton;
+        actionButtons[2] = ability1;
+        actionButtons[3] = ability2;
+        actionButtons[4] = ability3;
 	}
 	
 	@Override
@@ -504,7 +589,7 @@ public class FightScene extends JPanel implements ActionListener {
     	            		enableActionButtons();
     	            }
     	        }, 
-    	        450
+    	        550
 	    	);
 	    	
 	    }	    
