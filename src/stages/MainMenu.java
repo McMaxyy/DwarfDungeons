@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import constants.Player;
 import main.GameWindow;
 
+@SuppressWarnings("serial")
 public class MainMenu extends JPanel implements ActionListener {
 	
     private GameWindow window;
@@ -26,17 +27,20 @@ public class MainMenu extends JPanel implements ActionListener {
         
         JButton startButton = new JButton("Start");
         startButton.addActionListener(this);
-        startButton.setBounds(200, 200, 100, 50);
+        startButton.setBounds(590, 200, 100, 50);
+        startButton.setFocusable(false);
         add(startButton);
         
-        JButton settingsButton = new JButton("Load");
-        settingsButton.addActionListener(this);
-        settingsButton.setBounds(200, 300, 100, 50);
-        add(settingsButton);
+        JButton loadButton = new JButton("Load");
+        loadButton.addActionListener(this);
+        loadButton.setBounds(590, 300, 100, 50);
+        loadButton.setFocusable(false);
+        add(loadButton);
         
         JButton quitButton = new JButton("Quit");
         quitButton.addActionListener(this);
-        quitButton.setBounds(200, 400, 100, 50);
+        quitButton.setBounds(590, 400, 100, 50);
+        quitButton.setFocusable(false);
         add(quitButton);
                       
     }

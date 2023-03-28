@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.util.Random;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,6 +21,7 @@ import javax.swing.border.Border;
 import constants.Player;
 import main.GameWindow;
 
+@SuppressWarnings("serial")
 public class SlotMachine extends JPanel implements ActionListener {
 
 	private int rows = 3, columns = 3;
@@ -84,10 +87,15 @@ public class SlotMachine extends JPanel implements ActionListener {
 	
 	private void spinSlot() {
 		
+//		Icon symbolA = new ImageIcon();
+//		Icon symbolB = new ImageIcon();
+//		Icon symbol7 = new ImageIcon();
+		
 		for(int i = 0; i < 3; i++) {
 			slotLvl = 1;
 			x = rand.nextInt(3);
 			slots[x][i] = new JLabel("A");
+//			slots[x][i].setIcon(symbolA);
 			slotLvl++;
 			
 			for(int j = 0; j < 2; j++) {

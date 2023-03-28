@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -26,32 +24,32 @@ import main.GameWindow;
 import warriorAbilities.*;
 import constants.*;
 
+@SuppressWarnings("serial")
 public class FightScene extends JPanel implements ActionListener {
 	
 	private GameWindow window;
-	Gson gson;
-	private LevelSelector level = new LevelSelector(window, 0);
+	Gson gson = new Gson();
 	private Player player = new Player();
 	private Enemies enemy = new Enemies();
 	private Weapons weapon = new Weapons();
 	private OverheadSwing overheadSwing = new OverheadSwing();
 	private Decapitate decapitate = new Decapitate();
 	private Riposte riposte = new Riposte();
-	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblTurnCounter, lblExp, lblLevelUp;
-	private JButton returnButton, attackButton, fleeButton, quitButton, menuButton, 
-			turnButton, levelUpHPButton, levelUpStrButton, saveButton,ability1, ability2, 
+	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblTurnCounter, lblExp, lblLevelUp, 
+			enemyImg;
+	private JButton returnButton, attackButton, quitButton, menuButton, 
+			turnButton, levelUpHPButton, levelUpStrButton, ability1, ability2, 
 			ability3;
-	private JButton[] buttons = new JButton[] {attackButton, fleeButton, quitButton, 
-			menuButton, turnButton, saveButton, ability1, ability2, ability3};
-	private JButton[] actionButtons = new JButton[] {attackButton, fleeButton, ability1, 
+	private JButton[] buttons = new JButton[] {attackButton, quitButton, 
+			menuButton, turnButton, ability1, ability2, ability3};
+	private JButton[] actionButtons = new JButton[] {attackButton, ability1, 
 			ability2, ability3};
 	String youLost = "You\nLost";
 	String youWon = "You\nWon";
-	private boolean fightOver;
 	private Random rand = new Random();
 	private int enemySelectRand = rand.nextInt(2);
-	private int currentLevel, turnCounter, abilityID;
-	private boolean playerWin, leveledUp, playerAttack, riposteActive;
+	private int currentLevel, turnCounter, abilityID, enemiesDefeated;
+	private boolean playerWin, playerAttack, riposteActive, gameOver;
 	private Font f = new Font("Serif", Font.PLAIN, 18);
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
 	private Image pImg, wImg, pAttackImg, wAttackImg;
@@ -63,8 +61,7 @@ public class FightScene extends JPanel implements ActionListener {
 		currentLevel = levelIndex;
 		weapon.weaponOne();
 		abilityID = 0;
-		
-		
+		enemiesDefeated = 1;
 		
 		if (enemySelectRand == 0)
 			enemy.enemyOne();
@@ -73,21 +70,17 @@ public class FightScene extends JPanel implements ActionListener {
 		
 		if(currentLevel == 1)
 			player.playerOne();	
-		
-		System.out.println(player.getAbility1ID());
-		System.out.println(player.getAbility2ID());
-		System.out.println(player.getAbility3ID());
 				
 		// Enemy image
-		JLabel enemyImg = new JLabel();
+		enemyImg = new JLabel();
 		enemyImg = enemy.getEnemyIcon();
 		add(enemyImg);
-		enemyImg.setBounds(50, 100, enemyImg.getWidth(), enemyImg.getHeight());
+		enemyImg.setBounds(50, 50, enemyImg.getWidth(), enemyImg.getHeight());
 		
 		pImg = Toolkit.getDefaultToolkit().createImage("res/IdleDwarf.gif");
 		wImg = Toolkit.getDefaultToolkit().createImage("res/IronAxe.png");
-		pAttackImg = Toolkit.getDefaultToolkit().getImage("res/DwarfAttack.gif");
-		wAttackImg = Toolkit.getDefaultToolkit().getImage("res/AxeAttack.gif");
+		pAttackImg = Toolkit.getDefaultToolkit().createImage("res/DwarfAttack.gif");
+		wAttackImg = Toolkit.getDefaultToolkit().createImage("res/AxeAttack.gif");
 		
 		setLayout(null);
 		
@@ -105,10 +98,7 @@ public class FightScene extends JPanel implements ActionListener {
             System.exit(0);
             break;
         case "Main menu":
-            window.showMainMenu();
-            break;
-        case "Save":
-        	saveGame();
+            window.showHomeScreen();
             break;
         case "Return":
             if (playerWin) {
@@ -121,16 +111,6 @@ public class FightScene extends JPanel implements ActionListener {
             lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
             playerAttack();
             playerAttack = true;
-            break;
-        case "Flee":
-            if (rand.nextInt(2) == 0) {
-                window.showLevelSelector(currentLevel);
-            } else {
-                disableActionButtons();
-                lblDamageDealt.setText("You failed to escape.");
-                lblDamageDealt.repaint();
-                lblTurnCounter.setText("Available points: " + 0 + "/" + player.getTurnCount());
-            }
             break;
         case "Swing":
         	abilityID = overheadSwing.getID();
@@ -150,7 +130,7 @@ public class FightScene extends JPanel implements ActionListener {
         	if(rand.nextInt(2) == 0)
         		abilityID = riposte.getID();
         	else
-        		abilityID = 69;
+        		riposteActive = true;
         	turnCounter -= riposte.getAbilityCost();
             lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
             enemyAttack();            
@@ -168,10 +148,22 @@ public class FightScene extends JPanel implements ActionListener {
         case "HP up":
             player.increaseMaxHP();
             disableLevelUpComponents();
+            player.playerShowHP(lblPlayerHP);
+            lblPlayerHP.repaint(); 
+            if(!gameOver)
+            	enableActionButtons();           
+            if(gameOver)
+            	returnButton.setVisible(true);
             break;
         case "Str up":
             player.increasePlayerStr();
             disableLevelUpComponents();
+            player.playerShowHP(lblPlayerHP);
+            lblPlayerHP.repaint();
+            if(!gameOver)
+            	enableActionButtons();           
+            if(gameOver)
+            	returnButton.setVisible(true);
             break;
         }   
 	}
@@ -185,34 +177,88 @@ public class FightScene extends JPanel implements ActionListener {
 			for(JButton button : buttons)
 				button.setEnabled(false);
 			lblDamageDealt.setVisible(false);
+			gameOver = true;
 		}			
 	}
 	
 	public void isEnemyDead() {
 		if(enemy.getEnemyHP() <= 0) {
-			turnCounter = 0;
-			lblTurnCounter.setText("Available points: 0/" + player.getTurnCount());
-			player.increasePlayerExp(enemy.getEnemyExp());		// Add EXP to player	
-			lblExp.setText("Gained " + enemy.getEnemyExp() + " exp");
-			lblExp.setVisible(true);
-			returnButton.setText("<html>" + youWon.replaceAll("\\n", "<br>") + "</html>");
-			returnButton.setVisible(true);
-			playerWin = true;		// Will unlock the next stage
-			for(JButton button : buttons)
-				button.setEnabled(false);	
-			lblDamageDealt.setVisible(false);
-			disableActionButtons();
+			player.playerGainCoin(5);
 			
-			if(player.getPlayerExp() >= player.getLevelOneCap()) {	// Check if player has enough EXP to level up
-				player.levelUp();
-				enableLevelUpComponents();				
+			// Check if the player's defeated 3 enemies, if not, spawn a new one
+			if(enemiesDefeated != 3) {
+				
+				// Remove tags that need to be updated
+				remove(enemyImg);
+				
+				// Select new enemy
+				if (rand.nextInt(2) == 0)
+					enemy.enemyOne();
+				else
+					enemy.enemyTwo();
+				
+				// Refresh enemy pic & HP bar
+				enemyImg = enemy.getEnemyIcon();
+				add(enemyImg);
+				enemyImg.setBounds(50, 50, enemyImg.getWidth(), enemyImg.getHeight());				
+				enemy.enemyShowHP(lblEnemyHP);
+				lblEnemyHP.repaint();	
+				
+				player.increasePlayerExp(enemy.getEnemyExp());
+				if(player.getPlayerExp() >= player.getLevelOneCap()) {	// Check if player has enough EXP to level up
+					player.levelUp();
+					enableLevelUpComponents();
+				}	
+				enemiesDefeated++;
+				
+				// Refresh turn counter
+				turnCounter = player.getTurnCount();
+				lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+				lblTurnCounter.repaint();
+				
+				disableActionButtons();			
 			}
-		}			
+			// Player has defeated 3 enemies, stage cleared
+			else {
+				turnCounter = 0;
+				lblTurnCounter.setText("Available points: 0/" + player.getTurnCount());
+				player.increasePlayerExp(enemy.getEnemyExp());		// Add EXP to player	
+				lblExp.setText("Gained " + enemy.getEnemyExp() + " exp");
+				lblExp.setVisible(true);
+				returnButton.setText("<html>" + youWon.replaceAll("\\n", "<br>") + "</html>");
+				returnButton.setVisible(true);
+				playerWin = true;		// Will unlock the next stage
+				for(JButton button : buttons)
+					button.setEnabled(false);	
+				lblDamageDealt.setVisible(false);
+				
+				
+				if(player.getPlayerExp() >= player.getLevelOneCap()) {	// Check if player has enough EXP to level up
+					player.levelUp();
+					enableLevelUpComponents();
+				}
+				disableActionButtons();
+				gameOver = true;
+			}
+		}
 	}
 	
 	private void disableButtonFocus() {		
 		for(JButton button : buttons)
 			button.setFocusable(false);			
+	}
+	
+	private void enableLevelUpComponents() {
+		levelUpHPButton.setVisible(true);
+		levelUpStrButton.setVisible(true);
+		returnButton.setVisible(false);
+		lblDamageDealt.setEnabled(false);
+	}
+	
+	private void disableLevelUpComponents() {
+		levelUpHPButton.setVisible(false);
+		levelUpStrButton.setVisible(false);
+		lblDamageDealt.setEnabled(true);
 	}
 	
 	private void disableActionButtons() {
@@ -221,8 +267,9 @@ public class FightScene extends JPanel implements ActionListener {
 	}
 	
 	private void enableActionButtons() {
-		for(JButton button : actionButtons)
-			button.setEnabled(true);
+		if(enemiesDefeated != 4)
+			for(JButton button : actionButtons)
+				button.setEnabled(true);
 		
 		switch(ability1.getActionCommand()) {
 	    case "Swing":
@@ -290,12 +337,15 @@ public class FightScene extends JPanel implements ActionListener {
 			player.playerLoseHP(enemy.getEnemyStrength());
 	    	player.playerShowHP(lblPlayerHP);
 	    	lblPlayerHP.repaint();
-	    	if(abilityID == 69)
+	    	if(riposteActive)
 	    		lblDamageDealt.setText("Riposte failed and the enemy dealt: " + enemy.getEnemyStrength()  + " damage");
-	    	else
+	    	else {
 	    		lblDamageDealt.setText("Enemy dealt: " + enemy.getEnemyStrength()  + " damage");
+	    		isPlayerDead();
+	    	}
 			lblDamageDealt.repaint();
-	    	isPlayerDead();	
+	    	isPlayerDead();
+	    	riposteActive = false;
     	}
 		else{
 			int x = enemy.getEnemyStrength() + riposte.getAttackPower();			
@@ -339,55 +389,29 @@ public class FightScene extends JPanel implements ActionListener {
 		else {
 			lblDamageDealt.setText("You missed");
 			lblDamageDealt.repaint();
-		}
-		isEnemyDead();		
+		}			
 		if(turnCounter <= 0)
-			disableActionButtons();		
+			disableActionButtons();	
+		isEnemyDead();	
 	}
 	
-	private void enableLevelUpComponents() {
-		levelUpHPButton.setVisible(true);
-		levelUpStrButton.setVisible(true);
-		returnButton.setVisible(false);
-	}
 	
-	private void disableLevelUpComponents() {
-		levelUpHPButton.setVisible(false);
-		levelUpStrButton.setVisible(false);
-		returnButton.setVisible(true);
-	}
-	
-	private void saveGame() {
-		int[] saveS = new int[6];
-		saveS[0] = player.getPlayerMaxHP();
-		saveS[1] = player.getPlayerStrength();
-		saveS[2] = player.getTurnCount();
-		saveS[3] = player.getPlayerCoins();
-		saveS[4] = player.getPlayerLevel();
-		saveS[5] = player.getPlayerExp();
-		
-		try (FileWriter writer = new FileWriter("savegame.json")) {
-            gson.toJson(saveS, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-	}
 	
 	private void initComponents() {	
 		
 		// Useful labels
 		lblPlayerHP = new JLabel();
 		player.playerShowHP(lblPlayerHP);
-		lblPlayerHP.setBounds(170, 500, 100, 50);
+		lblPlayerHP.setBounds(850, 450, 100, 50);
 		add(lblPlayerHP);
 		
 		lblEnemyHP = new JLabel();
 		enemy.enemyShowHP(lblEnemyHP);
-		lblEnemyHP.setBounds(200, 100, 100, 50);		
+		lblEnemyHP.setBounds(220, 50, 100, 50);		
 		add(lblEnemyHP);
 		
 		lblTurnCounter = new JLabel();
-		lblTurnCounter.setBounds(170, 560, 120, 50);
+		lblTurnCounter.setBounds(970, 420, 120, 50);
 		lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
 		add(lblTurnCounter);
 		
@@ -406,7 +430,7 @@ public class FightScene extends JPanel implements ActionListener {
 		
 		// Damage dealt label
 		lblDamageDealt = new JLabel();
-		lblDamageDealt.setBounds(70, 350, 350, 20);
+		lblDamageDealt.setBounds(400, 320, 450, 30);
 		lblDamageDealt.setBorder(blackline);
 		lblDamageDealt.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDamageDealt.setVerticalAlignment(SwingConstants.CENTER);
@@ -417,22 +441,15 @@ public class FightScene extends JPanel implements ActionListener {
 		quitButton.setText("Quit");
 		quitButton.setActionCommand("Quit");
         quitButton.addActionListener(this);
-        quitButton.setBounds(375, 25, 100, 30);
+        quitButton.setBounds(1100, 25, 120, 40);
         add(quitButton);		
 		
         menuButton = new JButton();
         menuButton.setActionCommand("Main menu");
         menuButton.setText("Main menu");
         menuButton.addActionListener(this);
-        menuButton.setBounds(25, 25, 100, 30);
+        menuButton.setBounds(1100, 80, 120, 40);
         add(menuButton);    
-        
-        saveButton = new JButton();
-        saveButton.setActionCommand("Save");
-        saveButton.setText("Save game");
-        saveButton.addActionListener(this);
-        saveButton.setBounds(200, 25, 100, 30);
-        add(saveButton); 
         
         // Lost game button
         returnButton = new JButton();
@@ -449,15 +466,8 @@ public class FightScene extends JPanel implements ActionListener {
         attackButton.setActionCommand("Attack");
         attackButton.setText("Attack (-" + player.getAttackButtonCost() + ")");
         attackButton.addActionListener(this);
-        attackButton.setBounds(50, 500, 100, 50);
+        attackButton.setBounds(790, 550, 150, 100);
         add(attackButton);
-        
-        fleeButton = new JButton();
-        fleeButton.setActionCommand("Flee");
-        fleeButton.setText("Flee (-" + player.getTurnCount() + ")");
-        fleeButton.addActionListener(this);
-        fleeButton.setBounds(50, 560, 100, 50);
-        add(fleeButton);
         
         ability1 = new JButton();              
         switch(player.getAbility1ID()) {
@@ -477,7 +487,7 @@ public class FightScene extends JPanel implements ActionListener {
         	break;
         }        
         ability1.addActionListener(this);
-        ability1.setBounds(20, 620, 100, 50);
+        ability1.setBounds(250, 550, 150, 100);
         add(ability1);
       
         ability2 = new JButton();      
@@ -498,7 +508,7 @@ public class FightScene extends JPanel implements ActionListener {
         	break;
         }        
         ability2.addActionListener(this);
-        ability2.setBounds(130, 620, 100, 50);
+        ability2.setBounds(430, 550, 150, 100);
         add(ability2);
         
         ability3 = new JButton();      
@@ -519,14 +529,14 @@ public class FightScene extends JPanel implements ActionListener {
         	break;
         }        
         ability3.addActionListener(this);
-        ability3.setBounds(240, 620, 100, 50);
+        ability3.setBounds(610, 550, 150, 100);
         add(ability3);
         
         turnButton = new JButton();
         turnButton.setActionCommand("Turn");
         turnButton.setText("End turn");
         turnButton.addActionListener(this);
-        turnButton.setBounds(370, 430, 100, 30);
+        turnButton.setBounds(1120, 430, 100, 30);
         add(turnButton);
         
         levelUpHPButton = new JButton();
@@ -551,32 +561,29 @@ public class FightScene extends JPanel implements ActionListener {
         
         // Add buttons to arrays
         buttons[0] = attackButton;
-        buttons[1] = fleeButton;
-        buttons[2] = quitButton;
-        buttons[3] = menuButton;
-        buttons[4] = turnButton;
-        buttons[5] = saveButton;
-        buttons[6] = ability1;
-        buttons[7] = ability2;
-        buttons[8] = ability3;
+        buttons[1] = quitButton;
+        buttons[2] = menuButton;
+        buttons[3] = turnButton;
+        buttons[4] = ability1;
+        buttons[5] = ability2;
+        buttons[6] = ability3;
         
         actionButtons[0] = attackButton;
-        actionButtons[1] = fleeButton;
-        actionButtons[2] = ability1;
-        actionButtons[3] = ability2;
-        actionButtons[4] = ability3;
+        actionButtons[1] = ability1;
+        actionButtons[2] = ability2;
+        actionButtons[3] = ability3;
 	}
 	
 	@Override
 	  public void paintComponent(Graphics g) {
 	    super.paintComponent(g);
 	    if (pImg != null && wImg != null && !playerAttack) {
-	    	g.drawImage(wImg, 350, 500, this);
-	    	g.drawImage(pImg, 350, 500, this);
+	    	g.drawImage(wImg, 1050, 500, this);
+	    	g.drawImage(pImg, 1050, 500, this);
 	    }
 	    if (pAttackImg != null && wAttackImg != null && playerAttack) {
-	    	g.drawImage(pAttackImg, 350, 500, this);
-	    	g.drawImage(wAttackImg, 350, 500, this);
+	    	g.drawImage(pAttackImg, 1050, 500, this);
+	    	g.drawImage(wAttackImg, 1050, 500, this);
 	    	disableActionButtons();
 	    	
 	    	t.schedule( 
@@ -585,7 +592,7 @@ public class FightScene extends JPanel implements ActionListener {
     	            public void run() {
     	                // your code here
     	            	playerAttack = false;
-    	            	if(turnCounter > 0)
+    	            	if(turnCounter > 0 && !levelUpHPButton.isVisible())
     	            		enableActionButtons();
     	            }
     	        }, 

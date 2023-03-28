@@ -4,7 +4,6 @@ import java.util.Random;
 
 import javax.swing.JLabel;
 
-
 public class Enemies {
 
 	private int enemyHP;

@@ -39,7 +39,7 @@ public class Player {
 	
 	public boolean playerAttack() {
 		x = rand.nextInt(10);
-		if(x != 0 || x != 1)
+		if(x != 0 || x != 1 || x != 2)
 			return true;
 		else
 			return false;
