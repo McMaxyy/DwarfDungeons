@@ -25,6 +25,7 @@ public class GameWindow{
     	frame.setLocationRelativeTo(null);
     	frame.setResizable(false);
     	frame.getContentPane().setBackground(Color.BLUE);
+    	
 //        setUndecorated(true);
 //        getRootPane().setWindowDecorationStyle(JRootPane.NONE);
         

@@ -4,6 +4,6 @@ import constants.Abilities;
 
 public class Riposte  extends Abilities{
 	public Riposte(){
-		super(2, 1, 3);
+		super(4, 2, 3);
 	}
 }

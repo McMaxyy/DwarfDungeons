@@ -4,19 +4,21 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.Random;
 import java.util.Timer;
+import java.util.TimerTask;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-
-import com.google.gson.Gson;
 
 import javax.swing.JLabel;
 
@@ -25,18 +27,16 @@ import warriorAbilities.*;
 import constants.*;
 
 @SuppressWarnings("serial")
-public class FightScene extends JPanel implements ActionListener {
+public class FightScene extends JPanel implements ActionListener{
 	
 	private GameWindow window;
-	Gson gson = new Gson();
 	private Player player = new Player();
 	private Enemies enemy = new Enemies();
 	private Weapons weapon = new Weapons();
 	private OverheadSwing overheadSwing = new OverheadSwing();
 	private Decapitate decapitate = new Decapitate();
 	private Riposte riposte = new Riposte();
-	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblTurnCounter, lblExp, lblLevelUp, 
-			enemyImg;
+	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblTurnCounter, lblExp, lblLevelUp;
 	private JButton returnButton, attackButton, quitButton, menuButton, 
 			turnButton, levelUpHPButton, levelUpStrButton, ability1, ability2, 
 			ability3;
@@ -49,11 +49,13 @@ public class FightScene extends JPanel implements ActionListener {
 	private Random rand = new Random();
 	private int enemySelectRand = rand.nextInt(2);
 	private int currentLevel, turnCounter, abilityID, enemiesDefeated;
-	private boolean playerWin, playerAttack, riposteActive, gameOver;
+	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack;
 	private Font f = new Font("Serif", Font.PLAIN, 18);
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
-	private Image pImg, wImg, pAttackImg, wAttackImg;
+	private Image pImg, wImg, pAttackImg, wAttackImg, eImg, eAttackImg, backgroundImg;
 	private Timer t = new java.util.Timer();
+	private final int SCALE = 250;
+	private Image basicAtk, decapBtn, swingBtn, riposteBtn;
 
 	public FightScene(GameWindow window, int levelIndex){
 		this.window = window;
@@ -70,24 +72,15 @@ public class FightScene extends JPanel implements ActionListener {
 		
 		if(currentLevel == 1)
 			player.playerOne();	
-				
-		// Enemy image
-		enemyImg = new JLabel();
-		enemyImg = enemy.getEnemyIcon();
-		add(enemyImg);
-		enemyImg.setBounds(50, 50, enemyImg.getWidth(), enemyImg.getHeight());
-		
-		pImg = Toolkit.getDefaultToolkit().createImage("res/IdleDwarf.gif");
-		wImg = Toolkit.getDefaultToolkit().createImage("res/IronAxe.png");
-		pAttackImg = Toolkit.getDefaultToolkit().createImage("res/DwarfAttack.gif");
-		wAttackImg = Toolkit.getDefaultToolkit().createImage("res/AxeAttack.gif");
 		
 		setLayout(null);
 		
+		loadImages();
+		loadAnimations();
         initComponents();
         disableButtonFocus();
 	}
-	
+
 	// Button actions
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -150,8 +143,10 @@ public class FightScene extends JPanel implements ActionListener {
             disableLevelUpComponents();
             player.playerShowHP(lblPlayerHP);
             lblPlayerHP.repaint(); 
-            if(!gameOver)
-            	enableActionButtons();           
+            if(!gameOver) {
+            	enableActionButtons();
+            	turnButton.setEnabled(true);
+            }          
             if(gameOver)
             	returnButton.setVisible(true);
             break;
@@ -160,8 +155,10 @@ public class FightScene extends JPanel implements ActionListener {
             disableLevelUpComponents();
             player.playerShowHP(lblPlayerHP);
             lblPlayerHP.repaint();
-            if(!gameOver)
-            	enableActionButtons();           
+            if(!gameOver) {
+            	enableActionButtons();
+            	turnButton.setEnabled(true);
+            }             
             if(gameOver)
             	returnButton.setVisible(true);
             break;
@@ -188,19 +185,15 @@ public class FightScene extends JPanel implements ActionListener {
 			// Check if the player's defeated 3 enemies, if not, spawn a new one
 			if(enemiesDefeated != 3) {
 				
-				// Remove tags that need to be updated
-				remove(enemyImg);
-				
 				// Select new enemy
-				if (rand.nextInt(2) == 0)
+				enemySelectRand = rand.nextInt(2);
+				if (enemySelectRand == 0)
 					enemy.enemyOne();
 				else
 					enemy.enemyTwo();
 				
-				// Refresh enemy pic & HP bar
-				enemyImg = enemy.getEnemyIcon();
-				add(enemyImg);
-				enemyImg.setBounds(50, 50, enemyImg.getWidth(), enemyImg.getHeight());				
+				// Refresh enemy HP bar & load animations for new enemy
+				loadAnimations();
 				enemy.enemyShowHP(lblEnemyHP);
 				lblEnemyHP.repaint();	
 				
@@ -216,7 +209,8 @@ public class FightScene extends JPanel implements ActionListener {
 				lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
 				lblTurnCounter.repaint();
 				
-				disableActionButtons();			
+				disableActionButtons();
+				repaint();
 			}
 			// Player has defeated 3 enemies, stage cleared
 			else {
@@ -253,12 +247,16 @@ public class FightScene extends JPanel implements ActionListener {
 		levelUpStrButton.setVisible(true);
 		returnButton.setVisible(false);
 		lblDamageDealt.setEnabled(false);
+		turnButton.setEnabled(false);
+		disableActionButtons();
 	}
 	
 	private void disableLevelUpComponents() {
 		levelUpHPButton.setVisible(false);
 		levelUpStrButton.setVisible(false);
 		lblDamageDealt.setEnabled(true);
+		turnButton.setEnabled(true);
+		enableActionButtons();
 	}
 	
 	private void disableActionButtons() {
@@ -284,7 +282,7 @@ public class FightScene extends JPanel implements ActionListener {
 	            ability1.setEnabled(false);
 	        break;
 	    case "Riposte":
-	    	if(turnCounter != 1)
+	    	if(turnCounter != riposte.getAbilityCost())
 	    		ability1.setEnabled(false);
 	    	break;
 	    default:
@@ -304,7 +302,7 @@ public class FightScene extends JPanel implements ActionListener {
 	        	ability2.setEnabled(false);
 	        break;
 	    case "Riposte":
-	    	if(turnCounter != 1)
+	    	if(turnCounter != riposte.getAbilityCost())
 	    		ability2.setEnabled(false);
 	    	break;
 	    default:
@@ -324,7 +322,7 @@ public class FightScene extends JPanel implements ActionListener {
 	        	ability3.setEnabled(false);
 	        break;
 	    case "Riposte":
-	    	if(turnCounter != 1)
+	    	if(turnCounter != riposte.getAbilityCost())
 	    		ability3.setEnabled(false);
 	    	break;
 	    default:
@@ -333,6 +331,7 @@ public class FightScene extends JPanel implements ActionListener {
 	}	
 	
 	private void enemyAttack() {
+		enemyAttack = true;
 		if(abilityID != 3) {
 			player.playerLoseHP(enemy.getEnemyStrength());
 	    	player.playerShowHP(lblPlayerHP);
@@ -394,24 +393,28 @@ public class FightScene extends JPanel implements ActionListener {
 			disableActionButtons();	
 		isEnemyDead();	
 	}
-	
-	
-	
+
 	private void initComponents() {	
 		
 		// Useful labels
 		lblPlayerHP = new JLabel();
 		player.playerShowHP(lblPlayerHP);
-		lblPlayerHP.setBounds(850, 450, 100, 50);
+		lblPlayerHP.setBackground(Color.WHITE);
+		lblPlayerHP.setOpaque(true);
+		lblPlayerHP.setBounds(1050, 250, 100, 30);
 		add(lblPlayerHP);
 		
 		lblEnemyHP = new JLabel();
 		enemy.enemyShowHP(lblEnemyHP);
-		lblEnemyHP.setBounds(220, 50, 100, 50);		
+		lblEnemyHP.setBackground(Color.WHITE);
+		lblEnemyHP.setOpaque(true);
+		lblEnemyHP.setBounds(50, 280, 100, 30);		
 		add(lblEnemyHP);
 		
 		lblTurnCounter = new JLabel();
-		lblTurnCounter.setBounds(970, 420, 120, 50);
+		lblTurnCounter.setBackground(Color.WHITE);
+		lblTurnCounter.setOpaque(true);
+		lblTurnCounter.setBounds(970, 190, 120, 50);
 		lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
 		add(lblTurnCounter);
 		
@@ -430,13 +433,15 @@ public class FightScene extends JPanel implements ActionListener {
 		
 		// Damage dealt label
 		lblDamageDealt = new JLabel();
-		lblDamageDealt.setBounds(400, 320, 450, 30);
+		lblDamageDealt.setBounds(400, 180, 450, 30);
 		lblDamageDealt.setBorder(blackline);
+		lblDamageDealt.setBackground(Color.WHITE);
+		lblDamageDealt.setOpaque(true);
 		lblDamageDealt.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDamageDealt.setVerticalAlignment(SwingConstants.CENTER);
 		add(lblDamageDealt);
 		
-		// Buttons				
+		// Navigation buttons				
 		quitButton = new JButton();
 		quitButton.setText("Quit");
 		quitButton.setActionCommand("Quit");
@@ -464,7 +469,7 @@ public class FightScene extends JPanel implements ActionListener {
         // Action buttons
         attackButton = new JButton();
         attackButton.setActionCommand("Attack");
-        attackButton.setText("Attack (-" + player.getAttackButtonCost() + ")");
+        attackButton.setIcon(new ImageIcon(basicAtk));
         attackButton.addActionListener(this);
         attackButton.setBounds(790, 550, 150, 100);
         add(attackButton);
@@ -473,16 +478,16 @@ public class FightScene extends JPanel implements ActionListener {
         switch(player.getAbility1ID()) {
         case 1:
         	ability1.setActionCommand("Swing");
-        	ability1.setText("Swing (-" + overheadSwing.getAbilityCost() + ")");
+        	ability1.setIcon(new ImageIcon(swingBtn));
         	break;
         case 2:
         	ability1.setActionCommand("Decapitate");
-        	ability1.setText("Decap (-" + decapitate.getAbilityCost() + ")");
+        	ability1.setIcon(new ImageIcon(decapBtn));
         	ability1.setEnabled(false);
         	break;
         case 3:
         	ability1.setActionCommand("Riposte");
-        	ability1.setText("Riposte (-" + riposte.getAbilityCost() + ")");
+        	ability1.setIcon(new ImageIcon(riposteBtn));
         	ability1.setEnabled(false);
         	break;
         }        
@@ -494,16 +499,16 @@ public class FightScene extends JPanel implements ActionListener {
         switch(player.getAbility2ID()) {
         case 1:
         	ability2.setActionCommand("Swing");
-        	ability2.setText("Swing (-" + overheadSwing.getAbilityCost() + ")");
+        	ability2.setIcon(new ImageIcon(swingBtn));
         	break;
         case 2:
         	ability2.setActionCommand("Decapitate");
-        	ability2.setText("Decap (-" + decapitate.getAbilityCost() + ")");
+        	ability2.setIcon(new ImageIcon(decapBtn));
         	ability2.setEnabled(false);
         	break;
         case 3:
         	ability2.setActionCommand("Riposte");
-        	ability2.setText("Riposte (-" + riposte.getAbilityCost() + ")");
+        	ability2.setIcon(new ImageIcon(riposteBtn));
         	ability2.setEnabled(false);
         	break;
         }        
@@ -515,16 +520,16 @@ public class FightScene extends JPanel implements ActionListener {
         switch(player.getAbility3ID()) {
         case 1:
         	ability3.setActionCommand("Swing");
-        	ability3.setText("Swing (-" + overheadSwing.getAbilityCost() + ")");
+        	ability3.setIcon(new ImageIcon(swingBtn));
         	break;
         case 2:
         	ability3.setActionCommand("Decapitate");
-        	ability3.setText("Decap (-" + decapitate.getAbilityCost() + ")");
+        	ability3.setIcon(new ImageIcon(decapBtn));
         	ability3.setEnabled(false);
         	break;
         case 3:
         	ability3.setActionCommand("Riposte");
-        	ability3.setText("Riposte (-" + riposte.getAbilityCost() + ")");
+        	ability3.setIcon(new ImageIcon(riposteBtn));
         	ability3.setEnabled(false);
         	break;
         }        
@@ -536,9 +541,10 @@ public class FightScene extends JPanel implements ActionListener {
         turnButton.setActionCommand("Turn");
         turnButton.setText("End turn");
         turnButton.addActionListener(this);
-        turnButton.setBounds(1120, 430, 100, 30);
+        turnButton.setBounds(1120, 200, 100, 30);
         add(turnButton);
         
+        // Stat level up buttons
         levelUpHPButton = new JButton();
         levelUpHPButton.setVisible(false);
         levelUpHPButton.setActionCommand("HP up");
@@ -574,31 +580,99 @@ public class FightScene extends JPanel implements ActionListener {
         actionButtons[3] = ability3;
 	}
 	
-	@Override
-	  public void paintComponent(Graphics g) {
-	    super.paintComponent(g);
+	private void loadAnimations() {
+		
+		/* Since the loadAnimations method will be used for new enemies, we want to skip
+		 * the player animations being created every time it's called
+		 */
+		if(pImg == null && wImg == null) {
+			// Idle player animations
+			pImg = Toolkit.getDefaultToolkit().createImage("res/IdleDwarf.gif");
+			wImg = Toolkit.getDefaultToolkit().createImage("res/IronAxe.png");
+			// Attack animations
+			pAttackImg = Toolkit.getDefaultToolkit().createImage("res/DwarfAttack.gif");
+			wAttackImg = Toolkit.getDefaultToolkit().createImage("res/AxeAttack.gif");
+		}
+		
+		// Choose enemy animations based on which enemy is active
+		switch(enemySelectRand) {
+		case 0:
+			eImg = Toolkit.getDefaultToolkit().getImage("res/IdleSpoder.gif");	
+			eAttackImg = Toolkit.getDefaultToolkit().getImage("res/AttackSpoder.gif");
+			break;
+		case 1:
+			eImg = Toolkit.getDefaultToolkit().getImage("res/IdleGoblin.gif");	
+			eAttackImg = Toolkit.getDefaultToolkit().getImage("res/AttackGoblin.gif");
+			break;
+		}
+	}
+	
+	private void loadImages() {
+		try {
+		    basicAtk = ImageIO.read(new File("res/AttackButton.png"));
+		    swingBtn = ImageIO.read(new File("res/SwingButton.png"));
+		    decapBtn = ImageIO.read(new File("res/DecapButton.png"));
+		    riposteBtn = ImageIO.read(new File("res/RiposteButton.png"));
+		    backgroundImg = ImageIO.read(new File("res/Fight_BG.png"));
+		  } catch (Exception ex) {
+		    System.out.println(ex);
+		  }
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+	    
+	    // Draw background
+	    g.drawImage(backgroundImg, 0, 0, null);
+	    
+	    // Draw player animations
 	    if (pImg != null && wImg != null && !playerAttack) {
-	    	g.drawImage(wImg, 1050, 500, this);
-	    	g.drawImage(pImg, 1050, 500, this);
+	    	g.drawImage(wImg, 980, 308, SCALE, SCALE, this);
+	    	g.drawImage(pImg, 980, 308, SCALE, SCALE, this);
 	    }
 	    if (pAttackImg != null && wAttackImg != null && playerAttack) {
-	    	g.drawImage(pAttackImg, 1050, 500, this);
-	    	g.drawImage(wAttackImg, 1050, 500, this);
+	    	g.drawImage(pAttackImg, 980, 308, SCALE, SCALE, this);
+	    	g.drawImage(wAttackImg, 980, 308, SCALE, SCALE, this);
 	    	disableActionButtons();
 	    	
+	    	// Wait until attack animation is over to re-enable action buttons
 	    	t.schedule( 
-    	        new java.util.TimerTask() {
+    	        new TimerTask() {
     	            @Override
     	            public void run() {
-    	                // your code here
     	            	playerAttack = false;
-    	            	if(turnCounter > 0 && !levelUpHPButton.isVisible())
+    	            	if(turnCounter > 0 && !levelUpHPButton.isVisible()) {
     	            		enableActionButtons();
+    	            	}
     	            }
     	        }, 
-    	        550
-	    	);
+    	        // Timer value in milliseconds 
+    	        500
+	    	);	    	
+	    }
+	    
+	    // Draw enemy animations
+	    if (eImg != null && !enemyAttack) {
+	    	g.drawImage(eImg, 10, 308, SCALE, SCALE, this);
+	    }
+	    if (eAttackImg != null && enemyAttack) {
+	    	g.drawImage(eAttackImg, 10, 308, SCALE, SCALE, this);
+	    	disableActionButtons();
+	    	turnButton.setEnabled(false);
 	    	
-	    }	    
+	    	t.schedule( 
+    	        new TimerTask() {
+    	            @Override
+    	            public void run() {
+    	            	enemyAttack = false;
+    	            	if(!gameOver) {
+    	            		turnButton.setEnabled(true);
+    	            		enableActionButtons();
+    	            	}
+    	            }
+    	        }, 
+    	        500
+	    	);	    	
+	    }
 	 }	
 }
