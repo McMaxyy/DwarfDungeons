@@ -6,16 +6,17 @@ import java.util.*;
 
 public class Player {
 
-	private static int playerMaxHP = 10;
+	private static int playerMaxHP = 100;
 	private static int playerHP;
 	private static int playerStrength = 2;
 	private static int turnCount = 4;
 	private static int playerCoins = 100;
-	private static int playerLevel = 1;
+	private static int playerLevel = 0;
 	private static int playerExp = 0;
 	private static int ability1ID, ability2ID, ability3ID;
 	private final int attackButtonCost = 1;
-	private final int levelOneCap = 10;
+	private static int levelCap = 10;
+	private static int unlockedStage = 1;
 	protected JLabel lblPlayerHP;
 	private Random rand = new Random();
 	private static JLabel playerIcon = new JLabel();
@@ -59,9 +60,19 @@ public class Player {
 		playerHP = playerMaxHP;
 	}
 	
-	public void levelUp() {		
-		playerLevel++;
-		playerExp = 0;
+	public void levelUp() {
+		if(playerLevel <= 15) {
+			playerLevel++;
+			playerExp = 0;
+			if(playerLevel <= 5)
+				levelCap += 20;
+			else if (playerLevel >= 6 && playerLevel <= 9)
+				levelCap += 40;
+			else if (playerLevel == 10)
+				levelCap += 50;
+			else if (playerLevel >= 11 && playerLevel <= 15)
+				levelCap += 100;
+		}
 	}
 	
 	public void playerOne() {
@@ -127,8 +138,12 @@ public class Player {
 		Player.playerExp = playerExp;
 	}
 
-	public int getLevelOneCap() {
-		return levelOneCap;
+	public int getLevelCap() {
+		return levelCap;
+	}
+	
+	public void setLevelCap(int levelCap) {
+		Player.levelCap = levelCap;
 	}
 
 	public int getPlayerMaxHP() {
@@ -169,6 +184,14 @@ public class Player {
 
 	public void setAbility3ID(int ability3id) {
 		ability3ID = ability3id;
+	}
+
+	public int getUnlockedStage() {
+		return unlockedStage;
+	}
+
+	public void setUnlockedStage(int unlockedStage) {
+		Player.unlockedStage = unlockedStage;
 	}
 	
 }

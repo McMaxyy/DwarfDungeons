@@ -52,8 +52,8 @@ public class GameWindow{
     	frame.revalidate();
     }
     
-    public void showFightScene(int levelIndex){
-    	fightScene = new FightScene(this, levelIndex);
+    public void showFightScene(int levelIndex, int selectedStage){
+    	fightScene = new FightScene(this, levelIndex, selectedStage);
     	frame.setContentPane(fightScene);
     	frame.revalidate();
     }

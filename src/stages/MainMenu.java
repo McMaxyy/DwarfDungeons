@@ -70,6 +70,8 @@ public class MainMenu extends JPanel implements ActionListener {
             player.setPlayerCoins(intArray[3]);
             player.setPlayerLevel(intArray[4]);
             player.setPlayerExp(intArray[5]);
+            player.setLevelCap(intArray[6]);
+            player.setUnlockedStage(intArray[7]);
         } catch (IOException e) {
             e.printStackTrace();
         } 	

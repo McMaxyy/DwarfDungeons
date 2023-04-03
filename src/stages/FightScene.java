@@ -48,7 +48,7 @@ public class FightScene extends JPanel implements ActionListener{
 	String youWon = "You\nWon";
 	private Random rand = new Random();
 	private int enemySelectRand = rand.nextInt(2);
-	private int currentLevel, turnCounter, abilityID, enemiesDefeated;
+	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated;
 	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack;
 	private Font f = new Font("Serif", Font.PLAIN, 18);
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
@@ -57,13 +57,14 @@ public class FightScene extends JPanel implements ActionListener{
 	private final int SCALE = 250;
 	private Image basicAtk, decapBtn, swingBtn, riposteBtn;
 
-	public FightScene(GameWindow window, int levelIndex){
+	public FightScene(GameWindow window, int levelIndex, int selectedStage){
 		this.window = window;
 		turnCounter = player.getTurnCount();
 		currentLevel = levelIndex;
+		enemy.setCurrentStage(selectedStage);
 		weapon.weaponOne();
 		abilityID = 0;
-		enemiesDefeated = 1;
+		enemiesDefeated = 0;
 		
 		if (enemySelectRand == 0)
 			enemy.enemyOne();
@@ -95,7 +96,12 @@ public class FightScene extends JPanel implements ActionListener{
             break;
         case "Return":
             if (playerWin) {
-                currentLevel++;
+				if(currentLevel == 4) {
+					player.setUnlockedStage(player.getUnlockedStage() + 1);
+					currentLevel = 1;
+				}
+				else
+					currentLevel++;
             }
             window.showLevelSelector(currentLevel);
             break;
@@ -183,7 +189,7 @@ public class FightScene extends JPanel implements ActionListener{
 			player.playerGainCoin(5);
 			
 			// Check if the player's defeated 3 enemies, if not, spawn a new one
-			if(enemiesDefeated != 3) {
+			if(enemiesDefeated != 2 && currentLevel != 1) {
 				
 				// Select new enemy
 				enemySelectRand = rand.nextInt(2);
@@ -196,11 +202,12 @@ public class FightScene extends JPanel implements ActionListener{
 				loadAnimations();
 				enemy.enemyShowHP(lblEnemyHP);
 				lblEnemyHP.repaint();	
-				
-				player.increasePlayerExp(enemy.getEnemyExp());
-				if(player.getPlayerExp() >= player.getLevelOneCap()) {	// Check if player has enough EXP to level up
-					player.levelUp();
-					enableLevelUpComponents();
+				if (player.getPlayerLevel() <= 15) {	// Check if player is max level
+					player.increasePlayerExp(enemy.getExpValue());	// Add EXP to player
+					if(player.getPlayerExp() >= player.getLevelCap()) {	// Check if player has enough EXP to level up
+						player.levelUp();
+						enableLevelUpComponents();
+					}
 				}	
 				enemiesDefeated++;
 				
@@ -208,16 +215,14 @@ public class FightScene extends JPanel implements ActionListener{
 				turnCounter = player.getTurnCount();
 				lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
 				lblTurnCounter.repaint();
-				
-				disableActionButtons();
+							
 				repaint();
 			}
 			// Player has defeated 3 enemies, stage cleared
 			else {
 				turnCounter = 0;
-				lblTurnCounter.setText("Available points: 0/" + player.getTurnCount());
-				player.increasePlayerExp(enemy.getEnemyExp());		// Add EXP to player	
-				lblExp.setText("Gained " + enemy.getEnemyExp() + " exp");
+				lblTurnCounter.setText("Available points: 0/" + player.getTurnCount());	
+				lblExp.setText("Gained " + enemy.getExpValue() + " exp");
 				lblExp.setVisible(true);
 				returnButton.setText("<html>" + youWon.replaceAll("\\n", "<br>") + "</html>");
 				returnButton.setVisible(true);
@@ -227,12 +232,15 @@ public class FightScene extends JPanel implements ActionListener{
 				lblDamageDealt.setVisible(false);
 				
 				
-				if(player.getPlayerExp() >= player.getLevelOneCap()) {	// Check if player has enough EXP to level up
-					player.levelUp();
-					enableLevelUpComponents();
-				}
-				disableActionButtons();
+				if (player.getPlayerLevel() <= 15) {
+					player.increasePlayerExp(enemy.getExpValue()); // Add EXP to player
+					if(player.getPlayerExp() >= player.getLevelCap()) {	// Check if player has enough EXP to level up
+						player.levelUp();
+						enableLevelUpComponents();
+					}
+				}	
 				gameOver = true;
+				disableActionButtons();
 			}
 		}
 	}
@@ -256,16 +264,17 @@ public class FightScene extends JPanel implements ActionListener{
 		levelUpStrButton.setVisible(false);
 		lblDamageDealt.setEnabled(true);
 		turnButton.setEnabled(true);
-		enableActionButtons();
 	}
 	
 	private void disableActionButtons() {
-		for(JButton button : actionButtons)
-			button.setEnabled(false);	
+		for(JButton button : actionButtons) {
+			button.setEnabled(false);
+			button.setVisible(false);			
+		}
 	}
 	
 	private void enableActionButtons() {
-		if(enemiesDefeated != 4)
+		if(enemiesDefeated != 3)
 			for(JButton button : actionButtons)
 				button.setEnabled(true);
 		
@@ -328,11 +337,15 @@ public class FightScene extends JPanel implements ActionListener{
 	    default:
 	        break;
 		}
+		
+		for(JButton button : actionButtons) {
+			button.setVisible(true);
+		}
 	}	
 	
 	private void enemyAttack() {
 		enemyAttack = true;
-		if(abilityID != 3) {
+		if(abilityID != 3 && enemy.enemyAttack()) {
 			player.playerLoseHP(enemy.getEnemyStrength());
 	    	player.playerShowHP(lblPlayerHP);
 	    	lblPlayerHP.repaint();
@@ -346,7 +359,7 @@ public class FightScene extends JPanel implements ActionListener{
 	    	isPlayerDead();
 	    	riposteActive = false;
     	}
-		else{
+		else {
 			int x = enemy.getEnemyStrength() + riposte.getAttackPower();			
 			enemy.enemyLoseHP(x);
 			enemy.enemyShowHP(lblEnemyHP);
@@ -587,35 +600,26 @@ public class FightScene extends JPanel implements ActionListener{
 		 */
 		if(pImg == null && wImg == null) {
 			// Idle player animations
-			pImg = Toolkit.getDefaultToolkit().createImage("res/IdleDwarf.gif");
-			wImg = Toolkit.getDefaultToolkit().createImage("res/IronAxe.png");
+			pImg = Toolkit.getDefaultToolkit().createImage("res/PlayerAnimations/IdleDwarf.gif");
+			wImg = Toolkit.getDefaultToolkit().createImage("res/PlayerAnimations/IronAxe.png");
 			// Attack animations
-			pAttackImg = Toolkit.getDefaultToolkit().createImage("res/DwarfAttack.gif");
-			wAttackImg = Toolkit.getDefaultToolkit().createImage("res/AxeAttack.gif");
+			pAttackImg = Toolkit.getDefaultToolkit().createImage("res/PlayerAnimations/DwarfAttack.gif");
+			wAttackImg = Toolkit.getDefaultToolkit().createImage("res/PlayerAnimations/AxeAttack.gif");
 		}
 		
-		// Choose enemy animations based on which enemy is active
-		switch(enemySelectRand) {
-		case 0:
-			eImg = Toolkit.getDefaultToolkit().getImage("res/IdleSpoder.gif");	
-			eAttackImg = Toolkit.getDefaultToolkit().getImage("res/AttackSpoder.gif");
-			break;
-		case 1:
-			eImg = Toolkit.getDefaultToolkit().getImage("res/IdleGoblin.gif");	
-			eAttackImg = Toolkit.getDefaultToolkit().getImage("res/AttackGoblin.gif");
-			break;
-		}
+		eImg = enemy.getEnemyIdle();
+		eAttackImg = enemy.getEnemyAttack();
 	}
 	
 	private void loadImages() {
 		try {
-		    basicAtk = ImageIO.read(new File("res/AttackButton.png"));
-		    swingBtn = ImageIO.read(new File("res/SwingButton.png"));
-		    decapBtn = ImageIO.read(new File("res/DecapButton.png"));
-		    riposteBtn = ImageIO.read(new File("res/RiposteButton.png"));
-		    backgroundImg = ImageIO.read(new File("res/Fight_BG.png"));
+		    basicAtk = ImageIO.read(new File("res/Buttons/AttackButton.png"));
+		    swingBtn = ImageIO.read(new File("res/Buttons/SwingButton.png"));
+		    decapBtn = ImageIO.read(new File("res/Buttons/DecapButton.png"));
+		    riposteBtn = ImageIO.read(new File("res/Buttons/RiposteButton.png"));
+		    backgroundImg = ImageIO.read(new File("res/Backgrounds/Fight_BG.png"));
 		  } catch (Exception ex) {
-		    System.out.println(ex);
+			  System.out.println(ex);
 		  }
 	}
 	

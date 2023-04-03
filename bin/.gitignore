@@ -1,25 +1,4 @@
-/Axe.png
-/AxeAttack.gif
-/Dwarf.gif
-/DwarfAttack.gif
-/DwarfSpriteSheet.png
-/IdleDwarf.gif
-/IronAxe.png
-/Original files/
-/Visual sketches/
-/chr.png
-/dragun.png
-/player_sprites.png
+/constants/
 /stages/
-/AttackDwarf2.gif
-/AttackSpoder.gif
-/AxeAttack2.gif
-/IdleSpoder.gif
-/Fight_BG.png
-/AttackGoblin.gif
-/IdleGoblin.gif
+/main/
 /warriorAbilities/
-/AttackButton.png
-/DecapButton.png
-/RiposteButton.png
-/SwingButton.png
