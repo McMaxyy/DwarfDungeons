@@ -36,6 +36,9 @@ public class FightScene extends JPanel implements ActionListener{
 	private OverheadSwing overheadSwing = new OverheadSwing();
 	private Decapitate decapitate = new Decapitate();
 	private Riposte riposte = new Riposte();
+	private Rend rend = new Rend();
+	private Harden harden = new Harden();
+	private Whirlwind whirlwind = new Whirlwind();
 	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblTurnCounter, lblExp, lblLevelUp;
 	private JButton returnButton, attackButton, quitButton, menuButton, 
 			turnButton, levelUpHPButton, levelUpStrButton, ability1, ability2, 
@@ -48,12 +51,14 @@ public class FightScene extends JPanel implements ActionListener{
 	String youWon = "You\nWon";
 	private Random rand = new Random();
 	private int enemySelectRand = rand.nextInt(2);
-	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated;
-	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack;
+	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated, rendLeft;
+	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack, hardenActive,
+			enemyDead;
 	private Font f = new Font("Serif", Font.PLAIN, 18);
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
 	private Image pImg, wImg, pAttackImg, wAttackImg, eImg, eAttackImg, backgroundImg;
 	private Timer t = new java.util.Timer();
+	private Timer turnTimer = new java.util.Timer();
 	private final int SCALE = 250;
 	private Image basicAtk, decapBtn, swingBtn, riposteBtn;
 
@@ -138,10 +143,15 @@ public class FightScene extends JPanel implements ActionListener{
             lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
             playerAttack = true;
         	break;
+        case "Rend":
+        	rendLeft = 3;
+        	turnCounter -= rend.getAbilityCost();
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+        	playerAttack = true;
+        	break;
         case "Turn":
             enemyAttack();            
-            turnCounter = player.getTurnCount();
-            enableActionButtons();
+            turnCounter = player.getTurnCount();      
             lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
             break;
         case "HP up":
@@ -186,7 +196,8 @@ public class FightScene extends JPanel implements ActionListener{
 	
 	public void isEnemyDead() {
 		if(enemy.getEnemyHP() <= 0) {
-			player.playerGainCoin(5);
+			rendLeft = 0;
+			player.playerGainCoin(enemy.getCoinValue());
 			
 			// Check if the player's defeated 3 enemies, if not, spawn a new one
 			if(enemiesDefeated != 2 && currentLevel != 1) {
@@ -242,6 +253,7 @@ public class FightScene extends JPanel implements ActionListener{
 				gameOver = true;
 				disableActionButtons();
 			}
+			enemyDead = true;
 		}
 	}
 	
@@ -294,6 +306,21 @@ public class FightScene extends JPanel implements ActionListener{
 	    	if(turnCounter != riposte.getAbilityCost())
 	    		ability1.setEnabled(false);
 	    	break;
+	    case "Rend":
+	    	if(turnCounter < rend.getAbilityCost()) {
+	            ability1.setEnabled(false);
+	        }
+	    	break;
+	    case "Harden":
+	    	if(turnCounter < harden.getAbilityCost()) {
+	            ability1.setEnabled(false);
+	        }
+	    	break;
+	    case "Whirlwind":
+	    	if(turnCounter < whirlwind.getAbilityCost()) {
+	            ability1.setEnabled(false);
+	        }
+	    	break;
 	    default:
 	        break;
 		}
@@ -313,6 +340,21 @@ public class FightScene extends JPanel implements ActionListener{
 	    case "Riposte":
 	    	if(turnCounter != riposte.getAbilityCost())
 	    		ability2.setEnabled(false);
+	    	break;
+	    case "Rend":
+	    	if(turnCounter < rend.getAbilityCost()) {
+	    		ability2.setEnabled(false);
+	        }
+	    	break;
+	    case "Harden":
+	    	if(turnCounter < harden.getAbilityCost()) {
+	    		ability2.setEnabled(false);
+	        }
+	    	break;
+	    case "Whirlwind":
+	    	if(turnCounter < whirlwind.getAbilityCost()) {
+	    		ability2.setEnabled(false);
+	        }
 	    	break;
 	    default:
 	        break;
@@ -334,6 +376,21 @@ public class FightScene extends JPanel implements ActionListener{
 	    	if(turnCounter != riposte.getAbilityCost())
 	    		ability3.setEnabled(false);
 	    	break;
+	    case "Rend":
+	    	if(turnCounter < rend.getAbilityCost()) {
+	    		ability3.setEnabled(false);
+	        }
+	    	break;
+	    case "Harden":
+	    	if(turnCounter < harden.getAbilityCost()) {
+	    		ability3.setEnabled(false);
+	        }
+	    	break;
+	    case "Whirlwind":
+	    	if(turnCounter < whirlwind.getAbilityCost()) {
+	    		ability3.setEnabled(false);
+	        }
+	    	break;
 	    default:
 	        break;
 		}
@@ -343,32 +400,59 @@ public class FightScene extends JPanel implements ActionListener{
 		}
 	}	
 	
-	private void enemyAttack() {
-		enemyAttack = true;
-		if(abilityID != 3 && enemy.enemyAttack()) {
-			player.playerLoseHP(enemy.getEnemyStrength());
-	    	player.playerShowHP(lblPlayerHP);
-	    	lblPlayerHP.repaint();
-	    	if(riposteActive)
-	    		lblDamageDealt.setText("Riposte failed and the enemy dealt: " + enemy.getEnemyStrength()  + " damage");
-	    	else {
-	    		lblDamageDealt.setText("Enemy dealt: " + enemy.getEnemyStrength()  + " damage");
-	    		isPlayerDead();
-	    	}
-			lblDamageDealt.repaint();
-	    	isPlayerDead();
-	    	riposteActive = false;
-    	}
-		else {
-			int x = enemy.getEnemyStrength() + riposte.getAttackPower();			
-			enemy.enemyLoseHP(x);
+	private void enemyAttack() {		
+		if(rendLeft != 0) {
+			int temp = rend.getAttackPower() + player.getPlayerStrength() / 2;
+			enemy.enemyLoseHP(temp);
 			enemy.enemyShowHP(lblEnemyHP);
 			lblEnemyHP.repaint();
-			lblDamageDealt.setText("You reflected the attack and hit them for " + x + " damage");
-			lblDamageDealt.repaint();			
+			lblDamageDealt.setText("Enemy got hit by Rend for: " + temp + " damage");
+			lblDamageDealt.repaint();
 			isEnemyDead();
+			rendLeft--;			
 		}
-		abilityID = 0;
+		if(!enemyDead) {
+			t.schedule( 
+		        new TimerTask() {
+		            @Override
+		            public void run() {
+		            	enemyAttack = true;
+		    			if(abilityID != 3 && enemy.enemyAttack()) {
+		    				player.playerLoseHP(enemy.getEnemyStrength());
+		    		    	player.playerShowHP(lblPlayerHP);
+		    		    	lblPlayerHP.repaint();
+		    		    	if(riposteActive)
+		    		    		lblDamageDealt.setText("Riposte failed and the enemy dealt: " + enemy.getEnemyStrength()  + " damage");
+		    		    	else {
+		    		    		lblDamageDealt.setText("Enemy dealt: " + enemy.getEnemyStrength()  + " damage");
+		    		    		isPlayerDead();
+		    		    	}
+		    				lblDamageDealt.repaint();
+		    		    	isPlayerDead();
+		    		    	riposteActive = false;
+		    	    	}
+		    			else if (abilityID == 3){
+		    				int x = enemy.getEnemyStrength() + riposte.getAttackPower();			
+		    				enemy.enemyLoseHP(x);
+		    				enemy.enemyShowHP(lblEnemyHP);
+		    				lblEnemyHP.repaint();
+		    				lblDamageDealt.setText("You reflected the attack and hit them for " + x + " damage");
+		    				lblDamageDealt.repaint();			
+		    				isEnemyDead();
+		    			}
+		    			else {
+		    				lblDamageDealt.setText("Enemy attack missed");
+		    				lblDamageDealt.repaint();
+		    			}
+		    			enableActionButtons();
+		    			abilityID = 0;
+		            }
+		        }, 
+		        // Timer value in milliseconds 
+		        350
+	    	);									
+		}
+		enemyDead = false;
 	}
 	
 	private void playerAttack(){
@@ -399,7 +483,7 @@ public class FightScene extends JPanel implements ActionListener{
 			lblDamageDealt.repaint();
 		}
 		else {
-			lblDamageDealt.setText("You missed");
+			lblDamageDealt.setText("Your attack missed");
 			lblDamageDealt.repaint();
 		}			
 		if(turnCounter <= 0)
@@ -503,6 +587,18 @@ public class FightScene extends JPanel implements ActionListener{
         	ability1.setIcon(new ImageIcon(riposteBtn));
         	ability1.setEnabled(false);
         	break;
+        case 4:
+        	ability1.setActionCommand("Rend");
+        	ability1.setText("Rend " + "(-" + rend.getAbilityCost() + ")");
+        	break;
+        case 5:
+        	ability1.setActionCommand("Harden");
+        	ability1.setText("Harden " + "(-" + harden.getAbilityCost() + ")");
+        	break;
+        case 6:
+        	ability1.setActionCommand("Whirlwind");
+        	ability1.setText("Whirlwind " + "(-" + whirlwind.getAbilityCost() + ")");
+        	break;
         }        
         ability1.addActionListener(this);
         ability1.setBounds(250, 550, 150, 100);
@@ -524,6 +620,18 @@ public class FightScene extends JPanel implements ActionListener{
         	ability2.setIcon(new ImageIcon(riposteBtn));
         	ability2.setEnabled(false);
         	break;
+        case 4:
+        	ability2.setActionCommand("Rend");
+        	ability2.setText("Rend " + "(-" + rend.getAbilityCost() + ")");
+        	break;
+        case 5:
+        	ability2.setActionCommand("Harden");
+        	ability2.setText("Harden " + "(-" + harden.getAbilityCost() + ")");
+        	break;
+        case 6:
+        	ability2.setActionCommand("Whirlwind");
+        	ability2.setText("Whirlwind " + "(-" + whirlwind.getAbilityCost() + ")");
+        	break;
         }        
         ability2.addActionListener(this);
         ability2.setBounds(430, 550, 150, 100);
@@ -544,6 +652,18 @@ public class FightScene extends JPanel implements ActionListener{
         	ability3.setActionCommand("Riposte");
         	ability3.setIcon(new ImageIcon(riposteBtn));
         	ability3.setEnabled(false);
+        	break;
+        case 4:
+        	ability3.setActionCommand("Rend");
+        	ability3.setText("Rend " + "(-" + rend.getAbilityCost() + ")");
+        	break;
+        case 5:
+        	ability3.setActionCommand("Harden");
+        	ability3.setText("Harden " + "(-" + harden.getAbilityCost() + ")");
+        	break;
+        case 6:
+        	ability3.setActionCommand("Whirlwind");
+        	ability3.setText("Whirlwind " + "(-" + whirlwind.getAbilityCost() + ")");
         	break;
         }        
         ability3.addActionListener(this);

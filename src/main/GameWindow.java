@@ -8,6 +8,7 @@ import stages.FightScene;
 import stages.HomeScreen;
 import stages.LevelSelector;
 import stages.MainMenu;
+import stages.Merchant;
 import stages.SlotMachine;
 
 public class GameWindow{
@@ -17,6 +18,7 @@ public class GameWindow{
     private static LevelSelector levelSelector;
     private static FightScene fightScene;
     private static SlotMachine slotMachine;
+    private static Merchant merchant;
     JFrame frame = new JFrame("Lemony Squeeze");
 
     public GameWindow() {
@@ -61,6 +63,12 @@ public class GameWindow{
     public void showSlotMachine(){
     	slotMachine = new SlotMachine(this);
     	frame.setContentPane(slotMachine);
+    	frame.revalidate();
+    }
+    
+    public void showMerchant(int levelIndex) {
+    	merchant = new Merchant(this, levelIndex);
+    	frame.setContentPane(merchant);
     	frame.revalidate();
     }
 

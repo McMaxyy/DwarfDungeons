@@ -101,7 +101,7 @@ public class LevelSelector extends JPanel implements ActionListener{
         levelTwo.setEnabled(false);
         levelTwo.setVisible(false);
         levelTwo.setActionCommand("Level Two");
-        levelTwo.setText("Level Two");
+        levelTwo.setText("Merchant");
         levelTwo.addActionListener(this);
         levelTwo.setBounds(200, 400, 100, 50);
         add(levelTwo);
@@ -153,7 +153,7 @@ public class LevelSelector extends JPanel implements ActionListener{
         }
 		else if(command.equals("Level Two")) {
 			levelIndex = 2;
-			window.showFightScene(levelIndex, selectedStage);    	
+			window.showMerchant(levelIndex);    	
         }
 		else if(command.equals("Level Three")) {
 			levelIndex = 3;

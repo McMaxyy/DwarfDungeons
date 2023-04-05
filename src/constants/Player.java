@@ -60,6 +60,10 @@ public class Player {
 		playerHP = playerMaxHP;
 	}
 	
+	public void increaseHP(int pot) {
+		playerHP += pot;
+	}
+	
 	public void levelUp() {
 		if(playerLevel <= 15) {
 			playerLevel++;
@@ -77,16 +81,16 @@ public class Player {
 	
 	public void playerOne() {
 		playerHP = playerMaxHP;
-		x = rand.nextInt(1, 4);
-		y = rand.nextInt(1, 4);
-		z = rand.nextInt(1, 4);
+		x = rand.nextInt(1, 7);
+		y = rand.nextInt(1, 7);
+		z = rand.nextInt(1, 7);
 		ability1ID = x;
 		while(y == x) {
-			y = rand.nextInt(1, 4);
+			y = rand.nextInt(1, 7);
 		}
 		ability2ID = y;
 		while (z == y || z == x)
-			z = rand.nextInt(1, 4);
+			z = rand.nextInt(1, 7);
 		ability3ID = z;
 	}
 

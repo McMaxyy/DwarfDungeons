@@ -36,6 +36,7 @@ public class Enemies {
 			enemyHP = enemyMaxHP;
 			enemyStrength = 1;
 			expValue = 2;
+			coinValue = 3;
 		}
 	}
 	
@@ -48,12 +49,13 @@ public class Enemies {
 			enemyHP = enemyMaxHP;
 			enemyStrength = 2;
 			expValue = 4;
+			coinValue = 5;
 		}
 	}
 	
 	public boolean enemyAttack() {
 		int x = rand.nextInt(10);
-		if(x != 0 || x != 1 || x != 2 || x!= 3)
+		if(x != 0 || x != 1 || x != 2)
 			return true;
 		else
 			return false;

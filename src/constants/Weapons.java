@@ -17,6 +17,6 @@ public class Weapons {
 	}
 	
 	public void setWeaponDamage(int weaponDamage) {
-		this.weaponDamage = weaponDamage;
+		Weapons.weaponDamage = weaponDamage;
 	}
 }
