@@ -2,6 +2,7 @@ package stages;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -23,6 +24,7 @@ public class LevelSelector extends JPanel implements ActionListener{
 			levelFour1, levelFour2, levelFour3, levelFour4, levelFour5, levelFive1, levelFive2,
 			levelFive3, levelFive4, levelSix1, levelSix2;
 	private final int fight = 2, merch = 1, q = 1, bonfire = 2;
+	private Random rand = new Random();
 	
 	public LevelSelector(GameWindow window, int currentLevel) {
 		this.window = window;
@@ -30,6 +32,7 @@ public class LevelSelector extends JPanel implements ActionListener{
 		setLayout(null);
 		
 		initComponents();
+		setStage();
         
         switch(currentLevel) {
 		case 1:
@@ -168,7 +171,10 @@ public class LevelSelector extends JPanel implements ActionListener{
         levelThree1 = new JButton();
         levelThree1.setEnabled(true);
         levelThree1.setVisible(true);
-        levelThree1.setText("Fight");
+        if(rand.nextInt(2) == 0)
+        	levelThree1.setText("Bonfire");
+        else
+        	levelThree1.setText("???");
         levelThree1.setActionCommand(levelThree1.getText());     
         levelThree1.addActionListener(this);
         levelThree1.setBounds(470, 400, 70, 70);
@@ -177,7 +183,10 @@ public class LevelSelector extends JPanel implements ActionListener{
         levelThree2 = new JButton();
         levelThree2.setEnabled(true);
         levelThree2.setVisible(true);
-        levelThree2.setText("Fight");
+        if(levelThree1.getText() == "???")
+        	levelThree2.setText("Bonfire");
+        else
+        	levelThree2.setText("???");
         levelThree2.setActionCommand(levelThree2.getText());        
         levelThree2.addActionListener(this);
         levelThree2.setBounds(630, 400, 70, 70);
@@ -186,7 +195,10 @@ public class LevelSelector extends JPanel implements ActionListener{
         levelThree3 = new JButton();
         levelThree3.setEnabled(true);
         levelThree3.setVisible(true);
-        levelThree3.setText("Fight");
+        if(rand.nextInt(2) == 0)
+        	levelThree3.setText("Merchant");
+        else
+        	levelThree3.setText("Bonfire");
         levelThree3.setActionCommand(levelThree3.getText());       
         levelThree3.addActionListener(this);
         levelThree3.setBounds(770, 400, 70, 70);
@@ -195,11 +207,71 @@ public class LevelSelector extends JPanel implements ActionListener{
         levelThree4 = new JButton();
         levelThree4.setEnabled(true);
         levelThree4.setVisible(true);
-        levelThree4.setText("Fight");
+        if(levelThree3.getText() == "Bonfire")
+        	levelThree4.setText("Merchant");
+        else
+        	levelThree4.setText("Bonfire");
         levelThree4.setActionCommand(levelThree4.getText());       
         levelThree4.addActionListener(this);
         levelThree4.setBounds(930, 400, 70, 70);
         add(levelThree4);
+        
+        levelFour1 = new JButton();
+        levelFour1.setEnabled(true);
+        levelFour1.setVisible(true);
+        if(rand.nextInt(2) == 0)
+        	levelFour1.setText("Fight");
+        else
+        	levelFour1.setText("Merchant");
+        levelFour1.setActionCommand(levelFour1.getText());       
+        levelFour1.addActionListener(this);
+        levelFour1.setBounds(390, 300, 70, 70);
+        add(levelFour1);
+        
+        levelFour2 = new JButton();
+        levelFour2.setEnabled(true);
+        levelFour2.setVisible(true);
+        if(levelFour1.getText() == "Merchant")
+        	levelFour2.setText("Fight");
+        else
+        	levelFour2.setText("Merchant");
+        levelFour2.setActionCommand(levelFour2.getText());       
+        levelFour2.addActionListener(this);
+        levelFour2.setBounds(550, 300, 70, 70);
+        add(levelFour2);
+        
+        levelFour3 = new JButton();
+        levelFour3.setEnabled(true);
+        levelFour3.setVisible(true);
+        levelFour3.setActionCommand("Strong Enemy");
+        levelFour3.setText("Strong");
+        levelFour3.addActionListener(this);
+        levelFour3.setBounds(700, 300, 70, 70);
+        add(levelFour3);
+        
+        levelFour4 = new JButton();
+        levelFour4.setEnabled(true);
+        levelFour4.setVisible(true);
+        if(rand.nextInt(2) == 0)
+        	levelFour4.setText("Fight");
+        else
+        	levelFour4.setText("???");
+        levelFour4.setActionCommand(levelFour4.getText());       
+        levelFour4.addActionListener(this);
+        levelFour4.setBounds(850, 300, 70, 70);
+        add(levelFour4);
+        
+        levelFour5 = new JButton();
+        levelFour5.setEnabled(true);
+        levelFour5.setVisible(true);
+        if(levelFour4.getText() == "???")
+        	levelFour5.setText("Fight");
+        else
+        	levelFour5.setText("???");
+        levelFour5.setActionCommand(levelFour5.getText());       
+        levelFour5.addActionListener(this);
+        levelFour5.setBounds(1010, 300, 70, 70);
+        add(levelFour5);
 	}
 	
 	private void randomLevel() {
