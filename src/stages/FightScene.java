@@ -64,10 +64,9 @@ public class FightScene extends JPanel implements ActionListener{
 
 	public FightScene(GameWindow window, int levelIndex, int selectedStage){
 		this.window = window;
-		turnCounter = player.getTurnCount();
+		turnCounter = player.getMana();
 		currentLevel = levelIndex;
-		enemy.setCurrentStage(selectedStage);
-		weapon.weaponOne();
+		enemy.setCurrentStage(selectedStage);	
 		abilityID = 0;
 		enemiesDefeated = 0;
 		
@@ -76,8 +75,10 @@ public class FightScene extends JPanel implements ActionListener{
 		else
 			enemy.enemyTwo();
 		
-		if(currentLevel == 1)
-			player.playerOne();	
+		if(currentLevel == 1) {
+			player.playerOne();
+			weapon.weaponOne();
+		}	
 		
 		setLayout(null);
 		
@@ -112,21 +113,21 @@ public class FightScene extends JPanel implements ActionListener{
             break;
         case "Attack":
             turnCounter -= player.getAttackButtonCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
             playerAttack();
             playerAttack = true;
             break;
         case "Swing":
         	abilityID = overheadSwing.getID();
         	turnCounter -= overheadSwing.getAbilityCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
             playerAttack();
             playerAttack = true;
         	break;
         case "Decapitate":
         	abilityID = decapitate.getID();
         	turnCounter -= decapitate.getAbilityCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
             playerAttack();
             playerAttack = true;
         	break;
@@ -136,23 +137,37 @@ public class FightScene extends JPanel implements ActionListener{
         	else
         		riposteActive = true;
         	turnCounter -= riposte.getAbilityCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
             enemyAttack();            
-            turnCounter = player.getTurnCount();
+            turnCounter = player.getMana();
             enableActionButtons();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
             playerAttack = true;
         	break;
         case "Rend":
         	rendLeft = 3;
         	turnCounter -= rend.getAbilityCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
         	playerAttack = true;
+        	enableActionButtons();
         	break;
+        case "Harden":
+            turnCounter -= harden.getAbilityCost();
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
+            hardenActive = true;
+            playerAttack = true;
+            break;
+        case "Whirlwind":
+        	abilityID = whirlwind.getID();
+            turnCounter -= whirlwind.getAbilityCost();
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
+            playerAttack();
+            playerAttack = true;
+            break;
         case "Turn":
             enemyAttack();            
-            turnCounter = player.getTurnCount();      
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+            turnCounter = player.getMana();      
+            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
             break;
         case "HP up":
             player.increaseMaxHP();
@@ -223,8 +238,8 @@ public class FightScene extends JPanel implements ActionListener{
 				enemiesDefeated++;
 				
 				// Refresh turn counter
-				turnCounter = player.getTurnCount();
-				lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+				turnCounter = player.getMana();
+				lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
 				lblTurnCounter.repaint();
 							
 				repaint();
@@ -232,7 +247,7 @@ public class FightScene extends JPanel implements ActionListener{
 			// Player has defeated 3 enemies, stage cleared
 			else {
 				turnCounter = 0;
-				lblTurnCounter.setText("Available points: 0/" + player.getTurnCount());	
+				lblTurnCounter.setText("Available points: 0/" + player.getMana());	
 				lblExp.setText("Gained " + enemy.getExpValue() + " exp");
 				lblExp.setVisible(true);
 				returnButton.setText("<html>" + youWon.replaceAll("\\n", "<br>") + "</html>");
@@ -285,7 +300,7 @@ public class FightScene extends JPanel implements ActionListener{
 		}
 	}
 	
-	private void enableActionButtons() {
+	private void enableActionButtons() {		
 		if(enemiesDefeated != 3)
 			for(JButton button : actionButtons)
 				button.setEnabled(true);
@@ -411,51 +426,62 @@ public class FightScene extends JPanel implements ActionListener{
 			isEnemyDead();
 			rendLeft--;			
 		}
+		// Since Rend activates before the enemy attack, check if Rend killed the enemy
 		if(!enemyDead) {
-			t.schedule( 
-		        new TimerTask() {
-		            @Override
-		            public void run() {
-		            	enemyAttack = true;
-		    			if(abilityID != 3 && enemy.enemyAttack()) {
-		    				player.playerLoseHP(enemy.getEnemyStrength());
-		    		    	player.playerShowHP(lblPlayerHP);
-		    		    	lblPlayerHP.repaint();
-		    		    	if(riposteActive)
-		    		    		lblDamageDealt.setText("Riposte failed and the enemy dealt: " + enemy.getEnemyStrength()  + " damage");
-		    		    	else {
-		    		    		lblDamageDealt.setText("Enemy dealt: " + enemy.getEnemyStrength()  + " damage");
-		    		    		isPlayerDead();
-		    		    	}
-		    				lblDamageDealt.repaint();
-		    		    	isPlayerDead();
-		    		    	riposteActive = false;
-		    	    	}
-		    			else if (abilityID == 3){
-		    				int x = enemy.getEnemyStrength() + riposte.getAttackPower();			
-		    				enemy.enemyLoseHP(x);
-		    				enemy.enemyShowHP(lblEnemyHP);
-		    				lblEnemyHP.repaint();
-		    				lblDamageDealt.setText("You reflected the attack and hit them for " + x + " damage");
-		    				lblDamageDealt.repaint();			
-		    				isEnemyDead();
-		    			}
-		    			else {
-		    				lblDamageDealt.setText("Enemy attack missed");
-		    				lblDamageDealt.repaint();
-		    			}
-		    			enableActionButtons();
-		    			abilityID = 0;
-		            }
-		        }, 
-		        // Timer value in milliseconds 
-		        350
-	    	);									
-		}
+			turnTimer.schedule(new TimerTask() {
+	            @Override
+	            public void run() {
+	            	int temp = enemy.getEnemyStrength();
+	            	enemyAttack = true;
+	            	// Check if enemy attack missed
+	    			if(abilityID != 3 && enemy.enemyAttack()) {
+	    				if(hardenActive)
+	    					player.playerLoseHP(temp / 2);	// Harden is active, enemy deals 50% dmg
+	    				else
+	    					player.playerLoseHP(temp);
+	    		    	player.playerShowHP(lblPlayerHP);
+	    		    	lblPlayerHP.repaint();
+	    		    	if(riposteActive) {
+	    		    		if(hardenActive)
+	    		    			lblDamageDealt.setText("Riposte failed and the enemy dealt: " + temp / 2  + " damage");
+	    		    		else
+	    		    			lblDamageDealt.setText("Riposte failed and the enemy dealt: " + temp  + " damage");
+	    		    	}
+	    		    	else { 
+	    		    		if(hardenActive)
+	    		    			lblDamageDealt.setText("Enemy dealt: " + temp / 2 + " damage");
+	    		    		else
+	    		    			lblDamageDealt.setText("Enemy dealt: " + temp  + " damage");
+	    		    	}	    		    		    		    					    		    	
+	    				lblDamageDealt.repaint();
+	    		    	isPlayerDead();
+	    		    	riposteActive = false;		    		    	
+	    	    	}
+	    			// Check if Riposte was successful
+	    			else if (abilityID == 3){
+	    				int x = enemy.getEnemyStrength() / 2 + riposte.getAttackPower();			
+	    				enemy.enemyLoseHP(x);
+	    				enemy.enemyShowHP(lblEnemyHP);
+	    				lblEnemyHP.repaint();
+	    				lblDamageDealt.setText("You reflected the attack and hit them for " + x + " damage");
+	    				lblDamageDealt.repaint();			
+	    				isEnemyDead();
+	    			}
+	    			else {
+	    				lblDamageDealt.setText("Enemy attack missed");
+	    				lblDamageDealt.repaint();
+	    			}
+	    			enableActionButtons();
+	    			abilityID = 0;
+	    			hardenActive = false;
+	            }
+	        }, 400);	// Timer value in milliseconds        									
+		}	
 		enemyDead = false;
 	}
 	
 	private void playerAttack(){
+		// Check if player attack missed
 		if(player.playerAttack()) {
 			int x, y = 0;
 			
@@ -468,12 +494,17 @@ public class FightScene extends JPanel implements ActionListener{
 				case 2:
 					y = decapitate.getAttackPower();
 					break;
+				case 6:
+					y = whirlwind.getAttackPower();
 				}
-				x = player.getPlayerStrength() / 2 + y;
+				x = player.getPlayerStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr(); // Ability attack
+				if(abilityID == 6)	// Whirlwind
+					for(int i = 1; i < 3; i++)
+						x = x + (player.getPlayerStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr());	
 				abilityID = 0;
 			}
 			else
-				x = rand.nextInt(1, player.getPlayerStrength() + weapon.getWeaponDamage() + 1);	
+				x = rand.nextInt(1, player.getPlayerStrength() + weapon.getWeaponDamage() + 1 + player.getTempStr());	// Basic attack
 			
 			// Damage enemy & update label
 			enemy.enemyLoseHP(x);
@@ -487,8 +518,8 @@ public class FightScene extends JPanel implements ActionListener{
 			lblDamageDealt.repaint();
 		}			
 		if(turnCounter <= 0)
-			disableActionButtons();	
-		isEnemyDead();	
+			enableActionButtons();	// Maybe should be disable
+		isEnemyDead();	// Check if the player's attack killed the enemy
 	}
 
 	private void initComponents() {	
@@ -512,7 +543,7 @@ public class FightScene extends JPanel implements ActionListener{
 		lblTurnCounter.setBackground(Color.WHITE);
 		lblTurnCounter.setOpaque(true);
 		lblTurnCounter.setBounds(970, 190, 120, 50);
-		lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getTurnCount());
+		lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
 		add(lblTurnCounter);
 		
 		lblExp = new JLabel();
@@ -553,7 +584,7 @@ public class FightScene extends JPanel implements ActionListener{
         menuButton.setBounds(1100, 80, 120, 40);
         add(menuButton);    
         
-        // Lost game button
+        // Button for returning to the level selector when the player either wins or dies
         returnButton = new JButton();
         returnButton.setFont(f);
         returnButton.setFocusable(false);
@@ -757,7 +788,10 @@ public class FightScene extends JPanel implements ActionListener{
 	    if (pAttackImg != null && wAttackImg != null && playerAttack) {
 	    	g.drawImage(pAttackImg, 980, 308, SCALE, SCALE, this);
 	    	g.drawImage(wAttackImg, 980, 308, SCALE, SCALE, this);
-	    	disableActionButtons();
+	    	enableActionButtons();
+	    	for(JButton button : actionButtons) {
+				button.setVisible(false);			
+			}
 	    	
 	    	// Wait until attack animation is over to re-enable action buttons
 	    	t.schedule( 
@@ -766,13 +800,15 @@ public class FightScene extends JPanel implements ActionListener{
     	            public void run() {
     	            	playerAttack = false;
     	            	if(turnCounter > 0 && !levelUpHPButton.isVisible()) {
-    	            		enableActionButtons();
+    	            		for(JButton button : actionButtons) {
+    	            			button.setVisible(true);			
+    	            		}
     	            	}
     	            }
     	        }, 
     	        // Timer value in milliseconds 
     	        500
-	    	);	    	
+	    	);
 	    }
 	    
 	    // Draw enemy animations
@@ -781,7 +817,7 @@ public class FightScene extends JPanel implements ActionListener{
 	    }
 	    if (eAttackImg != null && enemyAttack) {
 	    	g.drawImage(eAttackImg, 10, 308, SCALE, SCALE, this);
-	    	disableActionButtons();
+	    	enableActionButtons();
 	    	turnButton.setEnabled(false);
 	    	
 	    	t.schedule( 

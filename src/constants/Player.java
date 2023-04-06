@@ -9,7 +9,7 @@ public class Player {
 	private static int playerMaxHP = 100;
 	private static int playerHP;
 	private static int playerStrength = 2;
-	private static int turnCount = 4;
+	private static int mana = 4;
 	private static int playerCoins = 100;
 	private static int playerLevel = 0;
 	private static int playerExp = 0;
@@ -17,6 +17,7 @@ public class Player {
 	private final int attackButtonCost = 1;
 	private static int levelCap = 10;
 	private static int unlockedStage = 1;
+	private static int tempStr;
 	protected JLabel lblPlayerHP;
 	private Random rand = new Random();
 	private static JLabel playerIcon = new JLabel();
@@ -27,15 +28,19 @@ public class Player {
 	}
 	
 	public void playerLoseHP(int dmg) {
-		setPlayerHP(getPlayerHP() - dmg);
+		playerHP -= dmg;
 	}
 	
 	public void playerGainCoin(int coin) {
-		setPlayerCoins(getPlayerCoins() + coin);
+		playerCoins += coin;
 	}
 	
 	public void playerLoseCoin(int coin) {
-		setPlayerCoins(getPlayerCoins() - coin);
+		playerCoins -= coin;
+	}
+	
+	public void increaseMana(int x) {
+		mana += x;
 	}
 	
 	public boolean playerAttack() {
@@ -60,6 +65,10 @@ public class Player {
 		playerHP = playerMaxHP;
 	}
 	
+	public void increaseTempStr(int x) {
+		tempStr += x;
+	}
+	
 	public void increaseHP(int pot) {
 		playerHP += pot;
 	}
@@ -80,6 +89,8 @@ public class Player {
 	}
 	
 	public void playerOne() {
+		tempStr = 0;
+		mana = 4;
 		playerHP = playerMaxHP;
 		x = rand.nextInt(1, 7);
 		y = rand.nextInt(1, 7);
@@ -94,12 +105,12 @@ public class Player {
 		ability3ID = z;
 	}
 
-	public int getTurnCount() {
-		return turnCount;
+	public int getMana() {
+		return mana;
 	}
 
-	public void setTurnCount(int turnCount) {
-		Player.turnCount = turnCount;
+	public void setMana(int mana) {
+		Player.mana = mana;
 	}
 
 	public int getPlayerHP() {
@@ -196,6 +207,10 @@ public class Player {
 
 	public void setUnlockedStage(int unlockedStage) {
 		Player.unlockedStage = unlockedStage;
+	}
+
+	public int getTempStr() {
+		return tempStr;
 	}
 	
 }

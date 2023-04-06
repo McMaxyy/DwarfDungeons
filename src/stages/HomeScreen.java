@@ -57,15 +57,14 @@ public class HomeScreen extends JPanel implements ActionListener {
     }
 
     private void saveGame() {
-		int[] saveS = new int[8];
+		int[] saveS = new int[7];
 		saveS[0] = player.getPlayerMaxHP();
 		saveS[1] = player.getPlayerStrength();
-		saveS[2] = player.getTurnCount();
-		saveS[3] = player.getPlayerCoins();
-		saveS[4] = player.getPlayerLevel();
-		saveS[5] = player.getPlayerExp();
-		saveS[6] = player.getLevelCap();
-		saveS[7] = player.getUnlockedStage();
+		saveS[2] = player.getPlayerCoins();
+		saveS[3] = player.getPlayerLevel();
+		saveS[4] = player.getPlayerExp();
+		saveS[5] = player.getLevelCap();
+		saveS[6] = player.getUnlockedStage();
 		
 		try (FileWriter writer = new FileWriter("savegame.json")) {
             gson.toJson(saveS, writer);

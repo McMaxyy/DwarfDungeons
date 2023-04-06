@@ -66,12 +66,11 @@ public class MainMenu extends JPanel implements ActionListener {
             }
             player.setPlayerMaxHP(intArray[0]);
             player.setPlayerStrength(intArray[1]);
-            player.setTurnCount(intArray[2]);
-            player.setPlayerCoins(intArray[3]);
-            player.setPlayerLevel(intArray[4]);
-            player.setPlayerExp(intArray[5]);
-            player.setLevelCap(intArray[6]);
-            player.setUnlockedStage(intArray[7]);
+            player.setPlayerCoins(intArray[2]);
+            player.setPlayerLevel(intArray[3]);
+            player.setPlayerExp(intArray[4]);
+            player.setLevelCap(intArray[5]);
+            player.setUnlockedStage(intArray[6]);
         } catch (IOException e) {
             e.printStackTrace();
         } 	

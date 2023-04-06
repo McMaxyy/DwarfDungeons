@@ -34,7 +34,7 @@ public class Enemies {
 			enemyAttack = entity.setEnemyStats("res/EnemyAnimations/AttackSpoder.gif");
 			enemyMaxHP = 20;
 			enemyHP = enemyMaxHP;
-			enemyStrength = 1;
+			enemyStrength = 2;
 			expValue = 2;
 			coinValue = 3;
 		}
@@ -47,9 +47,22 @@ public class Enemies {
 			enemyAttack = entity.setEnemyStats("res/EnemyAnimations/AttackGoblin.gif");
 			enemyMaxHP = 30;
 			enemyHP = enemyMaxHP;
-			enemyStrength = 2;
+			enemyStrength = 4;
 			expValue = 4;
 			coinValue = 5;
+		}
+	}
+	
+	public void strongEnemy() {
+		if(currentStage == 1) {
+			enemyName = "Bigdik";
+			enemyIdle = entity.setEnemyStats("res/chr.png");
+			enemyAttack = entity.setEnemyStats("res/chr.png");
+			enemyMaxHP = 50;
+			enemyHP = enemyMaxHP;
+			enemyStrength = 6;
+			expValue = 15;
+			coinValue = 15;
 		}
 	}
 	

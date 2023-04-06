@@ -4,6 +4,10 @@ public class Weapons {
 
 	private static int weaponDamage;
 	
+	public void upgradeWeapon(int x) {
+		weaponDamage += x;
+	}
+	
 	public void noWeapon() {
 		weaponDamage = 0;
 	}
@@ -14,9 +18,5 @@ public class Weapons {
 	
 	public int getWeaponDamage() {
 		return weaponDamage;
-	}
-	
-	public void setWeaponDamage(int weaponDamage) {
-		Weapons.weaponDamage = weaponDamage;
 	}
 }

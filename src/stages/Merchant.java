@@ -9,14 +9,17 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import constants.Player;
+import constants.Weapons;
 import main.GameWindow;
 
+@SuppressWarnings("serial")
 public class Merchant extends JPanel implements ActionListener{
 	
 	private GameWindow window;
 	private Player player = new Player();
+	private Weapons weapon = new Weapons();
 	private JButton healthPot, ability1, ability2, ability3, active1, active2, active3, 
-			returnButton;
+			returnButton, manaIncrease, upgradeWeapon;
 	private String a1, a2, a3, abilityText;
 	private int abilityID, currentLevel, x;
 	private Random rand = new Random();
@@ -101,10 +104,18 @@ public class Merchant extends JPanel implements ActionListener{
 		if (command.equals("Return")) {
 			currentLevel++;
 			window.showLevelSelector(currentLevel);
-		}			
+		}
+		else if(command.equals("Mana")) {
+			player.increaseMana(1);
+			healthPot.setEnabled(false);
+		}
 		else if(command.equals("HP")) {
 			player.increaseHP(5);
 			healthPot.setEnabled(false);
+		}
+		else if(command.equals("Weapons")) {
+			weapon.upgradeWeapon(1);
+			upgradeWeapon.setEnabled(false);
 		}
 		else if(command.equals("ab1")) {
 			active1.setVisible(true);
@@ -193,6 +204,20 @@ public class Merchant extends JPanel implements ActionListener{
 		healthPot.addActionListener(this);
 		healthPot.setBounds(300, 450, 150, 100);
         add(healthPot);
+        
+        manaIncrease = new JButton();
+        manaIncrease.setActionCommand("Mana");
+        manaIncrease.setText("Mana");
+        manaIncrease.addActionListener(this);
+        manaIncrease.setBounds(300, 290, 150, 100);
+        add(manaIncrease);
+        
+        upgradeWeapon = new JButton();
+        upgradeWeapon.setActionCommand("Weapon");
+        upgradeWeapon.setText("Upgrade weapon");
+        upgradeWeapon.addActionListener(this);
+        upgradeWeapon.setBounds(300, 130, 150, 100);
+        add(upgradeWeapon);
         
         ability1 = new JButton();
         ability1.setActionCommand("ab1");
