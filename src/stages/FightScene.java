@@ -40,10 +40,10 @@ public class FightScene extends JPanel implements ActionListener{
 	private Harden harden = new Harden();
 	private Whirlwind whirlwind = new Whirlwind();
 	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblTurnCounter, lblExp, lblLevelUp;
-	private JButton returnButton, attackButton, quitButton, menuButton, 
+	private JButton returnButton, attackButton, menuButton, 
 			turnButton, levelUpHPButton, levelUpStrButton, ability1, ability2, 
 			ability3;
-	private JButton[] buttons = new JButton[] {attackButton, quitButton, 
+	private JButton[] buttons = new JButton[] {attackButton, 
 			menuButton, turnButton, ability1, ability2, ability3};
 	private JButton[] actionButtons = new JButton[] {attackButton, ability1, 
 			ability2, ability3};
@@ -60,7 +60,7 @@ public class FightScene extends JPanel implements ActionListener{
 	private Timer t = new java.util.Timer();
 	private Timer turnTimer = new java.util.Timer();
 	private final int SCALE = 250;
-	private Image basicAtk, decapBtn, swingBtn, riposteBtn;
+	private Image basicAtk, decapBtn, swingBtn, riposteBtn, rendBtn, hardenBtn, whirlwindBtn, returnBtn;
 
 	public FightScene(GameWindow window, int levelIndex, int selectedStage){
 		this.window = window;
@@ -70,15 +70,19 @@ public class FightScene extends JPanel implements ActionListener{
 		abilityID = 0;
 		enemiesDefeated = 0;
 		
-		if (enemySelectRand == 0)
-			enemy.enemyOne();
-		else
-			enemy.enemyTwo();
+		if(!enemy.isStrongEnemyActive() && !enemy.isBossActive()) {
+			if (enemySelectRand == 0)
+				enemy.enemyOne();
+			else
+				enemy.enemyTwo();				
+		}
+		else if(enemy.isStrongEnemyActive())
+			enemy.strongEnemy();
 		
 		if(currentLevel == 1) {
 			player.playerOne();
 			weapon.weaponOne();
-		}	
+		}
 		
 		setLayout(null);
 		
@@ -94,15 +98,12 @@ public class FightScene extends JPanel implements ActionListener{
         String command = e.getActionCommand();
         
         switch (command) {
-        case "Quit":
-            System.exit(0);
-            break;
         case "Main menu":
             window.showHomeScreen();
             break;
         case "Return":
             if (playerWin) {
-				if(currentLevel == 4) {
+				if(currentLevel == 7) {
 					player.setUnlockedStage(player.getUnlockedStage() + 1);
 					currentLevel = 1;
 				}
@@ -112,62 +113,51 @@ public class FightScene extends JPanel implements ActionListener{
             window.showLevelSelector(currentLevel);
             break;
         case "Attack":
-            turnCounter -= player.getAttackButtonCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
-            playerAttack();
-            playerAttack = true;
+            turnCounter -= player.getAttackButtonCost();            
+            updateAttack();
             break;
         case "Swing":
         	abilityID = overheadSwing.getID();
         	turnCounter -= overheadSwing.getAbilityCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
-            playerAttack();
-            playerAttack = true;
+        	updateAttack();
         	break;
         case "Decapitate":
         	abilityID = decapitate.getID();
         	turnCounter -= decapitate.getAbilityCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
-            playerAttack();
-            playerAttack = true;
+        	updateAttack();
         	break;
         case "Riposte":
         	if(rand.nextInt(2) == 0)
         		abilityID = riposte.getID();
         	else
         		riposteActive = true;
-        	turnCounter -= riposte.getAbilityCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
             enemyAttack();            
             turnCounter = player.getMana();
             enableActionButtons();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
+            lblTurnCounter.setText("Available mana: " + turnCounter + "/" + player.getMana());
             playerAttack = true;
         	break;
         case "Rend":
         	rendLeft = 3;
         	turnCounter -= rend.getAbilityCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
-        	playerAttack = true;
+        	lblTurnCounter.setText("Available mana: " + turnCounter + "/" + player.getMana());
         	enableActionButtons();
         	break;
         case "Harden":
             turnCounter -= harden.getAbilityCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
+            lblTurnCounter.setText("Available mana: " + turnCounter + "/" + player.getMana());
             hardenActive = true;
             playerAttack = true;
             break;
         case "Whirlwind":
         	abilityID = whirlwind.getID();
             turnCounter -= whirlwind.getAbilityCost();
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
-            playerAttack();
-            playerAttack = true;
+            updateAttack();
             break;
         case "Turn":
-            enemyAttack();            
+            enemyAttack();       
             turnCounter = player.getMana();      
-            lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
+            lblTurnCounter.setText("Available mana: " + turnCounter + "/" + player.getMana());
             break;
         case "HP up":
             player.increaseMaxHP();
@@ -215,7 +205,8 @@ public class FightScene extends JPanel implements ActionListener{
 			player.playerGainCoin(enemy.getCoinValue());
 			
 			// Check if the player's defeated 3 enemies, if not, spawn a new one
-			if(enemiesDefeated != 2 && currentLevel != 1) {
+			if(enemiesDefeated != 2 && currentLevel != 1 && 
+				!enemy.isStrongEnemyActive() && !enemy.isBossActive()) {
 				
 				// Select new enemy
 				enemySelectRand = rand.nextInt(2);
@@ -239,7 +230,7 @@ public class FightScene extends JPanel implements ActionListener{
 				
 				// Refresh turn counter
 				turnCounter = player.getMana();
-				lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
+				lblTurnCounter.setText("Available mana: " + turnCounter + "/" + player.getMana());
 				lblTurnCounter.repaint();
 							
 				repaint();
@@ -247,7 +238,7 @@ public class FightScene extends JPanel implements ActionListener{
 			// Player has defeated 3 enemies, stage cleared
 			else {
 				turnCounter = 0;
-				lblTurnCounter.setText("Available points: 0/" + player.getMana());	
+				lblTurnCounter.setText("Available mana: 0/" + player.getMana());	
 				lblExp.setText("Gained " + enemy.getExpValue() + " exp");
 				lblExp.setVisible(true);
 				returnButton.setText("<html>" + youWon.replaceAll("\\n", "<br>") + "</html>");
@@ -471,13 +462,19 @@ public class FightScene extends JPanel implements ActionListener{
 	    				lblDamageDealt.setText("Enemy attack missed");
 	    				lblDamageDealt.repaint();
 	    			}
-	    			enableActionButtons();
+//	    			enableActionButtons();
 	    			abilityID = 0;
 	    			hardenActive = false;
 	            }
-	        }, 400);	// Timer value in milliseconds        									
+	        }, 300);	// Timer value in milliseconds        									
 		}	
 		enemyDead = false;
+	}
+	
+	private void updateAttack() {
+		lblTurnCounter.setText("Available mana: " + turnCounter + "/" + player.getMana());
+        playerAttack();
+        playerAttack = true;
 	}
 	
 	private void playerAttack(){
@@ -543,7 +540,7 @@ public class FightScene extends JPanel implements ActionListener{
 		lblTurnCounter.setBackground(Color.WHITE);
 		lblTurnCounter.setOpaque(true);
 		lblTurnCounter.setBounds(970, 190, 120, 50);
-		lblTurnCounter.setText("Available points: " + turnCounter + "/" + player.getMana());
+		lblTurnCounter.setText("Available mana: " + turnCounter + "/" + player.getMana());
 		add(lblTurnCounter);
 		
 		lblExp = new JLabel();
@@ -569,19 +566,15 @@ public class FightScene extends JPanel implements ActionListener{
 		lblDamageDealt.setVerticalAlignment(SwingConstants.CENTER);
 		add(lblDamageDealt);
 		
-		// Navigation buttons				
-		quitButton = new JButton();
-		quitButton.setText("Quit");
-		quitButton.setActionCommand("Quit");
-        quitButton.addActionListener(this);
-        quitButton.setBounds(1100, 25, 120, 40);
-        add(quitButton);		
-		
+		// Navigation buttons								
         menuButton = new JButton();
         menuButton.setActionCommand("Main menu");
-        menuButton.setText("Main menu");
+        menuButton.setIcon(new ImageIcon(returnBtn));
         menuButton.addActionListener(this);
-        menuButton.setBounds(1100, 80, 120, 40);
+        menuButton.setOpaque(false);
+        menuButton.setContentAreaFilled(false);
+        menuButton.setBorderPainted(false);
+        menuButton.setBounds(1100, 25, 100, 50);
         add(menuButton);    
         
         // Button for returning to the level selector when the player either wins or dies
@@ -620,15 +613,15 @@ public class FightScene extends JPanel implements ActionListener{
         	break;
         case 4:
         	ability1.setActionCommand("Rend");
-        	ability1.setText("Rend " + "(-" + rend.getAbilityCost() + ")");
+        	ability1.setIcon(new ImageIcon(rendBtn));
         	break;
         case 5:
         	ability1.setActionCommand("Harden");
-        	ability1.setText("Harden " + "(-" + harden.getAbilityCost() + ")");
+        	ability1.setIcon(new ImageIcon(hardenBtn));
         	break;
         case 6:
         	ability1.setActionCommand("Whirlwind");
-        	ability1.setText("Whirlwind " + "(-" + whirlwind.getAbilityCost() + ")");
+        	ability1.setIcon(new ImageIcon(whirlwindBtn));
         	break;
         }        
         ability1.addActionListener(this);
@@ -653,15 +646,15 @@ public class FightScene extends JPanel implements ActionListener{
         	break;
         case 4:
         	ability2.setActionCommand("Rend");
-        	ability2.setText("Rend " + "(-" + rend.getAbilityCost() + ")");
+        	ability2.setIcon(new ImageIcon(rendBtn));
         	break;
         case 5:
         	ability2.setActionCommand("Harden");
-        	ability2.setText("Harden " + "(-" + harden.getAbilityCost() + ")");
+        	ability2.setIcon(new ImageIcon(hardenBtn));
         	break;
         case 6:
         	ability2.setActionCommand("Whirlwind");
-        	ability2.setText("Whirlwind " + "(-" + whirlwind.getAbilityCost() + ")");
+        	ability2.setIcon(new ImageIcon(whirlwindBtn));
         	break;
         }        
         ability2.addActionListener(this);
@@ -686,15 +679,15 @@ public class FightScene extends JPanel implements ActionListener{
         	break;
         case 4:
         	ability3.setActionCommand("Rend");
-        	ability3.setText("Rend " + "(-" + rend.getAbilityCost() + ")");
+        	ability3.setIcon(new ImageIcon(rendBtn));
         	break;
         case 5:
         	ability3.setActionCommand("Harden");
-        	ability3.setText("Harden " + "(-" + harden.getAbilityCost() + ")");
+        	ability3.setIcon(new ImageIcon(hardenBtn));
         	break;
         case 6:
         	ability3.setActionCommand("Whirlwind");
-        	ability3.setText("Whirlwind " + "(-" + whirlwind.getAbilityCost() + ")");
+        	ability3.setIcon(new ImageIcon(whirlwindBtn));
         	break;
         }        
         ability3.addActionListener(this);
@@ -731,12 +724,11 @@ public class FightScene extends JPanel implements ActionListener{
         
         // Add buttons to arrays
         buttons[0] = attackButton;
-        buttons[1] = quitButton;
-        buttons[2] = menuButton;
-        buttons[3] = turnButton;
-        buttons[4] = ability1;
-        buttons[5] = ability2;
-        buttons[6] = ability3;
+        buttons[1] = menuButton;
+        buttons[2] = turnButton;
+        buttons[3] = ability1;
+        buttons[4] = ability2;
+        buttons[5] = ability3;
         
         actionButtons[0] = attackButton;
         actionButtons[1] = ability1;
@@ -768,7 +760,11 @@ public class FightScene extends JPanel implements ActionListener{
 		    swingBtn = ImageIO.read(new File("res/Buttons/SwingButton.png"));
 		    decapBtn = ImageIO.read(new File("res/Buttons/DecapButton.png"));
 		    riposteBtn = ImageIO.read(new File("res/Buttons/RiposteButton.png"));
+		    rendBtn = ImageIO.read(new File("res/Buttons/RendButton.png"));
+		    hardenBtn = ImageIO.read(new File("res/Buttons/HardenButton.png"));
+		    whirlwindBtn = ImageIO.read(new File("res/Buttons/WhirlwindButton.png"));
 		    backgroundImg = ImageIO.read(new File("res/Backgrounds/Fight_BG.png"));
+		    returnBtn = ImageIO.read(new File("res/FunctionButtons/HomeButton.png"));
 		  } catch (Exception ex) {
 			  System.out.println(ex);
 		  }

@@ -18,7 +18,7 @@ public class Merchant extends JPanel implements ActionListener{
 	private GameWindow window;
 	private Player player = new Player();
 	private Weapons weapon = new Weapons();
-	private JButton healthPot, ability1, ability2, ability3, active1, active2, active3, 
+	private JButton healthPot, ability1, active1, active2, active3, 
 			returnButton, manaIncrease, upgradeWeapon;
 	private String a1, a2, a3, abilityText;
 	private int abilityID, currentLevel, x;
@@ -107,7 +107,7 @@ public class Merchant extends JPanel implements ActionListener{
 		}
 		else if(command.equals("Mana")) {
 			player.increaseMana(1);
-			healthPot.setEnabled(false);
+			manaIncrease.setEnabled(false);
 		}
 		else if(command.equals("HP")) {
 			player.increaseHP(5);

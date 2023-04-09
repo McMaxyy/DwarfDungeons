@@ -4,12 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
-import stages.FightScene;
-import stages.HomeScreen;
-import stages.LevelSelector;
-import stages.MainMenu;
-import stages.Merchant;
-import stages.SlotMachine;
+import stages.*;
 
 public class GameWindow{
 	
@@ -19,6 +14,7 @@ public class GameWindow{
     private static FightScene fightScene;
     private static SlotMachine slotMachine;
     private static Merchant merchant;
+    private static Bonfire bonfire;
     JFrame frame = new JFrame("Lemony Squeeze");
 
     public GameWindow() {
@@ -69,6 +65,12 @@ public class GameWindow{
     public void showMerchant(int levelIndex) {
     	merchant = new Merchant(this, levelIndex);
     	frame.setContentPane(merchant);
+    	frame.revalidate();
+    }
+    
+    public void showBonfire(int levelIndex) {
+    	bonfire = new Bonfire(this, levelIndex);
+    	frame.setContentPane(bonfire);
     	frame.revalidate();
     }
 

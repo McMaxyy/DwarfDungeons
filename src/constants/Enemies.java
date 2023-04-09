@@ -13,6 +13,7 @@ public class Enemies {
 	private int expValue;
 	private int coinValue;
 	private int currentStage;
+	private static boolean bossActive, strongEnemyActive;
 	private String enemyName;
 	private Image enemyIdle, enemyAttack;
 	protected JLabel lblEnemyHP;
@@ -128,6 +129,22 @@ public class Enemies {
 
 	public String getEnemyName() {
 		return enemyName;
+	}
+
+	public boolean isBossActive() {
+		return bossActive;
+	}
+
+	public void setBossActive(boolean bossActive) {
+		Enemies.bossActive = bossActive;
+	}
+
+	public boolean isStrongEnemyActive() {
+		return strongEnemyActive;
+	}
+
+	public void setStrongEnemyActive(boolean strongEnemyActive) {
+		Enemies.strongEnemyActive = strongEnemyActive;
 	}
 	
 }
