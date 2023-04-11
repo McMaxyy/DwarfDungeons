@@ -1,5 +1,6 @@
 package stages;
 
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +24,7 @@ public class MainMenu extends JPanel implements ActionListener {
     private GameWindow window;
     Gson gson = new Gson();
     private Player player = new Player();
-    private Image startBtn, loadBtn, quitBtn;
+    private Image startBtn, loadBtn, quitBtn, backgroundImg;
 
     public MainMenu(GameWindow window) {
         this.window = window;
@@ -40,7 +41,7 @@ public class MainMenu extends JPanel implements ActionListener {
         startButton.setOpaque(false);
         startButton.setContentAreaFilled(false);
         startButton.setBorderPainted(false);
-        startButton.setBounds(590, 200, 100, 50);
+        startButton.setBounds(590, 350, 100, 50);
         startButton.setFocusable(false);
         add(startButton);
         
@@ -52,7 +53,7 @@ public class MainMenu extends JPanel implements ActionListener {
         loadButton.setOpaque(false);
         loadButton.setContentAreaFilled(false);
         loadButton.setBorderPainted(false);
-        loadButton.setBounds(590, 300, 100, 50);
+        loadButton.setBounds(590, 438, 100, 50);
         loadButton.setFocusable(false);
         add(loadButton);
         
@@ -64,7 +65,7 @@ public class MainMenu extends JPanel implements ActionListener {
         quitButton.setOpaque(false);
         quitButton.setContentAreaFilled(false);
         quitButton.setBorderPainted(false);
-        quitButton.setBounds(590, 400, 100, 50);
+        quitButton.setBounds(590, 524, 100, 50);
         quitButton.setFocusable(false);
         add(quitButton);
                       
@@ -75,6 +76,7 @@ public class MainMenu extends JPanel implements ActionListener {
 			startBtn = ImageIO.read(new File("res/FunctionButtons/StartButton.png"));
 			loadBtn = ImageIO.read(new File("res/FunctionButtons/LoadButton.png"));
 			quitBtn = ImageIO.read(new File("res/FunctionButtons/QuitButton.png"));
+			backgroundImg = ImageIO.read(new File("res/Backgrounds/Menu_BG.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -109,6 +111,13 @@ public class MainMenu extends JPanel implements ActionListener {
         } catch (IOException e) {
             e.printStackTrace();
         } 	
+    }
+    
+    public void paintComponent(Graphics g) {
+    	super.paintComponent(g);
+    	
+    	// Draw background
+	    g.drawImage(backgroundImg, 0, 0, null);
     }
 }
 

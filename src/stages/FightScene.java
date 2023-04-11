@@ -26,7 +26,7 @@ import main.GameWindow;
 import warriorAbilities.*;
 import constants.*;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "unused"})
 public class FightScene extends JPanel implements ActionListener{
 	
 	private GameWindow window;
