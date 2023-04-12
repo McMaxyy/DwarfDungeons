@@ -143,6 +143,8 @@ public class Merchant extends JPanel implements ActionListener{
 	        break;
 	    case "HP":
 	        player.increaseHP(5);
+	        if(player.getPlayerHP() > player.getPlayerMaxHP())
+	        	player.setPlayerHP(player.getPlayerMaxHP());
 	        player.playerLoseCoin(hpPrice);
 	        hpPurchased = true;
 	        checkAvailability();        
@@ -189,12 +191,12 @@ public class Merchant extends JPanel implements ActionListener{
 	}
 	
 	private void checkAvailability() {
-		if(player.getPlayerCoins() >= hpPrice && !hpPurchased)
+		if(player.getPlayerCoins() >= hpPrice && !hpPurchased && player.getPlayerHP() < player.getPlayerMaxHP())
 			healthPot.setEnabled(true);
 		else
 			healthPot.setEnabled(false);
 		
-		if(player.getPlayerCoins() >= mpPrice && !mpPurchased)
+		if(player.getPlayerCoins() >= mpPrice && !mpPurchased && player.getMana() < 7)
 			manaIncrease.setEnabled(true);
 		else
 			manaIncrease.setEnabled(false);

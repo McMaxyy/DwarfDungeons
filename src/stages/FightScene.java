@@ -67,7 +67,7 @@ public class FightScene extends JPanel implements ActionListener{
 	private Timer turnTimer = new java.util.Timer();
 	private final int SCALE = 250;
 	private Image basicAtk, decapBtn, swingBtn, riposteBtn, rendBtn, hardenBtn, whirlwindBtn, 
-			returnBtn, pBar, eBar;
+			returnBtn, turnBtn;
 
 	public FightScene(GameWindow window, int levelIndex, int selectedStage){
 		this.window = window;
@@ -143,18 +143,18 @@ public class FightScene extends JPanel implements ActionListener{
             enemyAttack();            
             turnCounter = player.getMana();
             enableActionButtons();
-            lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
+//            lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
             playerAttack = true;
         	break;
         case "Rend":
         	rendLeft = 3;
         	turnCounter -= rend.getAbilityCost();
-        	lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
+//        	lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
         	enableActionButtons();
         	break;
         case "Harden":
             turnCounter -= harden.getAbilityCost();
-            lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
+//            lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
             hardenActive = true;
             playerAttack = true;
             break;
@@ -166,7 +166,7 @@ public class FightScene extends JPanel implements ActionListener{
         case "Turn":
             enemyAttack();       
             turnCounter = player.getMana();      
-            lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
+//            lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
             break;
         case "HP up":
             player.increaseMaxHP();
@@ -209,13 +209,16 @@ public class FightScene extends JPanel implements ActionListener{
 	}
 	
 	public void isEnemyDead() {
-		if(enemy.getEnemyHP() <= 0) {		
+		if(enemy.getEnemyHP() <= 0) {
+			enemyDead = true;
 			rendLeft = 0;
 			player.playerGainCoin(enemy.getCoinValue());
 			
 			// Check if the player's defeated 3 enemies, if not, spawn a new one
 			if(enemiesDefeated != 2 && currentLevel != 1 && 
 				!enemy.isStrongEnemyActive() && !enemy.isBossActive()) {
+				
+				enemyDead = false;
 				
 				lblExp.setText("Gained " + enemy.getExpValue() + " exp");
 				lblExp.setVisible(true);
@@ -248,15 +251,15 @@ public class FightScene extends JPanel implements ActionListener{
 				
 				// Refresh turn counter
 				turnCounter = player.getMana();
-				lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
-				lblTurnCounter.repaint();
+//				lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
+//				lblTurnCounter.repaint();
 							
 				repaint();
 			}
 			// Player has defeated 3 enemies, stage cleared
 			else {
 				turnCounter = 0;
-				lblTurnCounter.setText("Mana: 0/" + player.getMana());	
+//				lblTurnCounter.setText("Mana: 0/" + player.getMana());	
 				lblExp.setText("Gained " + enemy.getExpValue() + " exp");
 				lblExp.setVisible(true);
 				returnButton.setText("<html>" + youWon.replaceAll("\\n", "<br>") + "</html>");
@@ -276,8 +279,7 @@ public class FightScene extends JPanel implements ActionListener{
 				}	
 				gameOver = true;
 				disableActionButtons();
-			}
-			enemyDead = true;
+			}			
 		}
 	}
 	
@@ -480,14 +482,14 @@ public class FightScene extends JPanel implements ActionListener{
 //	    			enableActionButtons();
 	    			abilityID = 0;
 	    			hardenActive = false;
+	    			enemyDead = false;
 	            }
 	        }, 350);	// Timer value in milliseconds        									
-		}	
-		enemyDead = false;
+		}			
 	}
 	
 	private void updateAttack() {
-		lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
+//		lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
         playerAttack();
         playerAttack = true;
 	}
@@ -540,34 +542,28 @@ public class FightScene extends JPanel implements ActionListener{
 		lblPlayerHP = new JLabel();
 		lblPlayerHP.setFont(font2);
 		player.playerShowHP(lblPlayerHP);
-//		lblPlayerHP.setBackground(Color.WHITE);
-//		lblPlayerHP.setOpaque(true);
-		lblPlayerHP.setForeground(Color.WHITE);
+		lblPlayerHP.setForeground(Color.BLACK);
 		lblPlayerHP.setBounds(1010, 270, 100, 30);
 		add(lblPlayerHP);
 		
 		lblEnemyHP = new JLabel();
 		lblEnemyHP.setFont(font2);
 		enemy.enemyShowHP(lblEnemyHP);
-//		lblEnemyHP.setBackground(Color.WHITE);
-//		lblEnemyHP.setOpaque(true);
-		lblEnemyHP.setForeground(Color.WHITE);
+		lblEnemyHP.setForeground(Color.BLACK);
 		lblEnemyHP.setBounds(50, 270, 100, 30);		
 		add(lblEnemyHP);
 		
-		lblTurnCounter = new JLabel();
-		lblTurnCounter.setFont(font2);
-//		lblTurnCounter.setBackground(Color.WHITE);
-//		lblTurnCounter.setOpaque(true);
-		lblTurnCounter.setForeground(Color.BLUE);
-		lblTurnCounter.setBounds(970, 190, 120, 50);
-		lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
-		add(lblTurnCounter);
+//		lblTurnCounter = new JLabel();
+//		lblTurnCounter.setFont(font2);
+//		lblTurnCounter.setForeground(Color.BLUE);
+//		lblTurnCounter.setBounds(970, 190, 120, 50);
+//		lblTurnCounter.setText("Mana: " + turnCounter + "/" + player.getMana());
+//		add(lblTurnCounter);
 		
 		lblExp = new JLabel();
 		lblExp.setFont(font);
 		lblExp.setForeground(Color.WHITE);
-		lblExp.setBounds(540, 420, 200, 60);
+		lblExp.setBounds(540, 420, 250, 60);
 		lblExp.setVisible(false);
 		add(lblExp);
 		
@@ -721,9 +717,9 @@ public class FightScene extends JPanel implements ActionListener{
         
         turnButton = new JButton();
         turnButton.setActionCommand("Turn");
-        turnButton.setText("End turn");
+        turnButton.setIcon(new ImageIcon(turnBtn));
         turnButton.addActionListener(this);
-        turnButton.setBounds(1120, 200, 100, 30);
+        turnButton.setBounds(950, 600, 100, 50);
         add(turnButton);
         
         // Stat level up buttons
@@ -806,7 +802,8 @@ public class FightScene extends JPanel implements ActionListener{
 		    whirlwindBtn = ImageIO.read(new File("res/Buttons/WhirlwindButton.png"));
 		    backgroundImg = ImageIO.read(new File("res/Backgrounds/Fight_BG.png"));
 		    returnBtn = ImageIO.read(new File("res/FunctionButtons/HomeButton.png"));
-		  } catch (Exception ex) {
+		    turnBtn = ImageIO.read(new File("res/FunctionButtons/TurnButton.png"));
+		} catch (Exception ex) {
 			  System.out.println(ex);
 		  }
 	}
@@ -816,6 +813,7 @@ public class FightScene extends JPanel implements ActionListener{
 		Graphics2D g1 = (Graphics2D)g;
 //		g1.setStroke(new BasicStroke(5));
 		float hpProc, hpProc2;
+		int bubbleLoc;
 	    
 	    // Draw background
 	    g.drawImage(backgroundImg, 0, 0, null);
@@ -871,7 +869,8 @@ public class FightScene extends JPanel implements ActionListener{
 	    	}
 	    
 	    //Enemy HP bar
-	    g.drawRect(40, 270, 200, 30);
+	    g.setColor(Color.WHITE);
+	    g.fillRect(40, 270, 200, 30);
 	    hpProc = (float)enemy.getEnemyHP() / (float)enemy.getEnemyMaxHP();
 	    if(hpProc <= 1 && hpProc > 0.95) {
 	    	g.setColor(Color.RED);
@@ -955,8 +954,8 @@ public class FightScene extends JPanel implements ActionListener{
 	    }
 	    
 	  //Player HP bar
-	    g.setColor(Color.BLACK);
-	    g.drawRect(1000, 270, 200, 30);
+	    g.setColor(Color.WHITE);
+	    g.fillRect(1000, 270, 200, 30);
 	    hpProc2 = (float)player.getPlayerHP() / (float)player.getPlayerMaxHP();
 	    if(hpProc2 <= 1 && hpProc2 > 0.95) {
 	    	g.setColor(Color.RED);
@@ -984,7 +983,7 @@ public class FightScene extends JPanel implements ActionListener{
 	    } 
 	    else if(hpProc2 <= 0.7 && hpProc2 > 0.65) {
 	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 11000, 30);
+	    	g.fillRect(1000, 270, 140, 30);
 	    } 
 	    else if(hpProc2 <= 0.65 && hpProc2 > 0.6) {
 	    	g.setColor(Color.RED);
@@ -1024,7 +1023,7 @@ public class FightScene extends JPanel implements ActionListener{
 	    } 
 	    else if(hpProc2 <= 0.2 && hpProc2 > 0.15) {
 	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 1000, 30);
+	    	g.fillRect(1000, 270, 40, 30);
 	    } 
 	    else if(hpProc2 <= 0.15 && hpProc2 > 0.1) {
 	    	g.setColor(Color.RED);
@@ -1040,9 +1039,17 @@ public class FightScene extends JPanel implements ActionListener{
 	    }
 	    
 	    // Mana bubbles
-	    g.setColor(Color.BLACK);
-	    g.drawOval(1000, 220, 20, 20);
-	    g.setColor(Color.BLUE);
-	    g.fillOval(1000, 220, 20, 20);
+	    bubbleLoc = 1000;
+	    for(int i = 1; i <= player.getMana(); i++) {
+	    	g.setColor(Color.BLACK);
+		    g.drawOval(bubbleLoc, 240, 20, 20);
+		    bubbleLoc += 30;
+	    }
+	    bubbleLoc = 1000;
+	    for(int i = 1; i <= turnCounter; i++) {
+	    	g.setColor(new Color(0, 44, 220));
+		    g.fillOval(bubbleLoc, 240, 20, 20);
+		    bubbleLoc += 30;
+	    }
 	}	
 }

@@ -8,7 +8,7 @@ public class Player {
 
 	private static int playerMaxHP = 30;
 	private static int playerHP;
-	private static int playerStrength = 2;
+	private static int playerStrength = 200;
 	private static int mana = 4;
 	private static int playerCoins = 100;
 	private static int playerLevel = 0;
@@ -65,7 +65,7 @@ public class Player {
 	}
 	
 	public void increaseMaxHP() {
-		playerMaxHP += 2;
+		playerMaxHP += 5;
 		playerHP = playerMaxHP;
 	}
 	

@@ -126,8 +126,10 @@ public class LevelSelector extends JPanel implements ActionListener{
 				levelSix2.setEnabled(true);
 				right2 = false;
 			}
+			break;
 		case 7:
 			bossLevel.setEnabled(true);
+			break;
 		}		
 		
         if(currentLevel > 1)
