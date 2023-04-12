@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Player {
 
-	private static int playerMaxHP = 100;
+	private static int playerMaxHP = 30;
 	private static int playerHP;
 	private static int playerStrength = 2;
 	private static int mana = 4;
@@ -18,13 +18,14 @@ public class Player {
 	private static int levelCap = 10;
 	private static int unlockedStage = 1;
 	private static int tempStr;
+	private static int merchantVisits;
 	protected JLabel lblPlayerHP;
 	private Random rand = new Random();
 	private static JLabel playerIcon = new JLabel();
-	int x, y, z;
+	private int x, y, z;
 	
 	public void playerShowHP(JLabel lblPlayerHP) {
-		lblPlayerHP.setText("Player HP: " + playerHP);
+		lblPlayerHP.setText("HP: " + playerHP);
 	}
 	
 	public void playerLoseHP(int dmg) {
@@ -41,6 +42,14 @@ public class Player {
 	
 	public void increaseMana(int x) {
 		mana += x;
+	}
+	
+	public void increaseMerchantVisits() {
+		merchantVisits++;
+	}
+	
+	public void decreaseMerchantVisits() {
+		merchantVisits--;
 	}
 	
 	public boolean playerAttack() {
@@ -211,6 +220,14 @@ public class Player {
 
 	public int getTempStr() {
 		return tempStr;
+	}
+
+	public void setMerchantVisits(int merchantVisits) {
+		Player.merchantVisits = merchantVisits;
+	}
+
+	public int getMerchantVisits() {
+		return merchantVisits;
 	}
 	
 }

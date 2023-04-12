@@ -1,10 +1,4 @@
 /stages/
-/HomeButton.png
-/LoadButton.png
-/Original files/
-/QuitButton.png
-/ReturnButton.png
-/SaveButton.png
-/StartButton.png
-/FunctionButtons/
-/Backgrounds/
+/constants/
+/HP100.png
+/HP50.png

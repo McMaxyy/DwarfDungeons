@@ -53,6 +53,14 @@ public class LevelSelector extends JPanel implements ActionListener{
 		initComponents();
 		setStage();
 		setButtons();
+		
+		if(player.getUnlockedStage() > 1)
+			stageOne.setEnabled(false);
+		
+		if(levelIndex > 1) {
+			stageOne.setEnabled(false);
+			stageTwo.setEnabled(false);
+		}
         
 		switch(levelIndex) {
 		case 1:
@@ -694,6 +702,7 @@ public class LevelSelector extends JPanel implements ActionListener{
 			break;
 		case "Stage1":
 			selectedStage = 1;
+			player.setMerchantVisits(0);
 			if(!levelOne.isVisible()) {
 				setStage();
 				setButtons();
@@ -704,11 +713,13 @@ public class LevelSelector extends JPanel implements ActionListener{
 				hideLevels();
 			break;
 		case "Stage2":
-			selectedStage = 1;
+			selectedStage = 2;
 			setStage();
 			setButtons();
 			levelOne.setEnabled(true);
 			showLevels();
+			stageOne.setEnabled(false);
+			stageTwo.setEnabled(false);			
 			break;
 		case "Level One":
 			levelIndex = 1;
@@ -766,6 +777,7 @@ public class LevelSelector extends JPanel implements ActionListener{
 				right1 = true;
 			else if(e.getSource() == levelThree3)
 				left2 = true;
+			player.increaseMerchantVisits();
 			window.showMerchant(levelIndex);
 			break;
 		case "Bonfire":

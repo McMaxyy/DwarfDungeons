@@ -21,6 +21,8 @@ public class Bonfire extends JPanel implements ActionListener{
 		this.window = window;
 		currentLevel = levelIndex;
 		
+		setLayout(null);
+		
 		initComponents();
 	}
 

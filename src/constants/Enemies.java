@@ -21,7 +21,7 @@ public class Enemies {
 	private Entities entity = new Entities();
 	
 	public void enemyShowHP(JLabel lblEnemyHP) {
-		lblEnemyHP.setText("Enemy HP: " + String.valueOf(getEnemyHP()));
+		lblEnemyHP.setText("HP: " + String.valueOf(getEnemyHP()));
 	}
 	
 	public void enemyLoseHP(int dmg) {
@@ -29,7 +29,7 @@ public class Enemies {
 	}
 	
 	public void enemyOne() {
-		if(currentStage == 1) {
+		if(currentStage == 1 || currentStage == 2) {
 			enemyName = "Baby spider";
 			enemyIdle = entity.setEnemyStats("res/EnemyAnimations/IdleSpoder.gif");
 			enemyAttack = entity.setEnemyStats("res/EnemyAnimations/AttackSpoder.gif");
@@ -42,7 +42,7 @@ public class Enemies {
 	}
 	
 	public void enemyTwo() {
-		if(currentStage == 1) {
+		if(currentStage == 1 || currentStage == 2) {
 			enemyName = "Schnopi";
 			enemyIdle = entity.setEnemyStats("res/EnemyAnimations/IdleGoblin.gif");
 			enemyAttack = entity.setEnemyStats("res/EnemyAnimations/AttackGoblin.gif");
@@ -55,7 +55,7 @@ public class Enemies {
 	}
 	
 	public void strongEnemy() {
-		if(currentStage == 1) {
+		if(currentStage == 1 || currentStage == 2) {
 			enemyName = "Bigdik";
 			enemyIdle = entity.setEnemyStats("res/chr.png");
 			enemyAttack = entity.setEnemyStats("res/chr.png");
