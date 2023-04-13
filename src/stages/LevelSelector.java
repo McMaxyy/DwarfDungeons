@@ -60,6 +60,7 @@ public class LevelSelector extends JPanel implements ActionListener{
 		if(levelIndex > 1) {
 			stageOne.setEnabled(false);
 			stageTwo.setEnabled(false);
+			stageThree.setEnabled(false);
 		}
         
 		switch(levelIndex) {
@@ -187,6 +188,17 @@ public class LevelSelector extends JPanel implements ActionListener{
         stageTwo.addActionListener(this);
         stageTwo.setBounds(50, 300, 100, 50);
         add(stageTwo); 
+        
+        stageThree = new JButton();
+        if(player.getUnlockedStage() >= 3)
+        	stageThree.setVisible(true);
+        else
+        	stageThree.setVisible(false);
+        stageThree.setActionCommand("Stage3");
+        stageThree.setText("Stage 3");
+        stageThree.addActionListener(this);
+        stageThree.setBounds(50, 400, 100, 50);
+        add(stageThree); 
         
         levelOne = new JButton();
         levelOne.setEnabled(false);
@@ -723,8 +735,18 @@ public class LevelSelector extends JPanel implements ActionListener{
 			stageOne.setEnabled(false);
 			stageTwo.setEnabled(false);			
 			break;
+		case "Stage3":
+			selectedStage = 3;
+			setStage();
+			setButtons();
+			levelOne.setEnabled(true);
+			showLevels();
+			stageOne.setEnabled(false);
+			stageTwo.setEnabled(false);	
+			stageThree.setEnabled(false);
+			break;
 		case "Level One":
-			levelIndex = 1;
+			levelIndex = 1;			
 			window.showFightScene(levelIndex, selectedStage); 
 			break;
 		case "Fight":

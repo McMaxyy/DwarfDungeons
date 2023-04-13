@@ -8,13 +8,13 @@ public class Player {
 
 	private static int playerMaxHP = 30;
 	private static int playerHP;
-	private static int playerStrength = 200;
+	private static int playerStrength = 2;
 	private static int mana = 4;
 	private static int playerCoins = 100;
 	private static int playerLevel = 0;
 	private static int playerExp = 0;
 	private static int ability1ID, ability2ID, ability3ID;
-	private final int attackButtonCost = 1;
+	
 	private static int levelCap = 10;
 	private static int unlockedStage = 1;
 	private static int tempStr;
@@ -101,16 +101,16 @@ public class Player {
 		tempStr = 0;
 		mana = 4;
 		playerHP = playerMaxHP;
-		x = rand.nextInt(1, 7);
-		y = rand.nextInt(1, 7);
-		z = rand.nextInt(1, 7);
+		x = rand.nextInt(1, 9);
+		y = rand.nextInt(1, 9);
+		z = rand.nextInt(1, 9);
 		ability1ID = x;
 		while(y == x) {
-			y = rand.nextInt(1, 7);
+			y = rand.nextInt(1, 9);
 		}
 		ability2ID = y;
 		while (z == y || z == x)
-			z = rand.nextInt(1, 7);
+			z = rand.nextInt(1, 9);
 		ability3ID = z;
 	}
 
@@ -140,10 +140,6 @@ public class Player {
 
 	public JLabel getPlayerIcon() {
 		return playerIcon;
-	}
-
-	public int getAttackButtonCost() {
-		return attackButtonCost;
 	}
 
 	public int getPlayerCoins() {

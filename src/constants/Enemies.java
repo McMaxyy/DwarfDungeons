@@ -18,7 +18,7 @@ public class Enemies {
 	private Image enemyIdle, enemyAttack;
 	protected JLabel lblEnemyHP;
 	private Random rand = new Random();
-	private Entities entity = new Entities();
+	private Storage entity = new Storage();
 	
 	public void enemyShowHP(JLabel lblEnemyHP) {
 		lblEnemyHP.setText("HP: " + String.valueOf(getEnemyHP()));
@@ -29,10 +29,10 @@ public class Enemies {
 	}
 	
 	public void enemyOne() {
-		if(currentStage == 1 || currentStage == 2) {
+		if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
 			enemyName = "Baby spider";
-			enemyIdle = entity.setEnemyStats("res/EnemyAnimations/IdleSpoder.gif");
-			enemyAttack = entity.setEnemyStats("res/EnemyAnimations/AttackSpoder.gif");
+			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
+			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
 			enemyMaxHP = 20;
 			enemyHP = enemyMaxHP;
 			enemyStrength = 2;
@@ -42,10 +42,10 @@ public class Enemies {
 	}
 	
 	public void enemyTwo() {
-		if(currentStage == 1 || currentStage == 2) {
+		if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
 			enemyName = "Schnopi";
-			enemyIdle = entity.setEnemyStats("res/EnemyAnimations/IdleGoblin.gif");
-			enemyAttack = entity.setEnemyStats("res/EnemyAnimations/AttackGoblin.gif");
+			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
+			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
 			enemyMaxHP = 30;
 			enemyHP = enemyMaxHP;
 			enemyStrength = 4;
@@ -55,15 +55,28 @@ public class Enemies {
 	}
 	
 	public void strongEnemy() {
-		if(currentStage == 1 || currentStage == 2) {
+		if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
 			enemyName = "Bigdik";
-			enemyIdle = entity.setEnemyStats("res/chr.png");
-			enemyAttack = entity.setEnemyStats("res/chr.png");
+			enemyIdle = entity.setAnimation("res/chr.png");
+			enemyAttack = entity.setAnimation("res/chr.png");
 			enemyMaxHP = 50;
 			enemyHP = enemyMaxHP;
 			enemyStrength = 6;
 			expValue = 15;
 			coinValue = 15;
+		}
+	}
+	
+	public void boss() {
+		if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
+			enemyName = "Smoldik";
+			enemyIdle = entity.setAnimation("res/dragun.png");
+			enemyAttack = entity.setAnimation("res/dragun.png");
+			enemyMaxHP = 80;
+			enemyHP = enemyMaxHP;
+			enemyStrength = 6;
+			expValue = 25;
+			coinValue = 30;
 		}
 	}
 	

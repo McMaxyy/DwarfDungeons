@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import constants.Player;
-import constants.Weapons;
+import constants.Weapon;
 import main.GameWindow;
 
 @SuppressWarnings("serial")
@@ -18,7 +18,7 @@ public class Merchant extends JPanel implements ActionListener{
 	
 	private GameWindow window;
 	private Player player = new Player();
-	private Weapons weapon = new Weapons();
+	private Weapon weapon = new Weapon();
 	private JButton healthPot, ability1, active1, active2, active3, 
 			returnButton, manaIncrease, upgradeWeapon;
 	private JLabel coins;
@@ -28,6 +28,8 @@ public class Merchant extends JPanel implements ActionListener{
 	private float newPrice;
 	private Random rand = new Random();
 	private boolean playerPurchased, hpPurchased, mpPurchased, weaponPurchased, abPurchased;
+	private int[] abilityIds = {player.getAbility1ID(), player.getAbility2ID(), player.getAbility3ID()};
+	private String[] abilities = new String[3];
 	
 	public Merchant(GameWindow window, int levelIndex){
 		this.window = window;
@@ -54,68 +56,38 @@ public class Merchant extends JPanel implements ActionListener{
 			break;
 		}
 		
-		switch(player.getAbility1ID()) {
-		case 1:
-			a1 = "Swing";
-			break;
-		case 2:
-			a1 = "Decapitate";
-			break;
-		case 3:
-			a1 = "Riposte";
-			break;
-		case 4:
-			a1 = "Rend";
-			break;
-		case 5:
-			a1 = "Harden";
-			break;
-		case 6:
-			a1 = "Whirlwind";
-			break;
+		for (int i = 0; i < 3; i++) {
+		    switch (abilityIds[i]) {
+		        case 1:
+		            abilities[i] = "Swing";
+		            break;
+		        case 2:
+		            abilities[i] = "Decapitate";
+		            break;
+		        case 3:
+		            abilities[i] = "Riposte";
+		            break;
+		        case 4:
+		            abilities[i] = "Rend";
+		            break;
+		        case 5:
+		            abilities[i] = "Harden";
+		            break;
+		        case 6:
+		            abilities[i] = "Whirlwind";
+		            break;
+		        case 7:
+		            abilities[i] = "Weaken";
+		            break;
+		        case 8:
+		            abilities[i] = "Stun";
+		            break;
+		    }
 		}
-		
-		switch(player.getAbility2ID()) {
-		case 1:
-			a2 = "Swing";
-			break;
-		case 2:
-			a2 = "Decapitate";
-			break;
-		case 3:
-			a2 = "Riposte";
-			break;
-		case 4:
-			a2 = "Rend";
-			break;
-		case 5:
-			a2 = "Harden";
-			break;
-		case 6:
-			a2 = "Whirlwind";
-			break;
-		}
-		
-		switch(player.getAbility3ID()) {
-		case 1:
-			a3 = "Swing";
-			break;
-		case 2:
-			a3 = "Decapitate";
-			break;
-		case 3:
-			a3 = "Riposte";
-			break;
-		case 4:
-			a3 = "Rend";
-			break;
-		case 5:
-			a3 = "Harden";
-			break;
-		case 6:
-			a3 = "Whirlwind";
-			break;
-		}
+
+		a1 = abilities[0];
+		a2 = abilities[1];
+		a3 = abilities[2];		
 		
 		setLayout(null);
 		
@@ -252,6 +224,12 @@ public class Merchant extends JPanel implements ActionListener{
 		case "Whirlwind":
 			abilityID = 6;
 			break;
+		case "Weaken":
+			abilityID = 7;
+			break;
+		case "Stun":
+			abilityID = 8;
+			break;
 		}
 	}
 	
@@ -274,6 +252,12 @@ public class Merchant extends JPanel implements ActionListener{
 			break;
 		case 6:
 			abilityText = "Whirlwind";
+			break;
+		case 7:
+			abilityText = "Weaken";
+			break;
+		case 8:
+			abilityText = "Stun";
 			break;
 		}
 	}

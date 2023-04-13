@@ -1,10 +1,7 @@
 package stages;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +19,7 @@ import javax.swing.SwingConstants;
 import com.google.gson.Gson;
 
 import constants.Player;
+import constants.Storage;
 import main.GameWindow;
 
 @SuppressWarnings("serial")
@@ -32,14 +30,12 @@ public class MainMenu extends JPanel implements ActionListener {
     private Player player = new Player();
     private Image startBtn, loadBtn, quitBtn, backgroundImg;
     private JButton loadFailed, startButton, loadButton, quitButton, yesLoad, noLoad;
-    private Font font;
     private JLabel loadGame;
 
     public MainMenu(GameWindow window) {
         this.window = window;
         
         loadIcons();
-        createFont();
         
         setLayout(null); 
         
@@ -88,7 +84,7 @@ public class MainMenu extends JPanel implements ActionListener {
         loadFailed.setText("No save files found");
         loadFailed.setActionCommand("Failed");
         loadFailed.addActionListener(this);
-        loadFailed.setFont(font);
+        loadFailed.setFont(Storage.getInstance().font);
         loadFailed.setHorizontalAlignment(SwingConstants.CENTER);
         loadFailed.setVerticalAlignment(SwingConstants.CENTER);
         loadFailed.setBounds(500, 350, 280, 100);
@@ -103,7 +99,7 @@ public class MainMenu extends JPanel implements ActionListener {
         yesLoad.setText("Yes");
         yesLoad.setActionCommand("Yes");
         yesLoad.addActionListener(this);
-        yesLoad.setFont(font);
+        yesLoad.setFont(Storage.getInstance().font);
         yesLoad.setHorizontalAlignment(SwingConstants.CENTER);
         yesLoad.setVerticalAlignment(SwingConstants.CENTER);
         yesLoad.setBorderPainted(false);
@@ -119,7 +115,7 @@ public class MainMenu extends JPanel implements ActionListener {
         noLoad.setText("No");
         noLoad.setActionCommand("No");
         noLoad.addActionListener(this);
-        noLoad.setFont(font);
+        noLoad.setFont(Storage.getInstance().font);
         noLoad.setHorizontalAlignment(SwingConstants.CENTER);
         noLoad.setVerticalAlignment(SwingConstants.CENTER);
         noLoad.setBorderPainted(false);
@@ -129,7 +125,7 @@ public class MainMenu extends JPanel implements ActionListener {
         loadGame = new JLabel();
         loadGame.setVisible(false);
         loadGame.setText("Load game?");
-        loadGame.setFont(font);
+        loadGame.setFont(Storage.getInstance().font);
         loadGame.setForeground(Color.WHITE);
         loadGame.setHorizontalAlignment(SwingConstants.CENTER);
         loadGame.setVerticalAlignment(SwingConstants.CENTER);
@@ -146,20 +142,6 @@ public class MainMenu extends JPanel implements ActionListener {
 			backgroundImg = ImageIO.read(new File("res/Backgrounds/Menu_BG.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-    
-    private void createFont() {
-		try {
-		    //create the font to use. Specify the size!
-		    font = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(20f);		
-		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		    //register the font
-		    ge.registerFont(font);
-		} catch (IOException e) {
-		    e.printStackTrace();
-		} catch(FontFormatException e) {
-		    e.printStackTrace();
 		}
 	}
 
@@ -214,6 +196,8 @@ public class MainMenu extends JPanel implements ActionListener {
             player.setPlayerLevel(intArray[3]);
             player.setPlayerExp(intArray[4]);
             player.setLevelCap(intArray[5]);
+            Storage.getInstance().ironAxe.setIsOwned(intArray[6]);
+            
             loadGame.setVisible(true);
         	yesLoad.setVisible(true);
         	noLoad.setVisible(true);

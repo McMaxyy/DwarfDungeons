@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import com.google.gson.Gson;
 
 import constants.Player;
+import constants.Storage;
 import main.GameWindow;
 
 @SuppressWarnings("serial")
@@ -91,13 +92,14 @@ public class HomeScreen extends JPanel implements ActionListener {
 	}
 
 	private void saveGame() {
-		int[] saveS = new int[6];
+		int[] saveS = new int[7];
 		saveS[0] = player.getPlayerMaxHP();
 		saveS[1] = player.getPlayerStrength();
 		saveS[2] = player.getPlayerCoins();
 		saveS[3] = player.getPlayerLevel();
 		saveS[4] = player.getPlayerExp();
 		saveS[5] = player.getLevelCap();
+		saveS[6] = Storage.getInstance().ironAxe.getIsOwned();
 		
 		try (FileWriter writer = new FileWriter("savegame.json")) {
             gson.toJson(saveS, writer);
