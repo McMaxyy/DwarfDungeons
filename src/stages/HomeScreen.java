@@ -25,16 +25,26 @@ public class HomeScreen extends JPanel implements ActionListener {
     private Player player = new Player();
     Gson gson = new Gson();
     private Image returnBtn, quitBtn, saveBtn;
+    private JButton menuButton, quitButton, saveButton, levelSelectButton, slotMachineButton, 
+    		storeButton, bagButton;
+    private Storage s = Storage.getInstance();
+    private int xLoc = 900, yLoc = 400, itemsInRow = 0;
+    private JButton bag[] = new JButton[s.steelAxe.getID()];
+    private boolean bagVisible = false;
 
     public HomeScreen(GameWindow window) {
-        this.window = window;
-        
-        loadIcons();
+        this.window = window;        
         player.setUnlockedStage(1);
         
-        setLayout(null);
+        setLayout(null); 
         
-        JButton menuButton = new JButton();  
+        loadIcons();
+        initComponents();
+        checkInventory();
+    }
+
+    private void initComponents() {
+    	menuButton = new JButton();  
         menuButton.setIcon(new ImageIcon(returnBtn));
         menuButton.setActionCommand("Return");
         menuButton.addActionListener(this);
@@ -45,7 +55,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         menuButton.setBounds(25, 25, 100, 50);
         add(menuButton);
               
-        JButton quitButton = new JButton();
+        quitButton = new JButton();
         quitButton.setIcon(new ImageIcon(quitBtn));
         quitButton.setActionCommand("Quit");
         quitButton.setFocusable(false);
@@ -56,10 +66,11 @@ public class HomeScreen extends JPanel implements ActionListener {
         quitButton.setBounds(25, 80, 100, 50);
         add(quitButton);
         
-        JButton saveButton = new JButton();
+        saveButton = new JButton();
         saveButton.setIcon(new ImageIcon(saveBtn));
         saveButton.setActionCommand("Save");
         saveButton.addActionListener(this);
+        saveButton.setFocusable(false);
         saveButton.setOpaque(false);
         saveButton.setContentAreaFilled(false);
         saveButton.setBorderPainted(false);
@@ -67,21 +78,85 @@ public class HomeScreen extends JPanel implements ActionListener {
         saveButton.setBounds(25, 135, 100, 50);
         add(saveButton);
         
-        JButton levelSelectButton = new JButton("Levels");
+        levelSelectButton = new JButton("Levels");
         levelSelectButton.setActionCommand("Levels");
+        levelSelectButton.setFocusable(false);
         levelSelectButton.addActionListener(this);
         levelSelectButton.setBounds(200, 200, 100, 50);
         add(levelSelectButton);
         
-        JButton slotMachineButton = new JButton("Slot");
+        slotMachineButton = new JButton("Slot");
         slotMachineButton.setActionCommand("Slot");
+        slotMachineButton.setFocusable(false);
         slotMachineButton.addActionListener(this);
         slotMachineButton.setBounds(200, 300, 100, 50);
         add(slotMachineButton);
-       
-    }
+        
+        storeButton = new JButton("Store");
+        storeButton.setActionCommand("Store");
+        storeButton.setFocusable(false);
+        storeButton.addActionListener(this);
+        storeButton.setBounds(200, 400, 100, 50);
+        add(storeButton);	
+        
+        bagButton = new JButton("Bag");
+        bagButton.setActionCommand("Bag");
+        bagButton.setFocusable(false);
+        bagButton.addActionListener(this);
+        bagButton.setBounds(900, 300, 100, 50);
+        add(bagButton);	
+	}
 
-    private void loadIcons() {
+    private void checkInventory() {
+		if(s.ironAxe.getIsOwned() > 0)
+			createInventory(s.ironAxe.getID());
+		if(s.steelAxe.getIsOwned() > 0)
+			createInventory(s.steelAxe.getID());	
+	}
+	
+	private void createInventory(int x) {
+		String temp = "item";
+		bag[x - 1] = new JButton();
+		bag[x - 1].setFocusable(false);
+		bag[x - 1].setVisible(false);
+		switch(x) {
+		case 1:
+			bag[x - 1].setText("IA");
+			break;
+		case 2:
+			bag[x - 1].setText("SA");
+			break;
+		}
+		bag[x - 1].setActionCommand(temp + x);
+		bag[x - 1].addActionListener(this);
+		bag[x - 1].setBounds(xLoc, yLoc, 50, 50);
+		add(bag[x - 1]);	
+		xLoc += 60;
+		itemsInRow++;
+		if(itemsInRow == 4) {
+			xLoc = 100;
+			yLoc += 60;
+			itemsInRow = 0;
+		}			
+	}
+	
+	private void showInventory() {
+		for(int i = 0; i < bag.length; i++) {
+			if(bag[i] != null)
+				bag[i].setVisible(true);
+		}
+		bagVisible = true;
+	}
+	
+	private void hideInventory() {
+		for(int i = 0; i < bag.length; i++) {
+			if(bag[i] != null)
+				bag[i].setVisible(false);
+		}
+		bagVisible = false;
+	}
+    
+	private void loadIcons() {
 		try {
 			returnBtn = ImageIO.read(new File("res/FunctionButtons/ReturnButton.png"));
 			saveBtn = ImageIO.read(new File("res/FunctionButtons/SaveButton.png"));
@@ -99,7 +174,7 @@ public class HomeScreen extends JPanel implements ActionListener {
 		saveS[3] = player.getPlayerLevel();
 		saveS[4] = player.getPlayerExp();
 		saveS[5] = player.getLevelCap();
-		saveS[6] = Storage.getInstance().ironAxe.getIsOwned();
+		saveS[6] = s.ironAxe.getIsOwned();
 		
 		try (FileWriter writer = new FileWriter("savegame.json")) {
             gson.toJson(saveS, writer);
@@ -111,20 +186,38 @@ public class HomeScreen extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-        if (command.equals("Return")) {
-        	window.showMainMenu();
-        }
-        else if (command.equals("Save")) {
+        
+        switch (command) {
+        case "Return":
+            window.showMainMenu();
+            break;
+        case "Save":
             saveGame();
-        }
-        else if (command.equals("Quit")) {
+            break;
+        case "Quit":
             System.exit(0);
-        }
-        else if (command.equals("Levels")) {
+            break;
+        case "Levels":
             window.showLevelSelector(1);
-        }
-        else if (command.equals("Slot")) {
+            break;
+        case "Slot":
             window.showSlotMachine();
+            break;
+        case "Store":
+        	window.showStore();
+        	break;
+        case "Bag":
+        	if(!bagVisible)
+        		showInventory();
+        	else
+        		hideInventory();
+        	break;
+        case "item1":
+            player.setActiveWeapon(1);
+            break;
+        case "item2":
+            player.setActiveWeapon(2);
+            break;
         }
     }
 }

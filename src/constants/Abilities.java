@@ -48,6 +48,7 @@ class Swing extends Abilities{
 
 class Decapitate extends Abilities{
 	public Decapitate() {
+		setAbilityName("Decapitate");
 		setAttackPower(10);
 		setAbilityCost(4);
 		setID(2);
@@ -56,7 +57,7 @@ class Decapitate extends Abilities{
 
 class Riposte extends Abilities{
 	public Riposte() {
-		setAbilityName("Decapitate");
+		setAbilityName("Riposte");
 		setAttackPower(4);
 		setAbilityCost(2);
 		setID(3);

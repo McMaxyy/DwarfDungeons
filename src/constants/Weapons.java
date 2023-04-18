@@ -1,7 +1,7 @@
 package constants;
 
 public abstract class Weapons {
-	private int attackPower, ID, isOwned;
+	private int attackPower, ID, isOwned, coinSellValue, coinValue;
 	private String weaponName;
 	
 	public int getAttackPower() {
@@ -27,6 +27,18 @@ public abstract class Weapons {
 	}
 	public void setIsOwned(int isOwned) {
 		this.isOwned = isOwned;
+	}
+	public int getCoinValue() {
+		return coinValue;
+	}
+	public void setCoinValue(int coinValue) {
+		this.coinValue = coinValue;
+	}
+	public int getCoinSellValue() {
+		return coinSellValue;
+	}
+	public void setCoinSellValue(int coinSellValue) {
+		this.coinSellValue = coinSellValue;
 	}	
 }
 
@@ -35,6 +47,19 @@ class IronAxe extends Weapons{
 		setWeaponName("Iron Axe");
 		setAttackPower(1);
 		setID(1);
-		setIsOwned(0);
+		setIsOwned(1);
+		setCoinValue(20);
+		setCoinSellValue(15);
+	}
+}
+
+class SteelAxe extends Weapons{
+	public SteelAxe() {
+		setWeaponName("Steel Axe");
+		setAttackPower(3);
+		setID(2);
+		setIsOwned(1);
+		setCoinValue(40);
+		setCoinSellValue(30);
 	}
 }

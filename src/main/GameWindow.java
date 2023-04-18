@@ -15,6 +15,7 @@ public class GameWindow{
     private static SlotMachine slotMachine;
     private static Merchant merchant;
     private static Bonfire bonfire;
+    private static Store store;
     JFrame frame = new JFrame("Lemony Squeeze");
 
     public GameWindow() {
@@ -71,6 +72,12 @@ public class GameWindow{
     public void showBonfire(int levelIndex) {
     	bonfire = new Bonfire(this, levelIndex);
     	frame.setContentPane(bonfire);
+    	frame.revalidate();
+    }
+    
+    public void showStore() {
+    	store = new Store(this);
+    	frame.setContentPane(store);
     	frame.revalidate();
     }
 

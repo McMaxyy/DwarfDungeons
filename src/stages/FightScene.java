@@ -1,16 +1,10 @@
 package stages;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.Random;
@@ -30,13 +24,14 @@ import javax.swing.JLabel;
 import main.GameWindow;
 import constants.*;
 
-@SuppressWarnings({"serial", "unused"})
+@SuppressWarnings({"serial"})
 public class FightScene extends JPanel implements ActionListener{
 	
 	private GameWindow window;
 	private Player player = new Player();
 	private Enemies enemy = new Enemies();
 	private Weapon weapon = new Weapon();
+	private Storage s = Storage.getInstance();
 	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblExp, lblLevelUp, lblEnemyName, lblReward;
 	private JButton returnButton, attackButton, menuButton, turnButton, levelUpHPButton, levelUpStrButton, 
 			ability1, ability2, ability3;
@@ -49,11 +44,9 @@ public class FightScene extends JPanel implements ActionListener{
 	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated, rendLeft, weakLeft;
 	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack, hardenActive,
 			enemyDead, stunActive, bossActive;
-	private Font f = new Font("Serif", Font.PLAIN, 18);
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
 	private Image pImg, wImg, pAttackImg, wAttackImg, eImg, eAttackImg, backgroundImg;
 	private Timer t = new java.util.Timer();
-	private Timer turnTimer = new java.util.Timer();
 	private final int SCALE = 250;
 	private Image basicAtk, decapBtn, swingBtn, riposteBtn, rendBtn, hardenBtn, whirlwindBtn, 
 			returnBtn, turnBtn;
@@ -82,12 +75,18 @@ public class FightScene extends JPanel implements ActionListener{
 		
 		if(currentLevel == 1 && currentStage == 1) {
 			player.playerOne();
-			if(Storage.getInstance().ironAxe.getIsOwned() == 1)
-				weapon.weaponOne(Storage.getInstance().ironAxe.getAttackPower());
+			if(player.getActiveWeapon() > 0)
+				switch(player.getActiveWeapon()) {
+				case 1:
+					weapon.weaponOne(s.ironAxe.getAttackPower());
+					break;
+				case 2:
+					weapon.weaponOne(s.steelAxe.getAttackPower());
+					break;
+				}
 			else
 				weapon.noWeapon();
 		}
-		
 		setLayout(null);
 		
 		loadImages();
@@ -117,22 +116,22 @@ public class FightScene extends JPanel implements ActionListener{
             window.showLevelSelector(currentLevel);
             break;
         case "Attack":
-            turnCounter -= Storage.getInstance().getAttackButtonCost();            
+            turnCounter -= s.getAttackButtonCost();            
             doAttack();
             break;
         case "Swing":
-        	abilityID = Storage.getInstance().overheadSwing.getID();
-        	turnCounter -= Storage.getInstance().overheadSwing.getAbilityCost();
+        	abilityID = s.overheadSwing.getID();
+        	turnCounter -= s.overheadSwing.getAbilityCost();
         	doAttack();
         	break;
         case "Decapitate":
-        	abilityID = Storage.getInstance().decapitate.getID();
-        	turnCounter -= Storage.getInstance().decapitate.getAbilityCost();
+        	abilityID = s.decapitate.getID();
+        	turnCounter -= s.decapitate.getAbilityCost();
         	doAttack();
         	break;
         case "Riposte":
         	if(rand.nextInt(4) != 0)
-        		abilityID = Storage.getInstance().riposte.getID();
+        		abilityID = s.riposte.getID();
         	else
         		riposteActive = true;
             enemyAttack();            
@@ -142,24 +141,24 @@ public class FightScene extends JPanel implements ActionListener{
         	break;
         case "Rend":
         	rendLeft = 3;
-        	turnCounter -= Storage.getInstance().rend.getAbilityCost();
+        	turnCounter -= s.rend.getAbilityCost();
         	enableActionButtons();
         	playerAttack = true;
         	break;
         case "Harden":
-            turnCounter -= Storage.getInstance().harden.getAbilityCost();
+            turnCounter -= s.harden.getAbilityCost();
             hardenActive = true;
             playerAttack = true;
             break;
         case "Whirlwind":
-        	abilityID = Storage.getInstance().whirlwind.getID();
-            turnCounter -= Storage.getInstance().whirlwind.getAbilityCost();
+        	abilityID = s.whirlwind.getID();
+            turnCounter -= s.whirlwind.getAbilityCost();
             doAttack();
             break;
         case "Weaken":
         	weakLeft = 2;
         	playerAttack = true;
-        	turnCounter -= Storage.getInstance().weaken.getAbilityCost();
+        	turnCounter -= s.weaken.getAbilityCost();
         	enableActionButtons();
         	break;
         case "Stun":
@@ -169,7 +168,7 @@ public class FightScene extends JPanel implements ActionListener{
         	}
         	else
         		lblDamageDealt.setText("Stun failed");
-        	turnCounter -= Storage.getInstance().weaken.getAbilityCost();
+        	turnCounter -= s.weaken.getAbilityCost();
         	enableActionButtons();
         	break;
         case "Turn":
@@ -213,6 +212,20 @@ public class FightScene extends JPanel implements ActionListener{
 				button.setEnabled(false);
 			lblDamageDealt.setVisible(false);
 			gameOver = true;
+			if(player.getActiveWeapon() > 0) {
+				switch(player.getActiveWeapon()) {
+				case 1:
+					s.ironAxe.setIsOwned(s.ironAxe.getIsOwned() - 1);
+					lblReward.setText("You lost " + s.ironAxe.getWeaponName());
+					break;
+				case 2:
+					s.steelAxe.setIsOwned(s.steelAxe.getIsOwned() - 1);
+					lblReward.setText("You lost " + s.steelAxe.getWeaponName());
+					break;
+				}
+				player.setActiveWeapon(0);
+				lblReward.setVisible(true);
+			}
 		}			
 	}
 	
@@ -220,7 +233,16 @@ public class FightScene extends JPanel implements ActionListener{
 		if(enemy.getEnemyHP() <= 0) {
 			enemyDead = true;
 			rendLeft = 0;
-			player.playerGainCoin(enemy.getCoinValue());
+			
+			// Normal enemy rewards
+			if(rand.nextInt(10) == 0 && !bossActive) {				
+				s.ironAxe.setIsOwned(s.ironAxe.getIsOwned() + 1);
+				lblReward.setText("You got " + s.ironAxe.getWeaponName());
+			}
+			else {
+				player.playerGainCoin(enemy.getCoinValue());
+				lblReward.setText("You got " + enemy.getCoinValue() + " coins");
+			}
 			
 			// Check if the player's defeated 3 enemies, if not, spawn a new one
 			if(enemiesDefeated != 2 && currentLevel != 1 && 
@@ -228,7 +250,6 @@ public class FightScene extends JPanel implements ActionListener{
 				
 				enemyDead = false;
 				
-				lblReward.setText("You got " + enemy.getCoinValue() + " coins");
 				lblReward.setVisible(true);
 				lblExp.setText("Gained " + enemy.getExpValue() + " exp");
 				lblExp.setVisible(true);
@@ -248,6 +269,7 @@ public class FightScene extends JPanel implements ActionListener{
 					enemy.enemyTwo();
 				
 				// Refresh enemy HP bar & load animations for new enemy
+				lblEnemyName.setText(enemy.getEnemyName());
 				loadAnimations();
 				enemy.enemyShowHP(lblEnemyHP);
 				lblEnemyHP.repaint();	
@@ -270,12 +292,16 @@ public class FightScene extends JPanel implements ActionListener{
 				turnCounter = 0;
 				lblExp.setText("Gained " + enemy.getExpValue() + " exp");
 				lblExp.setVisible(true);
-				lblReward.setText("You got " + enemy.getCoinValue() + " coins");
-				lblReward.setVisible(true);
-				if(bossActive) {
-					Storage.getInstance().ironAxe.setIsOwned(1);
-					lblReward.setText("You got " + Storage.getInstance().ironAxe.getWeaponName());
+				
+				// Boss rewards
+				if(bossActive)
+					lblReward.setText("You got " + enemy.getCoinValue() + " coins");									
+				if(bossActive && rand.nextInt(2) == 0) {
+					s.ironAxe.setIsOwned(1);
+					lblReward.setText("You got " + s.ironAxe.getWeaponName());
 				}
+				
+				lblReward.setVisible(true);
 				returnButton.setText("<html>" + youWon.replaceAll("\\n", "<br>") + "</html>");
 				returnButton.setVisible(true);
 				playerWin = true;		// Will unlock the next stage
@@ -330,47 +356,47 @@ public class FightScene extends JPanel implements ActionListener{
 			for(JButton button : actionButtons)
 				button.setEnabled(true);
 		
-		if(turnCounter < Storage.getInstance().getAttackButtonCost())
+		if(turnCounter < s.getAttackButtonCost())
 			attackButton.setEnabled(false);
 		
 		switch(ability1.getActionCommand()) {
 	    case "Swing":
-	        if(turnCounter < Storage.getInstance().overheadSwing.getAbilityCost()) {
+	        if(turnCounter < s.overheadSwing.getAbilityCost()) {
 	            ability1.setEnabled(false);
 	        }
 	        break;
 	    case "Decapitate":
-	        if(turnCounter >= Storage.getInstance().decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
+	        if(turnCounter >= s.decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
 	            ability1.setEnabled(true);
 	        else 
 	            ability1.setEnabled(false);
 	        break;
 	    case "Riposte":
-	    	if(turnCounter != Storage.getInstance().riposte.getAbilityCost())
+	    	if(turnCounter != s.riposte.getAbilityCost())
 	    		ability1.setEnabled(false);
 	    	break;
 	    case "Rend":
-	    	if(turnCounter < Storage.getInstance().rend.getAbilityCost()) {
+	    	if(turnCounter < s.rend.getAbilityCost()) {
 	            ability1.setEnabled(false);
 	        }
 	    	break;
 	    case "Harden":
-	    	if(turnCounter < Storage.getInstance().harden.getAbilityCost()) {
+	    	if(turnCounter < s.harden.getAbilityCost()) {
 	            ability1.setEnabled(false);
 	        }
 	    	break;
 	    case "Whirlwind":
-	    	if(turnCounter < Storage.getInstance().whirlwind.getAbilityCost()) {
+	    	if(turnCounter < s.whirlwind.getAbilityCost()) {
 	            ability1.setEnabled(false);
 	        }
 	    	break;
 	    case "Weaken":
-	    	if(turnCounter < Storage.getInstance().weaken.getAbilityCost()) {
+	    	if(turnCounter < s.weaken.getAbilityCost()) {
 	            ability1.setEnabled(false);
 	        }
 	    	break;
 	    case "Stun":
-	    	if(turnCounter < Storage.getInstance().stun.getAbilityCost()) {
+	    	if(turnCounter < s.stun.getAbilityCost()) {
 	            ability1.setEnabled(false);
 	        }
 	    	break;
@@ -378,42 +404,42 @@ public class FightScene extends JPanel implements ActionListener{
 		
 		switch(ability2.getActionCommand()) {
 	    case "Swing":
-	        if(turnCounter < Storage.getInstance().overheadSwing.getAbilityCost()) {
+	        if(turnCounter < s.overheadSwing.getAbilityCost()) {
 	        	ability2.setEnabled(false);
 	        }
 	        break;
 	    case "Decapitate":
-	        if(turnCounter >= Storage.getInstance().decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
+	        if(turnCounter >= s.decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
 	        	ability2.setEnabled(true);
 	        else 
 	        	ability2.setEnabled(false);
 	        break;
 	    case "Riposte":
-	    	if(turnCounter != Storage.getInstance().riposte.getAbilityCost())
+	    	if(turnCounter != s.riposte.getAbilityCost())
 	    		ability2.setEnabled(false);
 	    	break;
 	    case "Rend":
-	    	if(turnCounter < Storage.getInstance().rend.getAbilityCost()) {
+	    	if(turnCounter < s.rend.getAbilityCost()) {
 	    		ability2.setEnabled(false);
 	        }
 	    	break;
 	    case "Harden":
-	    	if(turnCounter < Storage.getInstance().harden.getAbilityCost()) {
+	    	if(turnCounter < s.harden.getAbilityCost()) {
 	    		ability2.setEnabled(false);
 	        }
 	    	break;
 	    case "Whirlwind":
-	    	if(turnCounter < Storage.getInstance().whirlwind.getAbilityCost()) {
+	    	if(turnCounter < s.whirlwind.getAbilityCost()) {
 	    		ability2.setEnabled(false);
 	        }
 	    	break;
 	    case "Weaken":
-	    	if(turnCounter < Storage.getInstance().weaken.getAbilityCost()) {
+	    	if(turnCounter < s.weaken.getAbilityCost()) {
 	    		ability2.setEnabled(false);
 	        }
 	    	break;
 	    case "Stun":
-	    	if(turnCounter < Storage.getInstance().stun.getAbilityCost()) {
+	    	if(turnCounter < s.stun.getAbilityCost()) {
 	    		ability2.setEnabled(false);
 	        }
 	    	break;
@@ -421,42 +447,42 @@ public class FightScene extends JPanel implements ActionListener{
 		
 		switch(ability3.getActionCommand()) {
 	    case "Swing":
-	        if(turnCounter < Storage.getInstance().overheadSwing.getAbilityCost()) {
+	        if(turnCounter < s.overheadSwing.getAbilityCost()) {
 	        	ability3.setEnabled(false);
 	        }
 	        break;
 	    case "Decapitate":
-	        if(turnCounter >= Storage.getInstance().decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
+	        if(turnCounter >= s.decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
 	        	ability3.setEnabled(true);
 	        else 
 	        	ability3.setEnabled(false);
 	        break;
 	    case "Riposte":
-	    	if(turnCounter != Storage.getInstance().riposte.getAbilityCost())
+	    	if(turnCounter != s.riposte.getAbilityCost())
 	    		ability3.setEnabled(false);
 	    	break;
 	    case "Rend":
-	    	if(turnCounter < Storage.getInstance().rend.getAbilityCost()) {
+	    	if(turnCounter < s.rend.getAbilityCost()) {
 	    		ability3.setEnabled(false);
 	        }
 	    	break;
 	    case "Harden":
-	    	if(turnCounter < Storage.getInstance().harden.getAbilityCost()) {
+	    	if(turnCounter < s.harden.getAbilityCost()) {
 	    		ability3.setEnabled(false);
 	        }
 	    	break;
 	    case "Whirlwind":
-	    	if(turnCounter < Storage.getInstance().whirlwind.getAbilityCost()) {
+	    	if(turnCounter < s.whirlwind.getAbilityCost()) {
 	    		ability3.setEnabled(false);
 	        }
 	    	break;
 	    case "Weaken":
-	    	if(turnCounter < Storage.getInstance().weaken.getAbilityCost()) {
+	    	if(turnCounter < s.weaken.getAbilityCost()) {
 	    		ability3.setEnabled(false);
 	        }
 	    	break;
 	    case "Stun":
-	    	if(turnCounter < Storage.getInstance().stun.getAbilityCost()) {
+	    	if(turnCounter < s.stun.getAbilityCost()) {
 	    		ability3.setEnabled(false);
 	        }
 	    	break;
@@ -469,7 +495,7 @@ public class FightScene extends JPanel implements ActionListener{
 	
 	private void enemyAttack() {		
 		if(rendLeft != 0) {
-			int temp = Storage.getInstance().rend.getAttackPower() + player.getPlayerStrength() / 2;
+			int temp = s.rend.getAttackPower() + player.getPlayerStrength() / 2;
 			enemy.enemyLoseHP(temp);
 			enemy.enemyShowHP(lblEnemyHP);
 			lblEnemyHP.repaint();
@@ -480,17 +506,17 @@ public class FightScene extends JPanel implements ActionListener{
 		}
 		// Since Rend activates before the enemy attack, check if Rend killed the enemy
 		if(!enemyDead && !stunActive) {
-			turnTimer.schedule(new TimerTask() {
+			t.schedule(new TimerTask() {
 	            @Override
 	            public void run() {
-	            	int temp = enemy.getEnemyStrength();
+	            	int temp = rand.nextInt(1, enemy.getEnemyStrength() + 1);
 	            	enemyAttack = true;
 	            	// Check if enemy attack missed
 	    			if(abilityID != 3 && enemy.enemyAttack()) {
 	    				if(hardenActive) {
 	    					temp = temp / 2;
 	    					if(weakLeft > 0) {						
-	    						temp = temp / Storage.getInstance().weaken.getAttackPower();
+	    						temp = temp / s.weaken.getAttackPower();
 	    						if(temp == 0)
 	    							player.playerLoseHP(1);
 	    						else
@@ -501,7 +527,7 @@ public class FightScene extends JPanel implements ActionListener{
 	    						player.playerLoseHP(temp);	// Harden is active, enemy deals 50% dmg
 	    				}
 	    				else if(weakLeft > 0) {
-	    					temp = temp / Storage.getInstance().weaken.getAttackPower();
+	    					temp = temp / s.weaken.getAttackPower();
 	    					if(temp == 0)
     							player.playerLoseHP(1);
     						else
@@ -522,7 +548,7 @@ public class FightScene extends JPanel implements ActionListener{
 	    	    	}
 	    			// Check if Riposte was successful
 	    			else if (abilityID == 3){
-	    				int x = enemy.getEnemyStrength() / 2 + Storage.getInstance().riposte.getAttackPower();			
+	    				int x = enemy.getEnemyStrength() / 2 + s.riposte.getAttackPower();			
 	    				enemy.enemyLoseHP(x);
 	    				enemy.enemyShowHP(lblEnemyHP);
 	    				lblEnemyHP.repaint();
@@ -565,18 +591,18 @@ public class FightScene extends JPanel implements ActionListener{
 			if(abilityID != 0) {
 				switch(abilityID) {
 				case 1:
-					y = Storage.getInstance().overheadSwing.getAttackPower();
+					y = s.overheadSwing.getAttackPower();
 					break;
 				case 2:
-					y = Storage.getInstance().decapitate.getAttackPower();
+					y = s.decapitate.getAttackPower();
 					break;
 				case 6:
-					y = Storage.getInstance().whirlwind.getAttackPower();
+					y = s.whirlwind.getAttackPower();
 				}
-				x = player.getPlayerStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr(); // Ability attack
+				x = rand.nextInt(y, player.getPlayerStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr() / 2 + 1); // Ability attack
 				if(abilityID == 6)	// Whirlwind
 					for(int i = 1; i < 3; i++)
-						x = x + (player.getPlayerStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr());	
+						x = x + (player.getPlayerStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr() / 2);	
 				abilityID = 0;
 			}
 			else
@@ -602,30 +628,28 @@ public class FightScene extends JPanel implements ActionListener{
 		
 		// Useful labels		
 		lblPlayerHP = new JLabel();
-		lblPlayerHP.setFont(Storage.getInstance().font2);
+		lblPlayerHP.setFont(s.font2);
 		player.playerShowHP(lblPlayerHP);
 		lblPlayerHP.setForeground(Color.BLACK);
 		lblPlayerHP.setBounds(1010, 270, 100, 30);
 		add(lblPlayerHP);
 		
 		lblEnemyHP = new JLabel();
-		lblEnemyHP.setFont(Storage.getInstance().font2);
+		lblEnemyHP.setFont(s.font2);
 		enemy.enemyShowHP(lblEnemyHP);
 		lblEnemyHP.setForeground(Color.BLACK);
 		lblEnemyHP.setBounds(50, 270, 100, 30);		
 		add(lblEnemyHP);
 		
 		lblEnemyName = new JLabel();
-		lblEnemyName.setFont(Storage.getInstance().font2);
+		lblEnemyName.setFont(s.font2);
 		lblEnemyName.setText(enemy.getEnemyName());
 		lblEnemyName.setForeground(Color.WHITE);
-		lblEnemyName.setHorizontalAlignment(SwingConstants.CENTER);
-		lblEnemyName.setVerticalAlignment(SwingConstants.CENTER);
 		lblEnemyName.setBounds(40, 240, 200, 30);
 		add(lblEnemyName);
 		
 		lblExp = new JLabel();
-		lblExp.setFont(Storage.getInstance().font2);
+		lblExp.setFont(s.font2);
 		lblExp.setForeground(Color.WHITE);
 		lblExp.setHorizontalAlignment(SwingConstants.CENTER);
 		lblExp.setVerticalAlignment(SwingConstants.CENTER);
@@ -634,7 +658,7 @@ public class FightScene extends JPanel implements ActionListener{
 		add(lblExp);
 		
 		lblReward = new JLabel();
-		lblReward.setFont(Storage.getInstance().font2);
+		lblReward.setFont(s.font2);
 		lblReward.setForeground(Color.WHITE);
 		lblReward.setHorizontalAlignment(SwingConstants.CENTER);
 		lblReward.setVerticalAlignment(SwingConstants.CENTER);
@@ -643,7 +667,7 @@ public class FightScene extends JPanel implements ActionListener{
 		add(lblReward);
 		
 		lblLevelUp = new JLabel();
-		lblLevelUp.setFont(Storage.getInstance().font2);
+		lblLevelUp.setFont(s.font2);
 		lblLevelUp.setBounds(200, 300, 100, 100);
 		lblLevelUp.setBorder(blackline);
 		lblLevelUp.setBackground(Color.gray);
@@ -653,7 +677,7 @@ public class FightScene extends JPanel implements ActionListener{
 		
 		// Damage dealt label
 		lblDamageDealt = new JLabel();
-		lblDamageDealt.setFont(Storage.getInstance().font3);
+		lblDamageDealt.setFont(s.font3);
 		lblDamageDealt.setBounds(400, 180, 450, 30);
 		lblDamageDealt.setBorder(blackline);
 		lblDamageDealt.setBackground(Color.WHITE);
@@ -662,7 +686,7 @@ public class FightScene extends JPanel implements ActionListener{
 		lblDamageDealt.setVerticalAlignment(SwingConstants.CENTER);
 		add(lblDamageDealt);
 		
-		// Navigation buttons								
+		// Navigation button							
         menuButton = new JButton();
         menuButton.setActionCommand("Main menu");
         menuButton.setIcon(new ImageIcon(returnBtn));
@@ -675,7 +699,7 @@ public class FightScene extends JPanel implements ActionListener{
         
         // Button for returning to the level selector when the player either wins or dies
         returnButton = new JButton();
-        returnButton.setFont(Storage.getInstance().font);
+        returnButton.setFont(s.font);
         returnButton.setFocusable(false);
         returnButton.setBackground(Color.WHITE);
         returnButton.setOpaque(true);
@@ -895,10 +919,8 @@ public class FightScene extends JPanel implements ActionListener{
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Graphics2D g1 = (Graphics2D)g;
-//		g1.setStroke(new BasicStroke(5));
 		float hpProc, hpProc2;
-		int bubbleLoc;
+		int bubbleLoc, width, width2;
 	    
 	    // Draw background
 	    g.drawImage(backgroundImg, 0, 0, null);
@@ -957,171 +979,27 @@ public class FightScene extends JPanel implements ActionListener{
 	    g.setColor(Color.WHITE);
 	    g.fillRect(40, 270, 200, 30);
 	    hpProc = (float)enemy.getEnemyHP() / (float)enemy.getEnemyMaxHP();
-	    if(hpProc <= 1 && hpProc > 0.95) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 200, 30);
-	    } 
-	    else if(hpProc <= 0.95 && hpProc > 0.9) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 190, 30);
-	    } 
-	    else if(hpProc <= 0.9 && hpProc > 0.85) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 180, 30);
-	    } 
-	    else if(hpProc <= 0.85 && hpProc > 0.8) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 170, 30);
-	    } 
-	    else if(hpProc <= 0.8 && hpProc > 0.75) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 160, 30);
-	    } 
-	    else if(hpProc <= 0.75 && hpProc > 0.7) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 150, 30);
-	    } 
-	    else if(hpProc <= 0.7 && hpProc > 0.65) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 140, 30);
-	    } 
-	    else if(hpProc <= 0.65 && hpProc > 0.6) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 130, 30);
-	    } 
-	    else if(hpProc <= 0.6 && hpProc > 0.55) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 120, 30);
-	    } 
-	    else if(hpProc <= 0.55 && hpProc > 0.5) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 110, 30);
-	    } 
-	    else if(hpProc <= 0.5 && hpProc > 0.45) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 100, 30);
-	    } 
-	    else if(hpProc <= 0.45 && hpProc > 0.4) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 90, 30);
-	    } 
-	    else if(hpProc <= 0.4 && hpProc > 0.35) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 80, 30);
-	    } 
-	    else if(hpProc <= 0.35 && hpProc > 0.3) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 70, 30);
-	    } 
-	    else if(hpProc <= 0.3 && hpProc > 0.25) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 60, 30);
-	    } 
-	    else if(hpProc <= 0.25 && hpProc > 0.2) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 50, 30);
-	    } 
-	    else if(hpProc <= 0.2 && hpProc > 0.15) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 40, 30);
-	    } 
-	    else if(hpProc <= 0.15 && hpProc > 0.1) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 30, 30);	
-	    }
-	    else if(hpProc <= 0.10 && hpProc > 0.05) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 20, 30);	
-	    }
-	    else if(hpProc <= 0.05 && hpProc > 0) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(40, 270, 10, 30);	
-	    }
+	    // Calculate the width of the rectangle based on hpProc
+	    width = (int)(hpProc * 200);
+		// Round the width down to the nearest 10
+		width = (width / 10) * 10;	
+		if (width < 10) {
+		     width = 0;
+		}	
+		g.setColor(Color.RED);
+		g.fillRect(40, 270, width, 30);
 	    
-	  //Player HP bar
+		//Player HP bar
 	    g.setColor(Color.WHITE);
 	    g.fillRect(1000, 270, 200, 30);
 	    hpProc2 = (float)player.getPlayerHP() / (float)player.getPlayerMaxHP();
-	    if(hpProc2 <= 1 && hpProc2 > 0.95) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 200, 30);
-	    } 
-	    else if(hpProc2 <= 0.95 && hpProc2 > 0.9) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 190, 30);
-	    } 
-	    else if(hpProc2 <= 0.9 && hpProc2 > 0.85) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 180, 30);
-	    } 
-	    else if(hpProc2 <= 0.85 && hpProc2 > 0.8) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 170, 30);
-	    } 
-	    else if(hpProc2 <= 0.8 && hpProc2 > 0.75) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 160, 30);
-	    } 
-	    else if(hpProc2 <= 0.75 && hpProc2 > 0.7) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 150, 30);
-	    } 
-	    else if(hpProc2 <= 0.7 && hpProc2 > 0.65) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 140, 30);
-	    } 
-	    else if(hpProc2 <= 0.65 && hpProc2 > 0.6) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 130, 30);
-	    } 
-	    else if(hpProc2 <= 0.6 && hpProc2 > 0.55) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 120, 30);
-	    } 
-	    else if(hpProc2 <= 0.55 && hpProc2 > 0.5) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 110, 30);
-	    } 
-	    else if(hpProc2 <= 0.5 && hpProc2 > 0.45) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 100, 30);
-	    } 
-	    else if(hpProc2 <= 0.45 && hpProc2 > 0.4) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 90, 30);
-	    } 
-	    else if(hpProc2 <= 0.4 && hpProc2 > 0.35) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 80, 30);
-	    } 
-	    else if(hpProc2 <= 0.35 && hpProc2 > 0.3) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 70, 30);
-	    } 
-	    else if(hpProc2 <= 0.3 && hpProc2 > 0.25) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 60, 30);
-	    } 
-	    else if(hpProc2 <= 0.25 && hpProc2 > 0.2) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 50, 30);
-	    } 
-	    else if(hpProc2 <= 0.2 && hpProc2 > 0.15) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 40, 30);
-	    } 
-	    else if(hpProc2 <= 0.15 && hpProc2 > 0.1) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 30, 30);	
-	    }
-	    else if(hpProc2 <= 0.10 && hpProc2 > 0.05) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 20, 30);	
-	    }
-	    else if(hpProc2 <= 0.05 && hpProc2 > 0) {
-	    	g.setColor(Color.RED);
-	    	g.fillRect(1000, 270, 10, 30);	
-	    }
+	    width2 = (int)(hpProc2 * 200);
+		width2 = (width2 / 10) * 10;	
+		if (width2 < 10) {
+		     width2 = 0;
+		}	
+		g.setColor(Color.RED);
+		g.fillRect(1000, 270, width2, 30);
 	    
 	    // Mana bubbles
 	    bubbleLoc = 1000;

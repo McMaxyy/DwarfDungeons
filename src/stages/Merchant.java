@@ -1,4 +1,4 @@
-package stages;
+ package stages;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -303,7 +303,7 @@ public class Merchant extends JPanel implements ActionListener{
         ability1.setEnabled(false);
         ability1.setActionCommand("ab1");
         while(x == player.getAbility1ID() || x == player.getAbility2ID() || x == player.getAbility3ID())
-        	x = rand.nextInt(1, 7);
+        	x = rand.nextInt(1, 9);
         setAbilityText();
         ability1.setText(abilityText);
         ability1.addActionListener(this);

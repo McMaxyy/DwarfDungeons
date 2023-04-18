@@ -40,6 +40,7 @@ public class Storage {
 	
 	//Load weapons
 	public Weapons ironAxe = new IronAxe();
+	public Weapons steelAxe = new SteelAxe();
 	
 	public Image setAnimation(String img) {
 		Image animation = Toolkit.getDefaultToolkit().getImage(img);

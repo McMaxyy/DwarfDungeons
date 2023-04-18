@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Player {
 
-	private static int playerMaxHP = 30;
+	private static int playerMaxHP = 20;
 	private static int playerHP;
 	private static int playerStrength = 2;
 	private static int mana = 4;
@@ -14,7 +14,7 @@ public class Player {
 	private static int playerLevel = 0;
 	private static int playerExp = 0;
 	private static int ability1ID, ability2ID, ability3ID;
-	
+	private static int activeWeapon;
 	private static int levelCap = 10;
 	private static int unlockedStage = 1;
 	private static int tempStr;
@@ -225,5 +225,12 @@ public class Player {
 	public int getMerchantVisits() {
 		return merchantVisits;
 	}
-	
+
+	public int getActiveWeapon() {
+		return activeWeapon;
+	}
+
+	public void setActiveWeapon(int activeWeapon) {
+		Player.activeWeapon = activeWeapon;
+	}
 }

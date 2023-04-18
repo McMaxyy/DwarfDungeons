@@ -29,7 +29,8 @@ public class Enemies {
 	}
 	
 	public void enemyOne() {
-		if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
+		switch(currentStage) {
+		case 1:
 			enemyName = "Baby spider";
 			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
 			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
@@ -38,12 +39,46 @@ public class Enemies {
 			enemyStrength = 2;
 			expValue = 2;
 			coinValue = 3;
+			break;
+		case 2:
+			enemyName = "Wolf";
+			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleWolf.gif");
+			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackWolf.gif");
+			enemyMaxHP = 30;
+			enemyHP = enemyMaxHP;
+			enemyStrength = 4;
+			expValue = 5;
+			coinValue = 6;
+			break;
+		case 3:
+			if(rand.nextInt(2) == 0) {
+				enemyName = "Baby spider";
+				enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
+				enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
+				enemyMaxHP = 30;
+				enemyHP = enemyMaxHP;
+				enemyStrength = 4;
+				expValue = 7;
+				coinValue = 8;
+			}
+			else {
+				enemyName = "Wolf";
+				enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleWolf.gif");
+				enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackWolf.gif");
+				enemyMaxHP = 40;
+				enemyHP = enemyMaxHP;
+				enemyStrength = 6;
+				expValue = 10;
+				coinValue = 12;
+			}
+			break;
 		}
 	}
 	
 	public void enemyTwo() {
-		if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
-			enemyName = "Schnopi";
+		switch(currentStage) {
+		case 1:
+			enemyName = "Goblin";
 			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
 			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
 			enemyMaxHP = 30;
@@ -51,14 +86,47 @@ public class Enemies {
 			enemyStrength = 4;
 			expValue = 4;
 			coinValue = 5;
+			break;
+		case 2:
+			enemyName = "Skeleton";
+			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
+			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
+			enemyMaxHP = 40;
+			enemyHP = enemyMaxHP;
+			enemyStrength = 6;
+			expValue = 8;
+			coinValue = 10;
+			break;
+		case 3:
+			if(rand.nextInt(2) == 0) {
+				enemyName = "Goblin";
+				enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
+				enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
+				enemyMaxHP = 40;
+				enemyHP = enemyMaxHP;
+				enemyStrength = 6;
+				expValue = 10;
+				coinValue = 12;
+			}
+			else {
+				enemyName = "Skeleton";
+				enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
+				enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
+				enemyMaxHP = 50;
+				enemyHP = enemyMaxHP;
+				enemyStrength = 8;
+				expValue = 14;
+				coinValue = 16;
+			}
+			break;
 		}
 	}
 	
 	public void strongEnemy() {
 		if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
-			enemyName = "Bigdik";
-			enemyIdle = entity.setAnimation("res/chr.png");
-			enemyAttack = entity.setAnimation("res/chr.png");
+			enemyName = "Fatlin";
+			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleFatlin.gif");
+			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackFatlin.gif");
 			enemyMaxHP = 50;
 			enemyHP = enemyMaxHP;
 			enemyStrength = 6;
@@ -68,15 +136,37 @@ public class Enemies {
 	}
 	
 	public void boss() {
-		if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
-			enemyName = "Smoldik";
-			enemyIdle = entity.setAnimation("res/dragun.png");
-			enemyAttack = entity.setAnimation("res/dragun.png");
+		switch(currentStage) {
+		case 1:
+			enemyName = "Basic Sbeve";
+			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSteve.gif");
+			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSteve.gif");
 			enemyMaxHP = 80;
 			enemyHP = enemyMaxHP;
-			enemyStrength = 6;
+			enemyStrength = 8;
 			expValue = 25;
 			coinValue = 30;
+			break;
+		case 2:
+			enemyName = "Stronger Sbeve";
+			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSteve2.gif");
+			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSteve2.gif");
+			enemyMaxHP = 110;
+			enemyHP = enemyMaxHP;
+			enemyStrength = 10;
+			expValue = 40;
+			coinValue = 50;
+			break;
+		case 3:
+			enemyName = "Angry Sbeve";
+			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSteve3.gif");
+			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSteve3.gif");
+			enemyMaxHP = 150;
+			enemyHP = enemyMaxHP;
+			enemyStrength = 14;
+			expValue = 100;
+			coinValue = 100;
+			break;
 		}
 	}
 	
