@@ -28,3 +28,8 @@ Shit to make:
 - Slot machine - spin button makes animation start, pressing it again makes it stop and show the result
 
 maybe uh make it so that you build a deck of 5 cards? add more abilities, maybe define base prices for each ability?
+
+Inventory system:
+- 8 slot bag to take shit to raid (1 weapon + items)
+- Player doesn't gain anything until he comes back from raid (bag fills up with items)
+- Dying results in losing everything (have to disable the return button whilst in the fight scene)
