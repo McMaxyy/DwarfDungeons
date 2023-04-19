@@ -19,6 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
+import Inventory.Storage;
+
 import javax.swing.JLabel;
 
 import main.GameWindow;
@@ -130,7 +132,7 @@ public class FightScene extends JPanel implements ActionListener{
         	doAttack();
         	break;
         case "Riposte":
-        	if(rand.nextInt(4) != 0)
+        	if(rand.nextInt(3) != 0)
         		abilityID = s.riposte.getID();
         	else
         		riposteActive = true;
@@ -203,7 +205,7 @@ public class FightScene extends JPanel implements ActionListener{
 	}
 	
 	public void isPlayerDead() {
-		if(player.getPlayerHP() <= 0) {
+		if(player.getHp() <= 0) {
 			returnButton.setText("<html>" + youLost.replaceAll("\\n", "<br>") + "</html>");
 			returnButton.setVisible(true);
 			currentLevel = 1;		// Player didn't succeed at clearing the stage
@@ -215,11 +217,11 @@ public class FightScene extends JPanel implements ActionListener{
 			if(player.getActiveWeapon() > 0) {
 				switch(player.getActiveWeapon()) {
 				case 1:
-					s.ironAxe.setIsOwned(s.ironAxe.getIsOwned() - 1);
+					s.ironAxe.setAmount(s.ironAxe.getAmount() - 1);
 					lblReward.setText("You lost " + s.ironAxe.getWeaponName());
 					break;
 				case 2:
-					s.steelAxe.setIsOwned(s.steelAxe.getIsOwned() - 1);
+					s.steelAxe.setAmount(s.steelAxe.getAmount() - 1);
 					lblReward.setText("You lost " + s.steelAxe.getWeaponName());
 					break;
 				}
@@ -230,17 +232,17 @@ public class FightScene extends JPanel implements ActionListener{
 	}
 	
 	public void isEnemyDead() {
-		if(enemy.getEnemyHP() <= 0) {
+		if(enemy.getHp() <= 0) {
 			enemyDead = true;
 			rendLeft = 0;
 			
 			// Normal enemy rewards
 			if(rand.nextInt(10) == 0 && !bossActive) {				
-				s.ironAxe.setIsOwned(s.ironAxe.getIsOwned() + 1);
+				s.ironAxe.setAmount(s.ironAxe.getAmount() + 1);
 				lblReward.setText("You got " + s.ironAxe.getWeaponName());
 			}
 			else {
-				player.playerGainCoin(enemy.getCoinValue());
+				player.gainCoin(enemy.getCoinValue());
 				lblReward.setText("You got " + enemy.getCoinValue() + " coins");
 			}
 			
@@ -273,9 +275,9 @@ public class FightScene extends JPanel implements ActionListener{
 				loadAnimations();
 				enemy.enemyShowHP(lblEnemyHP);
 				lblEnemyHP.repaint();	
-				if (player.getPlayerLevel() <= 15) {	// Check if player is max level
-					player.increasePlayerExp(enemy.getExpValue());	// Add EXP to player
-					if(player.getPlayerExp() >= player.getLevelCap()) {	// Check if player has enough EXP to level up
+				if (player.getLevel() <= 15) {	// Check if player is max level
+					player.increaseExp(enemy.getExpValue());	// Add EXP to player
+					if(player.getExp() >= player.getLevelCap()) {	// Check if player has enough EXP to level up
 						player.levelUp();
 						enableLevelUpComponents();
 					}
@@ -297,7 +299,7 @@ public class FightScene extends JPanel implements ActionListener{
 				if(bossActive)
 					lblReward.setText("You got " + enemy.getCoinValue() + " coins");									
 				if(bossActive && rand.nextInt(2) == 0) {
-					s.ironAxe.setIsOwned(1);
+					s.ironAxe.setAmount(1);
 					lblReward.setText("You got " + s.ironAxe.getWeaponName());
 				}
 				
@@ -310,9 +312,9 @@ public class FightScene extends JPanel implements ActionListener{
 				lblDamageDealt.setVisible(false);
 				
 				
-				if (player.getPlayerLevel() <= 15) {
-					player.increasePlayerExp(enemy.getExpValue()); // Add EXP to player
-					if(player.getPlayerExp() >= player.getLevelCap()) {	// Check if player has enough EXP to level up
+				if (player.getLevel() <= 15) {
+					player.increaseExp(enemy.getExpValue()); // Add EXP to player
+					if(player.getExp() >= player.getLevelCap()) {	// Check if player has enough EXP to level up
 						player.levelUp();
 						enableLevelUpComponents();
 					}
@@ -366,13 +368,15 @@ public class FightScene extends JPanel implements ActionListener{
 	        }
 	        break;
 	    case "Decapitate":
-	        if(turnCounter >= s.decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
+	        if(turnCounter >= s.decapitate.getAbilityCost() && enemy.getHp() <= (enemy.getMaxHP() / 3))
 	            ability1.setEnabled(true);
 	        else 
 	            ability1.setEnabled(false);
 	        break;
 	    case "Riposte":
-	    	if(turnCounter != s.riposte.getAbilityCost())
+	    	if(turnCounter == s.riposte.getAbilityCost())
+	    		ability1.setEnabled(true);
+	    	else
 	    		ability1.setEnabled(false);
 	    	break;
 	    case "Rend":
@@ -409,13 +413,15 @@ public class FightScene extends JPanel implements ActionListener{
 	        }
 	        break;
 	    case "Decapitate":
-	        if(turnCounter >= s.decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
+	        if(turnCounter >= s.decapitate.getAbilityCost() && enemy.getHp() <= (enemy.getMaxHP() / 3))
 	        	ability2.setEnabled(true);
 	        else 
 	        	ability2.setEnabled(false);
 	        break;
 	    case "Riposte":
-	    	if(turnCounter != s.riposte.getAbilityCost())
+	    	if(turnCounter == s.riposte.getAbilityCost())
+	    		ability2.setEnabled(true);
+	    	else
 	    		ability2.setEnabled(false);
 	    	break;
 	    case "Rend":
@@ -452,13 +458,15 @@ public class FightScene extends JPanel implements ActionListener{
 	        }
 	        break;
 	    case "Decapitate":
-	        if(turnCounter >= s.decapitate.getAbilityCost() && enemy.getEnemyHP() <= (enemy.getEnemyMaxHP() / 3))
+	        if(turnCounter >= s.decapitate.getAbilityCost() && enemy.getHp() <= (enemy.getMaxHP() / 3))
 	        	ability3.setEnabled(true);
 	        else 
 	        	ability3.setEnabled(false);
 	        break;
 	    case "Riposte":
-	    	if(turnCounter != s.riposte.getAbilityCost())
+	    	if(turnCounter == s.riposte.getAbilityCost())
+	    		ability3.setEnabled(true);
+	    	else
 	    		ability3.setEnabled(false);
 	    	break;
 	    case "Rend":
@@ -495,7 +503,7 @@ public class FightScene extends JPanel implements ActionListener{
 	
 	private void enemyAttack() {		
 		if(rendLeft != 0) {
-			int temp = s.rend.getAttackPower() + player.getPlayerStrength() / 2;
+			int temp = s.rend.getAttackPower() + player.getStrength() / 2;
 			enemy.enemyLoseHP(temp);
 			enemy.enemyShowHP(lblEnemyHP);
 			lblEnemyHP.repaint();
@@ -509,7 +517,7 @@ public class FightScene extends JPanel implements ActionListener{
 			t.schedule(new TimerTask() {
 	            @Override
 	            public void run() {
-	            	int temp = rand.nextInt(1, enemy.getEnemyStrength() + 1);
+	            	int temp = rand.nextInt(1, enemy.getStrength() + 1);
 	            	enemyAttack = true;
 	            	// Check if enemy attack missed
 	    			if(abilityID != 3 && enemy.enemyAttack()) {
@@ -548,7 +556,7 @@ public class FightScene extends JPanel implements ActionListener{
 	    	    	}
 	    			// Check if Riposte was successful
 	    			else if (abilityID == 3){
-	    				int x = enemy.getEnemyStrength() / 2 + s.riposte.getAttackPower();			
+	    				int x = enemy.getStrength() / 2 + s.riposte.getAttackPower();			
 	    				enemy.enemyLoseHP(x);
 	    				enemy.enemyShowHP(lblEnemyHP);
 	    				lblEnemyHP.repaint();
@@ -599,14 +607,14 @@ public class FightScene extends JPanel implements ActionListener{
 				case 6:
 					y = s.whirlwind.getAttackPower();
 				}
-				x = rand.nextInt(y, player.getPlayerStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr() / 2 + 1); // Ability attack
+				x = rand.nextInt(y, player.getStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr() / 2 + 1); // Ability attack
 				if(abilityID == 6)	// Whirlwind
 					for(int i = 1; i < 3; i++)
-						x = x + (player.getPlayerStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr() / 2);	
+						x = x + (player.getStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr() / 2);	
 				abilityID = 0;
 			}
 			else
-				x = rand.nextInt(1, player.getPlayerStrength() + weapon.getWeaponDamage() + 1 + player.getTempStr());	// Basic attack
+				x = rand.nextInt(1, player.getStrength() + weapon.getWeaponDamage() + 1 + player.getTempStr());	// Basic attack
 			
 			// Damage enemy & update label
 			enemy.enemyLoseHP(x);
@@ -978,7 +986,7 @@ public class FightScene extends JPanel implements ActionListener{
 	    //Enemy HP bar
 	    g.setColor(Color.WHITE);
 	    g.fillRect(40, 270, 200, 30);
-	    hpProc = (float)enemy.getEnemyHP() / (float)enemy.getEnemyMaxHP();
+	    hpProc = (float)enemy.getHp() / (float)enemy.getMaxHP();
 	    // Calculate the width of the rectangle based on hpProc
 	    width = (int)(hpProc * 200);
 		// Round the width down to the nearest 10
@@ -992,7 +1000,7 @@ public class FightScene extends JPanel implements ActionListener{
 		//Player HP bar
 	    g.setColor(Color.WHITE);
 	    g.fillRect(1000, 270, 200, 30);
-	    hpProc2 = (float)player.getPlayerHP() / (float)player.getPlayerMaxHP();
+	    hpProc2 = (float)player.getHp() / (float)player.getMaxHP();
 	    width2 = (int)(hpProc2 * 200);
 		width2 = (width2 / 10) * 10;	
 		if (width2 < 10) {

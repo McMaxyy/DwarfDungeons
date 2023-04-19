@@ -32,8 +32,8 @@ public class Bonfire extends JPanel implements ActionListener{
 		
 		if(command.equals("HP")) {
 			player.increaseHP(5);
-			if(player.getPlayerHP() > player.getPlayerMaxHP())
-	        	player.setPlayerHP(player.getPlayerMaxHP());
+			if(player.getHp() > player.getMaxHP())
+	        	player.setHp(player.getMaxHP());
 			healthPot.setEnabled(false);
 			strengthUp.setEnabled(false);
 		}

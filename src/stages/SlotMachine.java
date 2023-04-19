@@ -60,7 +60,7 @@ public class SlotMachine extends JPanel implements ActionListener {
         	window.showMainMenu();
         }
 		else if (command.equals("Spin")) {
-			player.playerLoseCoin(spinCost);
+			player.loseCoin(spinCost);
 			removeAll();
 			initializeComponents();
         	spinSlot();
@@ -145,7 +145,7 @@ public class SlotMachine extends JPanel implements ActionListener {
 				slots[i][j] = null;
 			}
 		
-		if(player.getPlayerCoins() < spinCost)
+		if(player.getCoins() < spinCost)
 			spinButton.setEnabled(false);
 	}
 	
@@ -168,7 +168,7 @@ public class SlotMachine extends JPanel implements ActionListener {
         
         spinButton = new JButton();
         spinButton.setFocusable(false);
-        if(player.getPlayerCoins() <= 0)
+        if(player.getCoins() <= 0)
 			spinButton.setEnabled(false);
         else
         	spinButton.setEnabled(true);
@@ -213,7 +213,7 @@ public class SlotMachine extends JPanel implements ActionListener {
         pay6Coin.setBounds(440, 600, 50, 30);
         add(pay6Coin);
         
-        coins.setText("Coins: " + player.getPlayerCoins());
+        coins.setText("Coins: " + player.getCoins());
         coins.setBounds(200, 650, 100, 50);
         add(coins);
         
@@ -283,11 +283,11 @@ public class SlotMachine extends JPanel implements ActionListener {
 			winnings.setText("You won " + roundWinnings + " coins");
 			winnings.setVisible(true);
 		}
-		coins.setText("Coins: " + player.getPlayerCoins());
+		coins.setText("Coins: " + player.getCoins());
 		
 		roundWinnings = 0;
 		
-		if(player.getPlayerCoins() >= spinCost)
+		if(player.getCoins() >= spinCost)
         	spinButton.setEnabled(true);
 	}
 	
@@ -330,7 +330,7 @@ public class SlotMachine extends JPanel implements ActionListener {
 		pay2Coin.setVisible(false);
 		pay3Coin.setVisible(false);
 		pay6Coin.setVisible(false);
-		if(player.getPlayerCoins() >= spinCost)
+		if(player.getCoins() >= spinCost)
         	spinButton.setEnabled(true);
 	}
 	
@@ -341,15 +341,15 @@ public class SlotMachine extends JPanel implements ActionListener {
 	
 	private void payPlayer(int payout) {
 		if(spinCost == 2) {
-			player.playerGainCoin(payout);
+			player.gainCoin(payout);
 			roundWinnings += payout;
 		}		
 		else if(spinCost == 3) {
-			player.playerGainCoin(payout * 2);
+			player.gainCoin(payout * 2);
 			roundWinnings += payout * 2;
 		}
 		else if(spinCost == 6) {
-			player.playerGainCoin(payout * 3);
+			player.gainCoin(payout * 3);
 			roundWinnings += payout * 3;
 		}
 	}

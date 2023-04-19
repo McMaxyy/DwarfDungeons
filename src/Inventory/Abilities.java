@@ -1,4 +1,4 @@
-package constants;
+package Inventory;
 
 public abstract class Abilities {
 	private int attackPower, abilityCost,  ID;
@@ -24,8 +24,8 @@ public abstract class Abilities {
 		return ID;
 	}
 
-	public void setID(int iD) {
-		ID = iD;
+	public void setID(int ID) {
+		this.ID = ID;
 	}
 
 	public String getAbilityName() {

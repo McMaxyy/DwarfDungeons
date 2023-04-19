@@ -6,13 +6,13 @@ import java.util.*;
 
 public class Player {
 
-	private static int playerMaxHP = 20;
-	private static int playerHP;
-	private static int playerStrength = 2;
+	private static int maxHP = 20;
+	private static int hp;
+	private static int strength = 2;
 	private static int mana = 4;
-	private static int playerCoins = 100;
-	private static int playerLevel = 0;
-	private static int playerExp = 0;
+	private static int coins = 100;
+	private static int level = 0;
+	private static int exp = 0;
 	private static int ability1ID, ability2ID, ability3ID;
 	private static int activeWeapon;
 	private static int levelCap = 10;
@@ -25,19 +25,19 @@ public class Player {
 	private int x, y, z;
 	
 	public void playerShowHP(JLabel lblPlayerHP) {
-		lblPlayerHP.setText("HP: " + playerHP);
+		lblPlayerHP.setText("HP: " + hp);
 	}
 	
 	public void playerLoseHP(int dmg) {
-		playerHP -= dmg;
+		hp -= dmg;
 	}
 	
-	public void playerGainCoin(int coin) {
-		playerCoins += coin;
+	public void gainCoin(int coin) {
+		coins += coin;
 	}
 	
-	public void playerLoseCoin(int coin) {
-		playerCoins -= coin;
+	public void loseCoin(int coin) {
+		coins -= coin;
 	}
 	
 	public void increaseMana(int x) {
@@ -60,18 +60,18 @@ public class Player {
 			return false;
 	}
 	
-	public void increasePlayerExp(int x) {
-		playerExp += x;		
+	public void increaseExp(int x) {
+		exp += x;		
 	}
 	
 	public void increaseMaxHP() {
-		playerMaxHP += 5;
-		playerHP = playerMaxHP;
+		maxHP += 5;
+		hp = maxHP;
 	}
 	
 	public void increasePlayerStr() {
-		playerStrength += 2;
-		playerHP = playerMaxHP;
+		strength += 2;
+		hp = maxHP;
 	}
 	
 	public void increaseTempStr(int x) {
@@ -79,20 +79,20 @@ public class Player {
 	}
 	
 	public void increaseHP(int pot) {
-		playerHP += pot;
+		hp += pot;
 	}
 	
 	public void levelUp() {
-		if(playerLevel <= 15) {
-			playerLevel++;
-			playerExp = 0;
-			if(playerLevel <= 5)
+		if(level <= 15) {
+			level++;
+			exp = 0;
+			if(level <= 5)
 				levelCap += 20;
-			else if (playerLevel >= 6 && playerLevel <= 9)
+			else if (level >= 6 && level <= 9)
 				levelCap += 40;
-			else if (playerLevel == 10)
+			else if (level == 10)
 				levelCap += 50;
-			else if (playerLevel >= 11 && playerLevel <= 15)
+			else if (level >= 11 && level <= 15)
 				levelCap += 100;
 		}
 	}
@@ -100,7 +100,7 @@ public class Player {
 	public void playerOne() {
 		tempStr = 0;
 		mana = 4;
-		playerHP = playerMaxHP;
+		hp = maxHP;
 		x = rand.nextInt(1, 9);
 		y = rand.nextInt(1, 9);
 		z = rand.nextInt(1, 9);
@@ -122,40 +122,40 @@ public class Player {
 		Player.mana = mana;
 	}
 
-	public int getPlayerHP() {
-		return playerHP;
+	public int getHp() {
+		return hp;
 	}
 
-	public void setPlayerHP(int playerHP) {
-		Player.playerHP = playerHP;
+	public void setHp(int playerHP) {
+		Player.hp = playerHP;
 	}
 	
-	public int getPlayerStrength() {
-		return playerStrength;
+	public int getStrength() {
+		return strength;
 	}
 
-	public void setPlayerStrength(int playerStrength) {
-		Player.playerStrength = playerStrength;
+	public void setStrength(int playerStrength) {
+		Player.strength = playerStrength;
 	}
 
 	public JLabel getPlayerIcon() {
 		return playerIcon;
 	}
 
-	public int getPlayerCoins() {
-		return playerCoins;
+	public int getCoins() {
+		return coins;
 	}
 
-	public void setPlayerCoins(int playerCoins) {
-		Player.playerCoins = playerCoins;
+	public void setCoins(int playerCoins) {
+		Player.coins = playerCoins;
 	}
 
-	public int getPlayerExp() {
-		return playerExp;
+	public int getExp() {
+		return exp;
 	}
 
-	public void setPlayerExp(int playerExp) {
-		Player.playerExp = playerExp;
+	public void setExp(int playerExp) {
+		Player.exp = playerExp;
 	}
 
 	public int getLevelCap() {
@@ -166,20 +166,20 @@ public class Player {
 		Player.levelCap = levelCap;
 	}
 
-	public int getPlayerMaxHP() {
-		return playerMaxHP;
+	public int getMaxHP() {
+		return maxHP;
 	}
 
-	public void setPlayerMaxHP(int playerMaxHP) {
-		Player.playerMaxHP = playerMaxHP;
+	public void setMaxHP(int playerMaxHP) {
+		Player.maxHP = playerMaxHP;
 	}
 
-	public int getPlayerLevel() {
-		return playerLevel;
+	public int getLevel() {
+		return level;
 	}
 
-	public void setPlayerLevel(int playerLevel) {
-		Player.playerLevel = playerLevel;
+	public void setLevel(int playerLevel) {
+		Player.level = playerLevel;
 	}
 
 	public int getAbility1ID() {

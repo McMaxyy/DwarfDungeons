@@ -5,11 +5,13 @@ import java.util.Random;
 
 import javax.swing.JLabel;
 
+import Inventory.Storage;
+
 public class Enemies {
 
-	private int enemyHP;
-	private int enemyMaxHP;
-	private int enemyStrength;
+	private int hp;
+	private int maxHP;
+	private int strength;
 	private int expValue;
 	private int coinValue;
 	private int currentStage;
@@ -18,56 +20,56 @@ public class Enemies {
 	private Image enemyIdle, enemyAttack;
 	protected JLabel lblEnemyHP;
 	private Random rand = new Random();
-	private Storage entity = new Storage();
+	private Storage s = Storage.getInstance();
 	
 	public void enemyShowHP(JLabel lblEnemyHP) {
-		lblEnemyHP.setText("HP: " + String.valueOf(getEnemyHP()));
+		lblEnemyHP.setText("HP: " + String.valueOf(getHp()));
 	}
 	
 	public void enemyLoseHP(int dmg) {
-		setEnemyHP(getEnemyHP() - dmg);
+		setHp(getHp() - dmg);
 	}
 	
 	public void enemyOne() {
 		switch(currentStage) {
 		case 1:
 			enemyName = "Baby spider";
-			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
-			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
-			enemyMaxHP = 20;
-			enemyHP = enemyMaxHP;
-			enemyStrength = 2;
+			enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
+			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
+			maxHP = 20;
+			hp = maxHP;
+			strength = 2;
 			expValue = 2;
 			coinValue = 3;
 			break;
 		case 2:
 			enemyName = "Wolf";
-			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleWolf.gif");
-			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackWolf.gif");
-			enemyMaxHP = 30;
-			enemyHP = enemyMaxHP;
-			enemyStrength = 4;
+			enemyIdle = s.setAnimation("res/EnemyAnimations/IdleWolf.gif");
+			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
+			maxHP = 30;
+			hp = maxHP;
+			strength = 4;
 			expValue = 5;
 			coinValue = 6;
 			break;
 		case 3:
 			if(rand.nextInt(2) == 0) {
 				enemyName = "Baby spider";
-				enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
-				enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
-				enemyMaxHP = 30;
-				enemyHP = enemyMaxHP;
-				enemyStrength = 4;
+				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
+				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
+				maxHP = 30;
+				hp = maxHP;
+				strength = 4;
 				expValue = 7;
 				coinValue = 8;
 			}
 			else {
 				enemyName = "Wolf";
-				enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleWolf.gif");
-				enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackWolf.gif");
-				enemyMaxHP = 40;
-				enemyHP = enemyMaxHP;
-				enemyStrength = 6;
+				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleWolf.gif");
+				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
+				maxHP = 40;
+				hp = maxHP;
+				strength = 6;
 				expValue = 10;
 				coinValue = 12;
 			}
@@ -79,42 +81,42 @@ public class Enemies {
 		switch(currentStage) {
 		case 1:
 			enemyName = "Goblin";
-			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
-			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
-			enemyMaxHP = 30;
-			enemyHP = enemyMaxHP;
-			enemyStrength = 4;
+			enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
+			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
+			maxHP = 30;
+			hp = maxHP;
+			strength = 4;
 			expValue = 4;
 			coinValue = 5;
 			break;
 		case 2:
 			enemyName = "Skeleton";
-			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
-			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
-			enemyMaxHP = 40;
-			enemyHP = enemyMaxHP;
-			enemyStrength = 6;
+			enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
+			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
+			maxHP = 40;
+			hp = maxHP;
+			strength = 6;
 			expValue = 8;
 			coinValue = 10;
 			break;
 		case 3:
 			if(rand.nextInt(2) == 0) {
 				enemyName = "Goblin";
-				enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
-				enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
-				enemyMaxHP = 40;
-				enemyHP = enemyMaxHP;
-				enemyStrength = 6;
+				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
+				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
+				maxHP = 40;
+				hp = maxHP;
+				strength = 6;
 				expValue = 10;
 				coinValue = 12;
 			}
 			else {
 				enemyName = "Skeleton";
-				enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
-				enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
-				enemyMaxHP = 50;
-				enemyHP = enemyMaxHP;
-				enemyStrength = 8;
+				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
+				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
+				maxHP = 50;
+				hp = maxHP;
+				strength = 8;
 				expValue = 14;
 				coinValue = 16;
 			}
@@ -125,11 +127,11 @@ public class Enemies {
 	public void strongEnemy() {
 		if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
 			enemyName = "Fatlin";
-			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleFatlin.gif");
-			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackFatlin.gif");
-			enemyMaxHP = 50;
-			enemyHP = enemyMaxHP;
-			enemyStrength = 6;
+			enemyIdle = s.setAnimation("res/EnemyAnimations/IdleFatlin.gif");
+			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackFatlin.gif");
+			maxHP = 50;
+			hp = maxHP;
+			strength = 6;
 			expValue = 15;
 			coinValue = 15;
 		}
@@ -139,31 +141,31 @@ public class Enemies {
 		switch(currentStage) {
 		case 1:
 			enemyName = "Basic Sbeve";
-			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSteve.gif");
-			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSteve.gif");
-			enemyMaxHP = 80;
-			enemyHP = enemyMaxHP;
-			enemyStrength = 8;
+			enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve.gif");
+			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve.gif");
+			maxHP = 80;
+			hp = maxHP;
+			strength = 8;
 			expValue = 25;
 			coinValue = 30;
 			break;
 		case 2:
 			enemyName = "Stronger Sbeve";
-			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSteve2.gif");
-			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSteve2.gif");
-			enemyMaxHP = 110;
-			enemyHP = enemyMaxHP;
-			enemyStrength = 10;
+			enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve2.gif");
+			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve2.gif");
+			maxHP = 110;
+			hp = maxHP;
+			strength = 10;
 			expValue = 40;
 			coinValue = 50;
 			break;
 		case 3:
 			enemyName = "Angry Sbeve";
-			enemyIdle = entity.setAnimation("res/EnemyAnimations/IdleSteve3.gif");
-			enemyAttack = entity.setAnimation("res/EnemyAnimations/AttackSteve3.gif");
-			enemyMaxHP = 150;
-			enemyHP = enemyMaxHP;
-			enemyStrength = 14;
+			enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve3.gif");
+			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve3.gif");
+			maxHP = 150;
+			hp = maxHP;
+			strength = 14;
 			expValue = 100;
 			coinValue = 100;
 			break;
@@ -178,21 +180,21 @@ public class Enemies {
 			return false;
 	}
 	
-	public int getEnemyHP() {
-		return enemyHP;
+	public int getHp() {
+		return hp;
 	}
 	
-	public void setEnemyHP(int enemyHP) {
-		this.enemyHP = enemyHP;
+	public void setHp(int enemyHP) {
+		this.hp = enemyHP;
 	}
 
 
-	public int getEnemyStrength() {
-		return enemyStrength;
+	public int getStrength() {
+		return strength;
 	}
 
-	public void setEnemyStrength(int enemyStrength) {
-		this.enemyStrength = enemyStrength;
+	public void setStrength(int enemyStrength) {
+		this.strength = enemyStrength;
 	}
 
 	public int getExpValue() {
@@ -203,12 +205,12 @@ public class Enemies {
 		this.expValue = expValue;
 	}
 
-	public int getEnemyMaxHP() {
-		return enemyMaxHP;
+	public int getMaxHP() {
+		return maxHP;
 	}
 
-	public void setEnemyMaxHP(int enemyMaxHP) {
-		this.enemyMaxHP = enemyMaxHP;
+	public void setMaxHP(int enemyMaxHP) {
+		this.maxHP = enemyMaxHP;
 	}
 
 	public int getCoinValue() {

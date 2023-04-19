@@ -108,23 +108,23 @@ public class Merchant extends JPanel implements ActionListener{
 	        break;
 	    case "Mana":
 	        player.increaseMana(1);
-	        player.playerLoseCoin(mpPrice);
+	        player.loseCoin(mpPrice);
 	        mpPurchased = true;
 	        checkAvailability();       
 	        playerPurchased = true;
 	        break;
 	    case "HP":
 	        player.increaseHP(5);
-	        if(player.getPlayerHP() > player.getPlayerMaxHP())
-	        	player.setPlayerHP(player.getPlayerMaxHP());
-	        player.playerLoseCoin(hpPrice);
+	        if(player.getHp() > player.getMaxHP())
+	        	player.setHp(player.getMaxHP());
+	        player.loseCoin(hpPrice);
 	        hpPurchased = true;
 	        checkAvailability();        
 	        playerPurchased = true;
 	        break;
 	    case "Weapon":
 	        weapon.upgradeWeapon(1);
-	        player.playerLoseCoin(weaponPrice);
+	        player.loseCoin(weaponPrice);
 	        weaponPurchased = true;
 	        checkAvailability();        
 	        playerPurchased = true;
@@ -136,7 +136,7 @@ public class Merchant extends JPanel implements ActionListener{
 	        setAbilityID();
 	        break;
 	    case "ac1":
-	    	player.playerLoseCoin(abPrice);
+	    	player.loseCoin(abPrice);
 	    	abPurchased = true;
 	    	checkAvailability();
 	    	disableAbilityButtons();
@@ -144,7 +144,7 @@ public class Merchant extends JPanel implements ActionListener{
 	        playerPurchased = true;
 	        break;
 	    case "ac2":
-	    	player.playerLoseCoin(abPrice);
+	    	player.loseCoin(abPrice);
 	    	abPurchased = true;
 	    	checkAvailability();
 	    	disableAbilityButtons();
@@ -152,7 +152,7 @@ public class Merchant extends JPanel implements ActionListener{
 	        playerPurchased = true;
 	        break;
 	    case "ac3":
-	    	player.playerLoseCoin(abPrice);
+	    	player.loseCoin(abPrice);
 	    	abPurchased = true;
 	    	checkAvailability();
 	    	disableAbilityButtons();
@@ -163,27 +163,27 @@ public class Merchant extends JPanel implements ActionListener{
 	}
 	
 	private void checkAvailability() {
-		if(player.getPlayerCoins() >= hpPrice && !hpPurchased && player.getPlayerHP() < player.getPlayerMaxHP())
+		if(player.getCoins() >= hpPrice && !hpPurchased && player.getHp() < player.getMaxHP())
 			healthPot.setEnabled(true);
 		else
 			healthPot.setEnabled(false);
 		
-		if(player.getPlayerCoins() >= mpPrice && !mpPurchased && player.getMana() < 7)
+		if(player.getCoins() >= mpPrice && !mpPurchased && player.getMana() < 7)
 			manaIncrease.setEnabled(true);
 		else
 			manaIncrease.setEnabled(false);
 		
-		if(player.getPlayerCoins() >= weaponPrice && !weaponPurchased)
+		if(player.getCoins() >= weaponPrice && !weaponPurchased)
 			upgradeWeapon.setEnabled(true);
 		else
 			upgradeWeapon.setEnabled(false);
 		
-		if(player.getPlayerCoins() >= abPrice && !abPurchased)
+		if(player.getCoins() >= abPrice && !abPurchased)
 			ability1.setEnabled(true);
 		else
 			ability1.setEnabled(false);
 		
-		coins.setText("Available coins: " + player.getPlayerCoins());
+		coins.setText("Available coins: " + player.getCoins());
 	}
 	
 	private void setPrice(float x) {
@@ -264,7 +264,7 @@ public class Merchant extends JPanel implements ActionListener{
 	
 	private void initComponents() {
 		coins = new JLabel();
-		coins.setText("Available coins: " + player.getPlayerCoins());
+		coins.setText("Available coins: " + player.getCoins());
 		coins.setBounds(200, 50, 200, 50);
 		add(coins);
 		

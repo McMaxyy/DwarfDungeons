@@ -18,8 +18,8 @@ import javax.swing.SwingConstants;
 
 import com.google.gson.Gson;
 
+import Inventory.Storage;
 import constants.Player;
-import constants.Storage;
 import main.GameWindow;
 
 @SuppressWarnings("serial")
@@ -190,13 +190,13 @@ public class MainMenu extends JPanel implements ActionListener {
     	try (FileReader reader = new FileReader("savegame.json")) {
             int[] intArray = gson.fromJson(reader, int[].class);
 
-            player.setPlayerMaxHP(intArray[0]);
-            player.setPlayerStrength(intArray[1]);
-            player.setPlayerCoins(intArray[2]);
-            player.setPlayerLevel(intArray[3]);
-            player.setPlayerExp(intArray[4]);
+            player.setMaxHP(intArray[0]);
+            player.setStrength(intArray[1]);
+            player.setCoins(intArray[2]);
+            player.setLevel(intArray[3]);
+            player.setExp(intArray[4]);
             player.setLevelCap(intArray[5]);
-            Storage.getInstance().ironAxe.setIsOwned(intArray[6]);
+            Storage.getInstance().ironAxe.setAmount(intArray[6]);
             
             loadGame.setVisible(true);
         	yesLoad.setVisible(true);

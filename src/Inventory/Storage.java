@@ -1,4 +1,4 @@
-package constants;
+package Inventory;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -7,6 +7,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
+
+import stages.HomeScreen;
 
 public class Storage {
 	private final int attackButtonCost = 1;
@@ -38,15 +40,32 @@ public class Storage {
 	public Abilities weaken = new Weaken();
 	public Abilities stun = new Stun();
 	
-	//Load weapons
+	// Load weapons
 	public Weapons ironAxe = new IronAxe();
 	public Weapons steelAxe = new SteelAxe();
+	public Weapons silverAxe = new SilverAxe();
+	public Weapons goldAxe = new GoldAxe();
+	public Weapons copperAxe = new CopperAxe();
+	public Weapons titaniumAxe = new TitaniumAxe();
+	public Weapons fieryAxe = new FieryAxe();
+	public Weapons moltenAxe = new MoltenAxe();
+	public Weapons waterAxe = new WaterAxe();
 	
+	// Load items
+	public Items healthPot = new HealthPot();
+	public Items shield = new Shield();
+	public Items bomb = new Bomb();
+	public Items poisonDart = new PoisonDart();
+	public Items bigBomb = new BigBomb();
+	public Items biggerBomb = new BiggerBomb();
+	
+	// Set animation to enemies
 	public Image setAnimation(String img) {
 		Image animation = Toolkit.getDefaultToolkit().getImage(img);
 		return animation;
 	}
 	
+	// Create custom fonts
 	private void createFont() {
 		try {
 		    font = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(25f);
