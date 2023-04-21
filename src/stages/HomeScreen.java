@@ -523,7 +523,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         	yLocA = 110;
         	for(int i = 0; i < activeBag.length; i++) {
         		String temp = "inv";
-        		Player.activeBag[i].setActionCommand(temp + i);
+        		Player.activeBag[i].setActionCommand(temp + (i + 1));
         		Player.activeBag[i].setContentAreaFilled(true);
         		Player.activeBag[i].setBackground(Color.DARK_GRAY);
         		if(activeBag[i].getIcon() != null)
@@ -534,8 +534,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         		if(itemsInRowA == 4) {
         			xLocA = 975;
         			yLocA += 50;
-        		}
-        		
+        		}      		
         	}
             window.showLevelSelector(1);
             break;
@@ -689,7 +688,6 @@ public class HomeScreen extends JPanel implements ActionListener {
     
     public void paintComponent(Graphics g) {
     	super.paintComponent(g);
-    	
     	// Draw background
 	    g.drawImage(bg, 0, 0, null);
     }

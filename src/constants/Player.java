@@ -3,6 +3,7 @@ package constants;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import java.awt.event.ActionEvent;
 import java.util.*;
 
 public class Player {
@@ -11,7 +12,7 @@ public class Player {
 	private static int hp;
 	private static int strength = 2;
 	private static int mana = 4;
-	private static int coins = 100;
+	private static int coins = 0;
 	private static int level = 0;
 	private static int exp = 0;
 	private static int ability1ID, ability2ID, ability3ID;
@@ -82,6 +83,8 @@ public class Player {
 	
 	public void increaseHP(int pot) {
 		hp += pot;
+		if(hp > maxHP)
+			hp = maxHP;
 	}
 	
 	public void levelUp() {

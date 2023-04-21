@@ -43,7 +43,7 @@ public class FightScene extends JPanel implements ActionListener{
 	String youWon = "You\nWon";
 	private Random rand = new Random();
 	private int enemySelectRand = rand.nextInt(2);
-	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated, rendLeft, weakLeft;
+	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated, rendLeft, weakLeft, poisonLeft;
 	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack, hardenActive,
 			enemyDead, stunActive, bossActive;
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
@@ -79,35 +79,7 @@ public class FightScene extends JPanel implements ActionListener{
 		if(currentLevel == 1 && currentStage == 1) {
 			player.playerOne();
 			if(player.getActiveWeapon() > 0)
-				switch(player.getActiveWeapon()) {
-				case 1:
-					weapon.weaponOne(s.ironAxe.getAttackPower());
-					break;
-				case 2:
-					weapon.weaponOne(s.silverAxe.getAttackPower());
-					break;
-				case 3:
-					weapon.weaponOne(s.goldAxe.getAttackPower());
-					break;
-				case 4:
-					weapon.weaponOne(s.steelAxe.getAttackPower());
-					break;
-				case 5:
-					weapon.weaponOne(s.copperAxe.getAttackPower());
-					break;
-				case 6:
-					weapon.weaponOne(s.titaniumAxe.getAttackPower());
-					break;
-				case 7:
-					weapon.weaponOne(s.fieryAxe.getAttackPower());
-					break;
-				case 8:
-					weapon.weaponOne(s.moltenAxe.getAttackPower());
-					break;
-				case 9:
-					weapon.weaponOne(s.waterAxe.getAttackPower());
-					break;
-				}
+				setWeapon();
 			else
 				weapon.noWeapon();
 		}
@@ -226,7 +198,138 @@ public class FightScene extends JPanel implements ActionListener{
             if(gameOver)
             	returnButton.setVisible(true);
             break;
+        case "inv1":
+        	itemAction(0);
+        	break;
+        case "inv2":
+        	itemAction(1);
+        	break;
+        case "inv3":
+        	itemAction(2);
+        	break;
+        case "inv4":
+        	itemAction(3);
+        	break;
+        case "inv5":
+        	itemAction(4);
+        	break;
+        case "inv6":
+        	itemAction(5);
+        	break;
+        case "inv7":
+        	itemAction(6);
+        	break;
+        case "inv8":
+        	itemAction(7);
+        	break;
         }   
+	}
+	
+	private void setWeapon() {
+		switch(player.getActiveWeapon()) {
+		case 1:
+			weapon.weaponOne(s.ironAxe.getAttackPower());
+			break;
+		case 2:
+			weapon.weaponOne(s.silverAxe.getAttackPower());
+			break;
+		case 3:
+			weapon.weaponOne(s.goldAxe.getAttackPower());
+			break;
+		case 4:
+			weapon.weaponOne(s.steelAxe.getAttackPower());
+			break;
+		case 5:
+			weapon.weaponOne(s.copperAxe.getAttackPower());
+			break;
+		case 6:
+			weapon.weaponOne(s.titaniumAxe.getAttackPower());
+			break;
+		case 7:
+			weapon.weaponOne(s.fieryAxe.getAttackPower());
+			break;
+		case 8:
+			weapon.weaponOne(s.moltenAxe.getAttackPower());
+			break;
+		case 9:
+			weapon.weaponOne(s.waterAxe.getAttackPower());
+			break;
+		}
+	}
+	
+	private void itemAction(int x) {
+		switch (activeBag[x].getName()) {
+	    case "Health":
+        	activeBag[x].setIcon(null);
+	        player.increaseHP(5);
+	        player.playerShowHP(lblPlayerHP);
+	        lblPlayerHP.repaint();	        
+	        break;
+	    case "Shield":
+	    	activeBag[x].setIcon(null);
+	        break;
+	    case "Bomb":
+	    	activeBag[x].setIcon(null);
+	        enemy.enemyLoseHP(s.bomb.getItemPower());
+	        enemy.enemyShowHP(lblEnemyHP);
+	        lblEnemyHP.repaint();
+	        isEnemyDead();
+	        break;
+	    case "PoisonDart":
+	    	activeBag[x].setIcon(null);
+	        poisonLeft = 3;
+	        break;
+	    case "Dynamite":
+	    	activeBag[x].setIcon(null);
+	        enemy.enemyLoseHP(s.bigBomb.getItemPower());
+	        enemy.enemyShowHP(lblEnemyHP);
+	        lblEnemyHP.repaint();
+	        isEnemyDead();
+	        break;
+	    case "Bombs":
+	    	activeBag[x].setIcon(null);
+	        enemy.enemyLoseHP(s.biggerBomb.getItemPower());
+	        enemy.enemyShowHP(lblEnemyHP);
+	        lblEnemyHP.repaint();
+	        isEnemyDead();
+	        break;
+	    case "IronAxe":
+	    	player.setActiveWeapon(1);
+	    	setWeapon();
+			break;
+	    case "SilverAxe":
+	    	player.setActiveWeapon(2);
+			setWeapon();
+			break;
+	    case "GoldAxe":
+	    	player.setActiveWeapon(3);
+			setWeapon();
+			break;
+	    case "SteelAxe":
+	    	player.setActiveWeapon(4);
+			setWeapon();
+			break;
+	    case "CopperAxe":
+	    	player.setActiveWeapon(5);
+			setWeapon();
+			break;
+	    case "TitaniumAxe":
+	    	player.setActiveWeapon(6);
+			setWeapon();
+			break;
+	    case "FieryAxe":
+	    	player.setActiveWeapon(7);
+			setWeapon();
+			break;
+	    case "MoltenAxe":
+	    	player.setActiveWeapon(8);
+			setWeapon();
+			break;
+	    case "WaterAxe":
+	    	player.setActiveWeapon(9);
+			setWeapon();
+			break;
+		}		
 	}
 	
 	public void isPlayerDead() {
@@ -262,13 +365,11 @@ public class FightScene extends JPanel implements ActionListener{
 			rendLeft = 0;
 			
 			// Normal enemy rewards
+			player.gainCoin(enemy.getCoinValue());
+			lblReward.setText("You got " + enemy.getCoinValue() + " coins");
 			if(rand.nextInt(10) == 0 && !bossActive) {				
 				s.ironAxe.setAmount(s.ironAxe.getAmount() + 1);
 				lblReward.setText("You got " + s.ironAxe.getWeaponName());
-			}
-			else {
-				player.gainCoin(enemy.getCoinValue());
-				lblReward.setText("You got " + enemy.getCoinValue() + " coins");
 			}
 			
 			// Check if the player's defeated 3 enemies, if not, spawn a new one
@@ -281,12 +382,12 @@ public class FightScene extends JPanel implements ActionListener{
 				lblExp.setText("Gained " + enemy.getExpValue() + " exp");
 				lblExp.setVisible(true);
 				t.schedule( 
-		    	        new TimerTask() {
-		    	            @Override
-		    	            public void run() {		    	            	
-		    	    			lblExp.setVisible(false);
-		    	    			lblReward.setVisible(false);
-		    	            }}, 1000);
+	    	        new TimerTask() {
+	    	            @Override
+	    	            public void run() {		    	            	
+	    	    			lblExp.setVisible(false);
+	    	    			lblReward.setVisible(false);
+	    	            }}, 1000);
 				
 				// Select new enemy
 				enemySelectRand = rand.nextInt(2);
@@ -310,8 +411,7 @@ public class FightScene extends JPanel implements ActionListener{
 				enemiesDefeated++;
 				
 				// Refresh turn counter
-				turnCounter = player.getMana();
-							
+				turnCounter = player.getMana();							
 				repaint();
 			}
 			// Player has defeated 3 enemies, stage cleared
@@ -639,7 +739,7 @@ public class FightScene extends JPanel implements ActionListener{
 				abilityID = 0;
 			}
 			else
-				x = rand.nextInt(1, player.getStrength() + weapon.getWeaponDamage() + 1 + player.getTempStr());	// Basic attack
+				x = rand.nextInt(player.getStrength(), player.getStrength() + weapon.getWeaponDamage() + player.getTempStr() + 1);	// Basic attack
 			
 			// Damage enemy & update label
 			enemy.enemyLoseHP(x);
@@ -812,6 +912,7 @@ public class FightScene extends JPanel implements ActionListener{
         // Inventory
         for(int i = 0; i < activeBag.length; i++) {
         	activeBag[i] = Player.activeBag[i];
+        	activeBag[i].addActionListener(this);
         	add(activeBag[i]);
         }
         
