@@ -56,8 +56,8 @@ public class SlotMachine extends JPanel implements ActionListener {
 		if (command.equals("Quit")) {
             System.exit(0);
         }
-		else if (command.equals("Main menu")) {
-        	window.showMainMenu();
+		else if (command.equals("Return")) {
+        	window.showHomeScreen();
         }
 		else if (command.equals("Spin")) {
 			player.loseCoin(spinCost);
@@ -86,16 +86,11 @@ public class SlotMachine extends JPanel implements ActionListener {
 	}
 	
 	private void spinSlot() {
-		
-//		Icon symbolA = new ImageIcon();
-//		Icon symbolB = new ImageIcon();
-//		Icon symbol7 = new ImageIcon();
-		
+				
 		for(int i = 0; i < 3; i++) {
 			slotLvl = 1;
 			x = rand.nextInt(3);
 			slots[x][i] = new JLabel("A");
-//			slots[x][i].setIcon(symbolA);
 			slotLvl++;
 			
 			for(int j = 0; j < 2; j++) {
@@ -155,15 +150,15 @@ public class SlotMachine extends JPanel implements ActionListener {
 		quitButton.setText("Quit");
 		quitButton.setActionCommand("Quit");
         quitButton.addActionListener(this);
-        quitButton.setBounds(375, 25, 100, 30);
+        quitButton.setBounds(375, 25, 100, 50);
         add(quitButton);		
 		
         menuButton = new JButton();
         menuButton.setFocusable(false);
-        menuButton.setActionCommand("Main menu");
-        menuButton.setText("Main menu");
+        menuButton.setActionCommand("Return");
+        menuButton.setText("Return");
         menuButton.addActionListener(this);
-        menuButton.setBounds(25, 25, 100, 30);
+        menuButton.setBounds(25, 25, 100, 50);
         add(menuButton);
         
         spinButton = new JButton();

@@ -8,12 +8,14 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 
-import stages.HomeScreen;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 public class Storage {
 	private final int attackButtonCost = 1;
-	public Font font, font2, font3;
+	public Font font, font2, font3, font4;
 	private static Storage instance = null;
+	public Border border = LineBorder.createBlackLineBorder();
 	
 	public static Storage getInstance() {
         if (instance == null) {
@@ -56,8 +58,8 @@ public class Storage {
 	public Items shield = new Shield();
 	public Items bomb = new Bomb();
 	public Items poisonDart = new PoisonDart();
-	public Items bigBomb = new BigBomb();
-	public Items biggerBomb = new BiggerBomb();
+	public Items bigBomb = new Dynamite();
+	public Items biggerBomb = new Bombs();
 	
 	// Set animation to enemies
 	public Image setAnimation(String img) {
@@ -71,6 +73,7 @@ public class Storage {
 		    font = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(25f);
 		    font2 = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(18f);
 		    font3 = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(11f);
+		    font4 = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(10f);
 		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		    // Register the font
 		    ge.registerFont(font);

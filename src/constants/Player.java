@@ -1,5 +1,6 @@
 package constants;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import java.util.*;
@@ -19,6 +20,7 @@ public class Player {
 	private static int unlockedStage = 1;
 	private static int tempStr;
 	private static int merchantVisits;
+	public static JButton activeBag[] = new JButton[8];
 	protected JLabel lblPlayerHP;
 	private Random rand = new Random();
 	private static JLabel playerIcon = new JLabel();
@@ -232,5 +234,13 @@ public class Player {
 
 	public void setActiveWeapon(int activeWeapon) {
 		Player.activeWeapon = activeWeapon;
+	}
+
+	public JButton[] getActiveBag() {
+		return activeBag;
+	}
+
+	public void setActiveBag(JButton activeBag[]) {
+		Player.activeBag = activeBag;
 	}
 }

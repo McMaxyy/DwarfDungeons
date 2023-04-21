@@ -57,7 +57,7 @@ class HealthPot extends Items{
 		else
 			setItemPower(25);
 		setID(1);
-		setAmount(1);
+		setAmount(3);
 		setBuyValue(15);
 		setSellValue(7);
 	}
@@ -101,9 +101,9 @@ class PoisonDart extends Items{
 	}
 }
 
-class BigBomb extends Items{
-	public BigBomb() {
-		setItemName("Big bomb");
+class Dynamite extends Items{
+	public Dynamite() {
+		setItemName("Dynamite");
 		setItemPower(20);
 		setID(5);
 		setAmount(1);
@@ -112,9 +112,9 @@ class BigBomb extends Items{
 	}
 }
 
-class BiggerBomb extends Items{
-	public BiggerBomb() {
-		setItemName("Bigger bomb");
+class Bombs extends Items{
+	public Bombs() {
+		setItemName("Bombs");
 		setItemPower(35);
 		setID(6);
 		setAmount(1);

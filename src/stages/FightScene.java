@@ -52,6 +52,7 @@ public class FightScene extends JPanel implements ActionListener{
 	private final int SCALE = 250;
 	private Image basicAtk, decapBtn, swingBtn, riposteBtn, rendBtn, hardenBtn, whirlwindBtn, 
 			returnBtn, turnBtn;
+	private JButton activeBag[] = new JButton[8];
 
 	public FightScene(GameWindow window, int levelIndex, int selectedStage){
 		this.window = window;
@@ -83,7 +84,28 @@ public class FightScene extends JPanel implements ActionListener{
 					weapon.weaponOne(s.ironAxe.getAttackPower());
 					break;
 				case 2:
+					weapon.weaponOne(s.silverAxe.getAttackPower());
+					break;
+				case 3:
+					weapon.weaponOne(s.goldAxe.getAttackPower());
+					break;
+				case 4:
 					weapon.weaponOne(s.steelAxe.getAttackPower());
+					break;
+				case 5:
+					weapon.weaponOne(s.copperAxe.getAttackPower());
+					break;
+				case 6:
+					weapon.weaponOne(s.titaniumAxe.getAttackPower());
+					break;
+				case 7:
+					weapon.weaponOne(s.fieryAxe.getAttackPower());
+					break;
+				case 8:
+					weapon.weaponOne(s.moltenAxe.getAttackPower());
+					break;
+				case 9:
+					weapon.weaponOne(s.waterAxe.getAttackPower());
 					break;
 				}
 			else
@@ -95,6 +117,9 @@ public class FightScene extends JPanel implements ActionListener{
 		loadAnimations();
         initComponents();
         disableButtonFocus();
+        
+        for(JButton button : buttons)
+        	button.setBorder(s.border);        	
 	}
 
 	// Button actions
@@ -607,10 +632,10 @@ public class FightScene extends JPanel implements ActionListener{
 				case 6:
 					y = s.whirlwind.getAttackPower();
 				}
-				x = rand.nextInt(y, player.getStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr() / 2 + 1); // Ability attack
+				x = rand.nextInt(y, player.getStrength() / 2 + weapon.getWeaponDamage()+ y + player.getTempStr() / 2 + 1); // Ability attack
 				if(abilityID == 6)	// Whirlwind
 					for(int i = 1; i < 3; i++)
-						x = x + (player.getStrength() / 2 + weapon.getWeaponDamage() / 2 + y + player.getTempStr() / 2);	
+						x = x + (player.getStrength() / 2 + weapon.getWeaponDamage()+ y + player.getTempStr() / 2 + 1);	
 				abilityID = 0;
 			}
 			else
@@ -631,6 +656,49 @@ public class FightScene extends JPanel implements ActionListener{
 			enableActionButtons();	// Maybe should be disable
 		isEnemyDead();	// Check if the player's attack killed the enemy
 	}
+	
+	private void configureAbilityButton(JButton button, int abilityID, int x, int y) {
+	    switch(abilityID) {
+	        case 1:
+	            button.setActionCommand("Swing");
+	            button.setIcon(new ImageIcon(swingBtn));
+	            break;
+	        case 2:
+	            button.setActionCommand("Decapitate");
+	            button.setIcon(new ImageIcon(decapBtn));
+	            button.setEnabled(false);
+	            break;
+	        case 3:
+	            button.setActionCommand("Riposte");
+	            button.setIcon(new ImageIcon(riposteBtn));
+	            button.setEnabled(false);
+	            break;
+	        case 4:
+	            button.setActionCommand("Rend");
+	            button.setIcon(new ImageIcon(rendBtn));
+	            break;
+	        case 5:
+	            button.setActionCommand("Harden");
+	            button.setIcon(new ImageIcon(hardenBtn));
+	            break;
+	        case 6:
+	            button.setActionCommand("Whirlwind");
+	            button.setIcon(new ImageIcon(whirlwindBtn));
+	            break;
+	        case 7:
+	            button.setActionCommand("Weaken");
+	            button.setText("Weaken");
+	            break;
+	        case 8:
+	            button.setActionCommand("Stun");
+	            button.setText("Stun");
+	            break;
+	    }
+	    button.addActionListener(this);
+	    button.setBounds(x, y, 150, 100);
+	    add(button);
+	}
+
 
 	private void initComponents() {	
 		
@@ -725,128 +793,14 @@ public class FightScene extends JPanel implements ActionListener{
         attackButton.setBounds(790, 550, 150, 100);
         add(attackButton);
         
-        ability1 = new JButton();              
-        switch(player.getAbility1ID()) {
-        case 1:
-        	ability1.setActionCommand("Swing");
-        	ability1.setIcon(new ImageIcon(swingBtn));
-        	break;
-        case 2:
-        	ability1.setActionCommand("Decapitate");
-        	ability1.setIcon(new ImageIcon(decapBtn));
-        	ability1.setEnabled(false);
-        	break;
-        case 3:
-        	ability1.setActionCommand("Riposte");
-        	ability1.setIcon(new ImageIcon(riposteBtn));
-        	ability1.setEnabled(false);
-        	break;
-        case 4:
-        	ability1.setActionCommand("Rend");
-        	ability1.setIcon(new ImageIcon(rendBtn));
-        	break;
-        case 5:
-        	ability1.setActionCommand("Harden");
-        	ability1.setIcon(new ImageIcon(hardenBtn));
-        	break;
-        case 6:
-        	ability1.setActionCommand("Whirlwind");
-        	ability1.setIcon(new ImageIcon(whirlwindBtn));
-        	break;
-        case 7:
-        	ability1.setActionCommand("Weaken");
-        	ability1.setText("Weaken");
-        	break;
-        case 8:
-        	ability1.setActionCommand("Stun");
-        	ability1.setText("Stun");
-        	break;
-        }        
-        ability1.addActionListener(this);
-        ability1.setBounds(250, 550, 150, 100);
-        add(ability1);
-      
-        ability2 = new JButton();      
-        switch(player.getAbility2ID()) {
-        case 1:
-        	ability2.setActionCommand("Swing");
-        	ability2.setIcon(new ImageIcon(swingBtn));
-        	break;
-        case 2:
-        	ability2.setActionCommand("Decapitate");
-        	ability2.setIcon(new ImageIcon(decapBtn));
-        	ability2.setEnabled(false);
-        	break;
-        case 3:
-        	ability2.setActionCommand("Riposte");
-        	ability2.setIcon(new ImageIcon(riposteBtn));
-        	ability2.setEnabled(false);
-        	break;
-        case 4:
-        	ability2.setActionCommand("Rend");
-        	ability2.setIcon(new ImageIcon(rendBtn));
-        	break;
-        case 5:
-        	ability2.setActionCommand("Harden");
-        	ability2.setIcon(new ImageIcon(hardenBtn));
-        	break;
-        case 6:
-        	ability2.setActionCommand("Whirlwind");
-        	ability2.setIcon(new ImageIcon(whirlwindBtn));
-        	break;
-        case 7:
-        	ability2.setActionCommand("Weaken");
-        	ability2.setText("Weaken");
-        	break;
-        case 8:
-        	ability2.setActionCommand("Stun");
-        	ability2.setText("Stun");
-        	break;
-        }        
-        ability2.addActionListener(this);
-        ability2.setBounds(430, 550, 150, 100);
-        add(ability2);
-        
-        ability3 = new JButton();      
-        switch(player.getAbility3ID()) {
-        case 1:
-        	ability3.setActionCommand("Swing");
-        	ability3.setIcon(new ImageIcon(swingBtn));
-        	break;
-        case 2:
-        	ability3.setActionCommand("Decapitate");
-        	ability3.setIcon(new ImageIcon(decapBtn));
-        	ability3.setEnabled(false);
-        	break;
-        case 3:
-        	ability3.setActionCommand("Riposte");
-        	ability3.setIcon(new ImageIcon(riposteBtn));
-        	ability3.setEnabled(false);
-        	break;
-        case 4:
-        	ability3.setActionCommand("Rend");
-        	ability3.setIcon(new ImageIcon(rendBtn));
-        	break;
-        case 5:
-        	ability3.setActionCommand("Harden");
-        	ability3.setIcon(new ImageIcon(hardenBtn));
-        	break;
-        case 6:
-        	ability3.setActionCommand("Whirlwind");
-        	ability3.setIcon(new ImageIcon(whirlwindBtn));
-        	break;
-        case 7:
-        	ability3.setActionCommand("Weaken");
-        	ability3.setText("Weaken");
-        	break;
-        case 8:
-        	ability3.setActionCommand("Stun");
-        	ability3.setText("Stun");
-        	break;
-        }        
-        ability3.addActionListener(this);
-        ability3.setBounds(610, 550, 150, 100);
-        add(ability3);
+        ability1 = new JButton();
+        configureAbilityButton(ability1, player.getAbility1ID(), 250, 550);
+                
+        ability2 = new JButton();
+        configureAbilityButton(ability2, player.getAbility2ID(), 430, 550);
+                
+        ability3 = new JButton();
+        configureAbilityButton(ability3, player.getAbility3ID(), 610, 550);       
         
         turnButton = new JButton();
         turnButton.setActionCommand("Turn");
@@ -854,6 +808,12 @@ public class FightScene extends JPanel implements ActionListener{
         turnButton.addActionListener(this);
         turnButton.setBounds(950, 600, 100, 50);
         add(turnButton);
+        
+        // Inventory
+        for(int i = 0; i < activeBag.length; i++) {
+        	activeBag[i] = Player.activeBag[i];
+        	add(activeBag[i]);
+        }
         
         // Stat level up buttons
         levelUpHPButton = new JButton();

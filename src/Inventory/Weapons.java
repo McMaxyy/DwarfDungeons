@@ -58,7 +58,7 @@ class SilverAxe extends Weapons{
 		setWeaponName("Silver Axe");
 		setAttackPower(2);
 		setID(2);
-		setAmount(0);
+		setAmount(1);
 		setSellValue(25);
 	}
 }
@@ -99,7 +99,7 @@ class TitaniumAxe extends Weapons{
 		setWeaponName("Titanium Axe");
 		setAttackPower(7);
 		setID(6);
-		setAmount(1);
+		setAmount(10);
 		setSellValue(150);
 	}
 }
