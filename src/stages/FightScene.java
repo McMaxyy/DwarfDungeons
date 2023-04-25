@@ -1,12 +1,8 @@
 package stages;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Timer;
@@ -28,7 +24,7 @@ import main.GameWindow;
 import constants.*;
 
 @SuppressWarnings({"serial"})
-public class FightScene extends JPanel implements ActionListener{
+public class FightScene extends JPanel implements ActionListener, MouseListener, MouseMotionListener{
 	
 	private GameWindow window;
 	private Player player = new Player();
@@ -53,8 +49,16 @@ public class FightScene extends JPanel implements ActionListener{
 	private Timer t = new java.util.Timer();
 	private final int SCALE = 250;
 	private Image basicAtk, decapBtn, swingBtn, riposteBtn, rendBtn, hardenBtn, whirlwindBtn, 
-			returnBtn, turnBtn;
+			returnBtn, turnBtn, stunBtn, weakenBtn, bubbleBtn, healBtn, blockBtn,
+			poisonBtn, explosiveBtn, confuseBtn, pummelBtn, tendonBtn, stealBtn, breakerBtn,
+			shieldBtn, fortifyBtn;
+	private Image swingCard, rendCard, hardenCard, stunCard, riposteCard, whirlwindCard,
+			decapCard, weakenCard, attackCard, bubbleCard, healCard, blockCard, poisonCard,
+			explosiveCard, confuseCard, pummelCard, tendonCard, stealCard, breakerCard, shieldCard, fortifyCard;
 	private JButton activeBag[] = new JButton[8];
+	private boolean isHovering, hoverAttack, hoverSwing, hoverRend, hoverHarden, hoverRiposte, hoverWhirlwind,
+			hoverDecap, hoverWeaken, hoverBubble, hoverHeal, hoverBlock, hoverPoison, hoverExplosive, hoverConfuse,
+			hoverPummel, hoverTendon, hoverSteal, hoverBreaker, hoverShield, hoverFortify, hoverStun;
 
 	public FightScene(GameWindow window, int levelIndex, int selectedStage){
 		this.window = window;
@@ -776,14 +780,16 @@ public class FightScene extends JPanel implements ActionListener{
 	            break;
 	        case 7:
 	            button.setActionCommand("Weaken");
-	            button.setText("Weaken");
+	            button.setIcon(new ImageIcon(weakenBtn));
 	            break;
 	        case 8:
 	            button.setActionCommand("Stun");
-	            button.setText("Stun");
+	            button.setIcon(new ImageIcon(stunBtn));
 	            break;
 	    }
 	    button.addActionListener(this);
+	    button.addMouseListener(this);
+	    button.addMouseMotionListener(this);
 	    button.setBounds(x, y, 150, 100);
 	    add(button);
 	}
@@ -843,7 +849,7 @@ public class FightScene extends JPanel implements ActionListener{
 		// Damage dealt label
 		lblDamageDealt = new JLabel();
 		lblDamageDealt.setFont(s.font3);
-		lblDamageDealt.setBounds(400, 180, 450, 30);
+		lblDamageDealt.setBounds(400, 80, 450, 30);
 		lblDamageDealt.setBorder(blackline);
 		lblDamageDealt.setBackground(Color.WHITE);
 		lblDamageDealt.setOpaque(true);
@@ -912,6 +918,8 @@ public class FightScene extends JPanel implements ActionListener{
         attackButton.setActionCommand("Attack");
         attackButton.setIcon(new ImageIcon(basicAtk));
         attackButton.addActionListener(this);
+        attackButton.addMouseListener(this);
+        attackButton.addMouseMotionListener(this);
         attackButton.setBounds(790, 550, 150, 100);
         add(attackButton);
         
@@ -993,16 +1001,56 @@ public class FightScene extends JPanel implements ActionListener{
 	
 	private void loadImages() {
 		try {
-		    basicAtk = ImageIO.read(new File("res/Buttons/AttackButton.png"));
-		    swingBtn = ImageIO.read(new File("res/Buttons/SwingButton.png"));
-		    decapBtn = ImageIO.read(new File("res/Buttons/DecapButton.png"));
-		    riposteBtn = ImageIO.read(new File("res/Buttons/RiposteButton.png"));
-		    rendBtn = ImageIO.read(new File("res/Buttons/RendButton.png"));
-		    hardenBtn = ImageIO.read(new File("res/Buttons/HardenButton.png"));
-		    whirlwindBtn = ImageIO.read(new File("res/Buttons/WhirlwindButton.png"));
+			// Button images
+		    basicAtk = ImageIO.read(new File("res/AbilityButtons/AttackButton.png"));
+		    swingBtn = ImageIO.read(new File("res/AbilityButtons/SwingButton.png"));
+		    decapBtn = ImageIO.read(new File("res/AbilityButtons/DecapButton.png"));
+		    riposteBtn = ImageIO.read(new File("res/AbilityButtons/RiposteButton.png"));
+		    rendBtn = ImageIO.read(new File("res/AbilityButtons/RendButton.png"));
+		    hardenBtn = ImageIO.read(new File("res/AbilityButtons/HardenButton.png"));
+		    whirlwindBtn = ImageIO.read(new File("res/AbilityButtons/WhirlwindButton.png"));
+		    weakenBtn = ImageIO.read(new File("res/AbilityButtons/WeakenButton.png"));
+		    stunBtn = ImageIO.read(new File("res/AbilityButtons/StunButton.png"));
+		    bubbleBtn = ImageIO.read(new File("res/AbilityButtons/BubbleButton.png"));
+		    healBtn = ImageIO.read(new File("res/AbilityButtons/HealButton.png"));
+		    blockBtn = ImageIO.read(new File("res/AbilityButtons/BlockButton.png"));
+		    poisonBtn = ImageIO.read(new File("res/AbilityButtons/PoisonButton.png"));
+		    explosiveBtn = ImageIO.read(new File("res/AbilityButtons/ExplosiveButton.png"));
+		    confuseBtn = ImageIO.read(new File("res/AbilityButtons/ConfuseButton.png"));
+		    pummelBtn = ImageIO.read(new File("res/AbilityButtons/PummelButton.png"));
+		    tendonBtn = ImageIO.read(new File("res/AbilityButtons/TendonButton.png"));
+		    stealBtn = ImageIO.read(new File("res/AbilityButtons/StealButton.png"));
+		    breakerBtn = ImageIO.read(new File("res/AbilityButtons/BreakerButton.png"));
+		    shieldBtn = ImageIO.read(new File("res/AbilityButtons/ShieldButton.png"));
+		    fortifyBtn = ImageIO.read(new File("res/AbilityButtons/FortifyButton.png"));
+		    
+		    // Other images
 		    backgroundImg = ImageIO.read(new File("res/Backgrounds/Fight_BG.png"));
 		    returnBtn = ImageIO.read(new File("res/FunctionButtons/HomeButton.png"));
 		    turnBtn = ImageIO.read(new File("res/FunctionButtons/TurnButton.png"));
+		    
+		    // Card images
+		    swingCard = ImageIO.read(new File("res/AbilityCards/OverheadSwing.png"));
+		    rendCard = ImageIO.read(new File("res/AbilityCards/Rend.png"));
+		    hardenCard = ImageIO.read(new File("res/AbilityCards/Harden.png"));
+		    stunCard = ImageIO.read(new File("res/AbilityCards/Stun.png"));
+		    riposteCard = ImageIO.read(new File("res/AbilityCards/Riposte.png"));
+		    whirlwindCard = ImageIO.read(new File("res/AbilityCards/Whirlwind.png"));
+		    decapCard = ImageIO.read(new File("res/AbilityCards/Decapitate.png"));
+		    weakenCard = ImageIO.read(new File("res/AbilityCards/Weaken.png"));
+		    attackCard = ImageIO.read(new File("res/AbilityCards/BasicAttack.png"));
+		    bubbleCard = ImageIO.read(new File("res/AbilityCards/Bubble.png"));
+		    healCard = ImageIO.read(new File("res/AbilityCards/Heal.png"));
+		    blockCard = ImageIO.read(new File("res/AbilityCards/Block.png"));
+		    poisonCard = ImageIO.read(new File("res/AbilityCards/PoisonSlash.png"));
+		    explosiveCard = ImageIO.read(new File("res/AbilityCards/ExplosiveAttack.png"));
+		    confuseCard = ImageIO.read(new File("res/AbilityCards/Confuse.png"));
+		    pummelCard = ImageIO.read(new File("res/AbilityCards/Pummel.png"));
+		    tendonCard = ImageIO.read(new File("res/AbilityCards/TendonCutter.png"));
+		    stealCard = ImageIO.read(new File("res/AbilityCards/LifeSteal.png"));
+		    breakerCard = ImageIO.read(new File("res/AbilityCards/GroundBreaker.png"));
+		    shieldCard = ImageIO.read(new File("res/AbilityCards/ShieldWall.png"));
+		    fortifyCard = ImageIO.read(new File("res/AbilityCards/FortifiedAttack.png"));
 		} catch (Exception ex) {
 			  System.out.println(ex);
 		  }
@@ -1104,5 +1152,99 @@ public class FightScene extends JPanel implements ActionListener{
 		    g.fillOval(bubbleLoc, 240, 20, 20);
 		    bubbleLoc += 30;
 	    }
+	    
+	    if (isHovering) {
+	    	if(hoverAttack)
+	    		g.drawImage(attackCard, 500, 200, this);
+	    	else if(hoverSwing)
+		    	g.drawImage(swingCard, 500, 200, this);
+	    	else if(hoverHarden)
+		    	g.drawImage(hardenCard, 500, 200, this);
+	    	else if(hoverStun)
+		    	g.drawImage(stunCard, 500, 200, this);
+	    	else if(hoverRiposte)
+		    	g.drawImage(riposteCard, 500, 200, this);
+        }
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		if (e.getSource() instanceof JButton) {
+	        String actionCommand = ((JButton) e.getSource()).getActionCommand();
+	        switch (actionCommand) {
+	        case "Swing":
+	        	hoverSwing = true;
+	        	break;
+	        case "Attack":
+	        	hoverAttack = true;
+	        	break;
+	        case "Harden":
+	        	hoverHarden = true;
+	        	break;
+	        case "Stun":
+	        	hoverStun = true;
+	        	break;
+	        case "Riposte":
+	        	hoverRiposte = true;
+	        	break;
+	        case "Rend":
+	        	hoverRend = true;
+	        	break;
+	        case "Whirlwind":
+	        	hoverWhirlwind = true;
+	        	break;
+	        case "Decapitate":
+	        	hoverDecap = true;
+	        	break;
+	        case "Weaken":
+	        	hoverWeaken = true;
+	        	break;
+	        case "Bubble":
+	        	hoverBubble = true;
+	        	break;
+	        case "Heal":
+	        	hoverHeal = true;
+	        	break;
+	        case "Block":
+	        	hoverBlock = true;
+	        	break;
+	        }
+	        isHovering = true;	
+		}
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		isHovering = false;  
+		hoverAttack = false;
+		hoverSwing = false;
+		hoverHarden = false;
+		hoverStun = false;
+		hoverRiposte = false;
 	}	
+	
+	@Override
+	public void mouseMoved(MouseEvent e) {
+
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		
+	}
 }

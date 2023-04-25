@@ -144,7 +144,7 @@ class PoisonSlash extends Abilities{
 class ExplosiveAttack extends Abilities{
 	public ExplosiveAttack() {
 		setAbilityName("Explosive Attack");
-		setAttackPower(3);
+		setAttackPower(4);
 		setAbilityCost(2);
 		setID(12);
 	}
@@ -180,7 +180,7 @@ class LifeSteal extends Abilities{
 	public LifeSteal() {
 		setAbilityName("Life Steal");
 		setAttackPower(4);
-		setAbilityCost(4);
+		setAbilityCost(3);
 		setID(16);
 	}
 }
@@ -205,7 +205,7 @@ class ShieldWall extends Abilities{
 class FortifiedAttack extends Abilities{
 	public FortifiedAttack() {
 		setAbilityName("Fortified Attack");
-		setAttackPower(10);
+		setAttackPower(8);
 		setAbilityCost(6);
 		setID(19);
 	}
