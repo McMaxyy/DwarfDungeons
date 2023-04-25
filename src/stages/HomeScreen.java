@@ -33,7 +33,7 @@ public class HomeScreen extends JPanel implements ActionListener {
     		storeButton, bagButton;
     private Storage s = Storage.getInstance();
     private int xLoc1 = 607, yLoc1 = 300, itemsInRow1 = 0, xLoc2 = 642, yLoc2 = 500, itemsInRow2 = 0;
-    private int xLocA = 660, yLocA = 90, itemsInRowA = 0, yLocP = 400;
+    private int xLocA = 660, yLocA = 90, itemsInRowA = 0;
     private JButton bagW[] = new JButton[s.waterAxe.getID()];
     private JButton bagI[] = new JButton[s.biggerBomb.getID()];
     private JButton activeBag[] = new JButton[8];
@@ -148,13 +148,13 @@ public class HomeScreen extends JPanel implements ActionListener {
     
 	private void addItemToActiveBag(Image img, String name) {
 		for(int i = 0; i < activeBag.length; i++) {
-			if(weaponAdded && !itemAdded) {
-				activeBag[i].setIcon(new ImageIcon(img));
-				activeBag[i].setName(name);				
-				itemAdded = true;
+			if(weaponAdded) {
+				activeBag[0].setIcon(new ImageIcon(img));
+				activeBag[0].setName(name);	
+				weaponAdded = false;
 				break;
 			}
-			else if(activeBag[i].getIcon() == null) {
+			else if(activeBag[i].getIcon() == null && i != 0) {
 				activeBag[i].setIcon(new ImageIcon(img));
 				activeBag[i].setName(name);	
 				break;
@@ -487,7 +487,7 @@ public class HomeScreen extends JPanel implements ActionListener {
 	}
 
 	private void saveGame() {
-		int[] saveS = new int[7];
+		int[] saveS = new int[21];
 		saveS[0] = player.getMaxHP();
 		saveS[1] = player.getStrength();
 		saveS[2] = player.getCoins();
@@ -495,6 +495,20 @@ public class HomeScreen extends JPanel implements ActionListener {
 		saveS[4] = player.getExp();
 		saveS[5] = player.getLevelCap();
 		saveS[6] = s.ironAxe.getAmount();
+		saveS[7] = s.silverAxe.getAmount();
+		saveS[8] = s.goldAxe.getAmount();
+		saveS[9] = s.steelAxe.getAmount();
+		saveS[10] = s.copperAxe.getAmount();
+		saveS[11] = s.titaniumAxe.getAmount();
+		saveS[12] = s.fieryAxe.getAmount();
+		saveS[13] = s.moltenAxe.getAmount();
+		saveS[14] = s.waterAxe.getAmount();
+		saveS[15] = s.healthPot.getAmount();
+		saveS[16] = s.shield.getAmount();
+		saveS[17] = s.bomb.getAmount();
+		saveS[18] = s.poisonDart.getAmount();
+		saveS[19] = s.bigBomb.getAmount();
+		saveS[20] = s.biggerBomb.getAmount();
 		
 		try (FileWriter writer = new FileWriter("savegame.json")) {
             gson.toJson(saveS, writer);
@@ -523,7 +537,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         	yLocA = 110;
         	for(int i = 0; i < activeBag.length; i++) {
         		String temp = "inv";
-        		Player.activeBag[i].setActionCommand(temp + (i + 1));
+        		Player.activeBag[i].setActionCommand(temp + i);
         		Player.activeBag[i].setContentAreaFilled(true);
         		Player.activeBag[i].setBackground(Color.DARK_GRAY);
         		if(activeBag[i].getIcon() != null)
@@ -555,104 +569,113 @@ public class HomeScreen extends JPanel implements ActionListener {
         case "weapon1":
             player.setActiveWeapon(s.ironAxe.getID()); 
             weaponAdded = true;
-            itemAdded = false;
             addItemToActiveBag(ironBtn, "IronAxe");           
             break;
         case "weapon2":
             player.setActiveWeapon(s.silverAxe.getID());
             weaponAdded = true;
-            itemAdded = false;
             addItemToActiveBag(silverBtn, "SilverAxe");
             break;
         case "weapon3":
             player.setActiveWeapon(s.goldAxe.getID());
             weaponAdded = true;
-            itemAdded = false;
             addItemToActiveBag(goldBtn, "GoldAxe");
             break;
         case "weapon4":
             player.setActiveWeapon(s.steelAxe.getID());
             weaponAdded = true;
-            itemAdded = false;
             addItemToActiveBag(steelBtn, "SteelAxe");
             break;
         case "weapon5":
             player.setActiveWeapon(s.copperAxe.getID());
             weaponAdded = true;
-            itemAdded = false;
             addItemToActiveBag(copperBtn, "CopperAxe");
             break;
         case "weapon6":
             player.setActiveWeapon(s.titaniumAxe.getID());
             weaponAdded = true;
-            itemAdded = false;
             addItemToActiveBag(titanBtn, "TitaniumAxe");           
             break;
         case "weapon7":
             player.setActiveWeapon(s.fieryAxe.getID());
             weaponAdded = true;
-            itemAdded = false;
             addItemToActiveBag(fieryBtn, "FieryAxe");
             break;
         case "weapon8":
             player.setActiveWeapon(s.moltenAxe.getID());
             weaponAdded = true;
-            itemAdded = false;
             addItemToActiveBag(moltenBtn, "MoltenAxe");
             break;
         case "weapon9":
             player.setActiveWeapon(s.waterAxe.getID());
             weaponAdded = true;
-            itemAdded = false;
             addItemToActiveBag(waterBtn, "WaterAxe");
             break;
             
         // Items in inventory
         case "item1":
-        	s.healthPot.setAmount(s.healthPot.getAmount() - 1);
+        	for(int i = 1; i < activeBag.length; i++) {
+        		if(activeBag[i].getIcon() == null) {
+        			s.healthPot.setAmount(s.healthPot.getAmount() - 1);
+        			break;
+        		}
+        	}
         	checkAvailableItems();
-        	itemAdded = true;
         	addItemToActiveBag(healthBtn, "Health");
         	break;
         case "item2":
-        	s.shield.setAmount(s.shield.getAmount() - 1);
+        	for(int i = 1; i < activeBag.length; i++) {
+        		if(activeBag[i].getIcon() == null) {
+        			s.shield.setAmount(s.shield.getAmount() - 1);
+        			break;
+        		}
+        	}
         	checkAvailableItems();
-        	itemAdded = true;
         	addItemToActiveBag(shieldBtn, "Shield");
         	break;
         case "item3":
-        	s.bomb.setAmount(s.bomb.getAmount() - 1);
+        	for(int i = 1; i < activeBag.length; i++) {
+        		if(activeBag[i].getIcon() == null) {
+        			s.bomb.setAmount(s.bomb.getAmount() - 1);
+        			break;
+        		}
+        	}
         	checkAvailableItems();
-        	itemAdded = true;
         	addItemToActiveBag(bombBtn, "Bomb");
         	break;
         case "item4":
-        	s.poisonDart.setAmount(s.poisonDart.getAmount() - 1);
+        	for(int i = 1; i < activeBag.length; i++) {
+        		if(activeBag[i].getIcon() == null) {
+        			s.poisonDart.setAmount(s.poisonDart.getAmount() - 1);
+        			break;
+        		}
+        	}
         	checkAvailableItems();
-        	itemAdded = true;
         	addItemToActiveBag(dartBtn, "PoisonDart");
         	break;
         case "item5":
-        	s.bigBomb.setAmount(s.bigBomb.getAmount() - 1);
+        	for(int i = 1; i < activeBag.length; i++) {
+        		if(activeBag[i].getIcon() == null) {
+        			s.bigBomb.setAmount(s.bigBomb.getAmount() - 1);
+        			break;
+        		}
+        	}
         	checkAvailableItems();
-        	itemAdded = true;
         	addItemToActiveBag(dynamiteBtn, "Dynamite");
         	break;
         case "item6":
-        	s.biggerBomb.setAmount(s.biggerBomb.getAmount() - 1);
+        	for(int i = 1; i < activeBag.length; i++) {
+        		if(activeBag[i].getIcon() == null) {
+        			s.biggerBomb.setAmount(s.biggerBomb.getAmount() - 1);
+        			break;
+        		}
+        	}
         	checkAvailableItems();
-        	itemAdded = true;
         	addItemToActiveBag(bombsBtn, "Bombs");
         	break;
         	
         // Active inventory
         case "active1":
-        	if(activeBag[0].getName() != "IronAxe" && activeBag[0].getName() != "SilverAxe" &&
-        		activeBag[0].getName() != "GoldAxe" && activeBag[0].getName() != "SteelAxe" &&
-        		activeBag[0].getName() != "CopperAxe" && activeBag[0].getName() != "TitaniumAxe" &&
-        		activeBag[0].getName() != "FieryAxe" && activeBag[0].getName() != "MoltenAxe" &&
-        		activeBag[0].getName() != "WaterAxe")
-        		addItemBack(0);
         	activeBag[0].setIcon(null);
         	break;
         case "active2":

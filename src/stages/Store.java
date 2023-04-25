@@ -417,7 +417,7 @@ public class Store extends JPanel implements ActionListener{
 		coins.setText("Available coins: " + player.getCoins());
 		coins.setFont(s.font2);
 		coins.setForeground(Color.WHITE);
-		coins.setBounds(215 , 190, 300, 30);
+		coins.setBounds(220 , 190, 300, 30);
 		add(coins);
 	}
 

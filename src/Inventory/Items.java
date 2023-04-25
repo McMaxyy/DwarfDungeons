@@ -93,7 +93,7 @@ class Bomb extends Items{
 class PoisonDart extends Items{
 	public PoisonDart() {
 		setItemName("Poison dart");
-		setItemPower(2);
+		setItemPower(3);
 		setID(4);
 		setAmount(1);
 		setBuyValue(13);

@@ -36,13 +36,13 @@ public class FightScene extends JPanel implements ActionListener{
 	private Storage s = Storage.getInstance();
 	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblExp, lblLevelUp, lblEnemyName, lblReward;
 	private JButton returnButton, attackButton, menuButton, turnButton, levelUpHPButton, levelUpStrButton, 
-			ability1, ability2, ability3;
+			ability1, ability2, ability3, yesAdd, noAdd;
 	private JButton[] buttons = new JButton[] {attackButton, menuButton, turnButton, ability1, ability2, ability3};
 	private JButton[] actionButtons = new JButton[] {attackButton, ability1, ability2, ability3};
 	String youLost = "You\nLost";
 	String youWon = "You\nWon";
 	private Random rand = new Random();
-	private int enemySelectRand = rand.nextInt(2);
+	private int enemySelectRand = rand.nextInt(2), weaponWon;
 	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated, rendLeft, weakLeft, poisonLeft;
 	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack, hardenActive,
 			enemyDead, stunActive, bossActive;
@@ -197,32 +197,73 @@ public class FightScene extends JPanel implements ActionListener{
             }             
             if(gameOver)
             	returnButton.setVisible(true);
-            break;
-        case "inv1":
-        	itemAction(0);
+            break;       
+        case "Yes":
+        	for(int i = 0; i < activeBag.length; i++) {
+        		activeBag[i].setActionCommand("remove" + i);
+        		activeBag[i].addActionListener(this);
+        	}
+        	lblReward.setText("Choose an inventory slot"); 
+        	noAdd.setVisible(false);
+        	yesAdd.setVisible(false);	
         	break;
-        case "inv2":
-        	itemAction(1);
-        	break;
-        case "inv3":
-        	itemAction(2);
-        	break;
-        case "inv4":
-        	itemAction(3);
-        	break;
-        case "inv5":
-        	itemAction(4);
-        	break;
-        case "inv6":
-        	itemAction(5);
-        	break;
-        case "inv7":
-        	itemAction(6);
-        	break;
-        case "inv8":
-        	itemAction(7);
-        	break;
-        }   
+        case "No":
+        	lblReward.setVisible(false);   
+        	noAdd.setVisible(false);
+        	yesAdd.setVisible(false);
+        }
+        if (command.startsWith("remove")) {
+			int index = Integer.parseInt(command.substring(6));
+			switch(weaponWon) {
+			case 1:
+				activeBag[index].setIcon(new ImageIcon("res/Weapons/IronAxe.png"));
+				activeBag[index].setName("IronAxe");
+				break;
+			case 2:
+				activeBag[index].setIcon(new ImageIcon("res/Weapons/SilverAxe.png"));
+				activeBag[index].setName("SilverAxe");
+				break;
+			case 3:
+				activeBag[index].setIcon(new ImageIcon("res/Weapons/GoldAxe.png"));
+				activeBag[index].setName("GoldAxe");
+				break;
+			case 4:
+				activeBag[index].setIcon(new ImageIcon("res/Weapons/SteelAxe.png"));
+				activeBag[index].setName("SteelAxe");
+				break;
+			case 5:
+				activeBag[index].setIcon(new ImageIcon("res/Weapons/CopperAxe.png"));
+				activeBag[index].setName("CopperAxe");
+				break;
+			case 6:
+				activeBag[index].setIcon(new ImageIcon("res/Weapons/TitaniumAxe.png"));
+				activeBag[index].setName("TitaniumAxe");
+				break;
+			case 7:
+				activeBag[index].setIcon(new ImageIcon("res/Weapons/FieryAxe.png"));
+				activeBag[index].setName("FieryAxe");
+				break;
+			case 8:
+				activeBag[index].setIcon(new ImageIcon("res/Weapons/MoltenAxe.png"));
+				activeBag[index].setName("MoltenAxe");
+				break;
+			case 9:
+				activeBag[index].setIcon(new ImageIcon("res/Weapons/WaterAxe.png"));
+				activeBag[index].setName("WaterAxe");
+				break;
+			}
+			
+			for(int i = 0; i < activeBag.length; i++) {
+				activeBag[i].setActionCommand("inv" + i);
+				activeBag[i].addActionListener(this);
+			}
+			lblReward.setVisible(false);					
+        }
+        if(command.startsWith("inv")) {
+        	int index = Integer.parseInt(command.substring(3));
+        	if(activeBag[index].getIcon() != null)
+        		itemAction(index);
+        }
 	}
 	
 	private void setWeapon() {
@@ -367,13 +408,15 @@ public class FightScene extends JPanel implements ActionListener{
 			// Normal enemy rewards
 			player.gainCoin(enemy.getCoinValue());
 			lblReward.setText("You got " + enemy.getCoinValue() + " coins");
-			if(rand.nextInt(10) == 0 && !bossActive) {				
-				s.ironAxe.setAmount(s.ironAxe.getAmount() + 1);
-				lblReward.setText("You got " + s.ironAxe.getWeaponName());
+			if(rand.nextInt(5) == 0 && !bossActive) {								
+				lblReward.setText("You got " + s.ironAxe.getWeaponName() + ". Add it to inv?");
+				weaponWon = 1;
+				yesAdd.setVisible(true);
+				noAdd.setVisible(true);
 			}
 			
 			// Check if the player's defeated 3 enemies, if not, spawn a new one
-			if(enemiesDefeated != 2 && currentLevel != 1 && 
+			if(enemiesDefeated != 2 && currentLevel != 2 && 
 				!enemy.isStrongEnemyActive() && !enemy.isBossActive()) {
 				
 				enemyDead = false;
@@ -386,7 +429,7 @@ public class FightScene extends JPanel implements ActionListener{
 	    	            @Override
 	    	            public void run() {		    	            	
 	    	    			lblExp.setVisible(false);
-	    	    			lblReward.setVisible(false);
+//	    	    			lblReward.setVisible(false);
 	    	            }}, 1000);
 				
 				// Select new enemy
@@ -424,8 +467,8 @@ public class FightScene extends JPanel implements ActionListener{
 				if(bossActive)
 					lblReward.setText("You got " + enemy.getCoinValue() + " coins");									
 				if(bossActive && rand.nextInt(2) == 0) {
-					s.ironAxe.setAmount(1);
-					lblReward.setText("You got " + s.ironAxe.getWeaponName());
+					lblReward.setText("You got " + s.silverAxe.getWeaponName() + ". Add it to inv?");
+					weaponWon = 2;
 				}
 				
 				lblReward.setVisible(true);
@@ -637,6 +680,16 @@ public class FightScene extends JPanel implements ActionListener{
 			isEnemyDead();
 			rendLeft--;			
 		}
+		if(poisonLeft != 0) {
+			int temp = s.poisonDart.getItemPower();
+			enemy.enemyLoseHP(temp);
+			enemy.enemyShowHP(lblEnemyHP);
+			lblEnemyHP.repaint();
+			lblDamageDealt.setText("Enemy got hit by Poison dart for: " + temp + " damage");
+			lblDamageDealt.repaint();
+			isEnemyDead();
+			poisonLeft--;			
+		}
 		// Since Rend activates before the enemy attack, check if Rend killed the enemy
 		if(!enemyDead && !stunActive) {
 			t.schedule(new TimerTask() {
@@ -829,7 +882,7 @@ public class FightScene extends JPanel implements ActionListener{
 		lblExp.setForeground(Color.WHITE);
 		lblExp.setHorizontalAlignment(SwingConstants.CENTER);
 		lblExp.setVerticalAlignment(SwingConstants.CENTER);
-		lblExp.setBounds(515, 420, 250, 50);
+		lblExp.setBounds(515, 370, 250, 50);
 		lblExp.setVisible(false);
 		add(lblExp);
 		
@@ -838,7 +891,7 @@ public class FightScene extends JPanel implements ActionListener{
 		lblReward.setForeground(Color.WHITE);
 		lblReward.setHorizontalAlignment(SwingConstants.CENTER);
 		lblReward.setVerticalAlignment(SwingConstants.CENTER);
-		lblReward.setBounds(515, 390, 250, 50);
+		lblReward.setBounds(385, 390, 500, 50);
 		lblReward.setVisible(false);
 		add(lblReward);
 		
@@ -861,6 +914,39 @@ public class FightScene extends JPanel implements ActionListener{
 		lblDamageDealt.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDamageDealt.setVerticalAlignment(SwingConstants.CENTER);
 		add(lblDamageDealt);
+		
+		// Yes/no buttons for receiving reward
+		yesAdd = new JButton();
+		yesAdd.setFocusable(false);
+		yesAdd.setVisible(false);
+		yesAdd.setBackground(Color.GRAY);
+		yesAdd.setForeground(Color.WHITE);
+		yesAdd.setOpaque(true);
+		yesAdd.setText("Yes");
+		yesAdd.setActionCommand("Yes");
+		yesAdd.addActionListener(this);
+		yesAdd.setFont(s.font);
+		yesAdd.setHorizontalAlignment(SwingConstants.CENTER);
+		yesAdd.setVerticalAlignment(SwingConstants.CENTER);
+		yesAdd.setBorderPainted(false);
+		yesAdd.setBounds(520, 438, 100, 50);
+        add(yesAdd);
+        
+        noAdd = new JButton();
+        noAdd.setFocusable(false);
+        noAdd.setVisible(false);
+        noAdd.setBackground(Color.GRAY);
+        noAdd.setForeground(Color.WHITE);
+        noAdd.setOpaque(true);
+        noAdd.setText("No");
+        noAdd.setActionCommand("No");
+        noAdd.addActionListener(this);
+        noAdd.setFont(s.font);
+        noAdd.setHorizontalAlignment(SwingConstants.CENTER);
+        noAdd.setVerticalAlignment(SwingConstants.CENTER);
+        noAdd.setBorderPainted(false);
+        noAdd.setBounds(656, 438, 100, 50);
+        add(noAdd);
 		
 		// Navigation button							
         menuButton = new JButton();

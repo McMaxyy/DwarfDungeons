@@ -31,6 +31,7 @@ public class MainMenu extends JPanel implements ActionListener {
     private Image startBtn, loadBtn, quitBtn, backgroundImg;
     private JButton loadFailed, startButton, loadButton, quitButton, yesLoad, noLoad;
     private JLabel loadGame;
+    private Storage s = Storage.getInstance();
 
     public MainMenu(GameWindow window) {
         this.window = window;
@@ -84,7 +85,7 @@ public class MainMenu extends JPanel implements ActionListener {
         loadFailed.setText("No save files found");
         loadFailed.setActionCommand("Failed");
         loadFailed.addActionListener(this);
-        loadFailed.setFont(Storage.getInstance().font);
+        loadFailed.setFont(s.font);
         loadFailed.setHorizontalAlignment(SwingConstants.CENTER);
         loadFailed.setVerticalAlignment(SwingConstants.CENTER);
         loadFailed.setBounds(500, 350, 280, 100);
@@ -99,7 +100,7 @@ public class MainMenu extends JPanel implements ActionListener {
         yesLoad.setText("Yes");
         yesLoad.setActionCommand("Yes");
         yesLoad.addActionListener(this);
-        yesLoad.setFont(Storage.getInstance().font);
+        yesLoad.setFont(s.font);
         yesLoad.setHorizontalAlignment(SwingConstants.CENTER);
         yesLoad.setVerticalAlignment(SwingConstants.CENTER);
         yesLoad.setBorderPainted(false);
@@ -115,7 +116,7 @@ public class MainMenu extends JPanel implements ActionListener {
         noLoad.setText("No");
         noLoad.setActionCommand("No");
         noLoad.addActionListener(this);
-        noLoad.setFont(Storage.getInstance().font);
+        noLoad.setFont(s.font);
         noLoad.setHorizontalAlignment(SwingConstants.CENTER);
         noLoad.setVerticalAlignment(SwingConstants.CENTER);
         noLoad.setBorderPainted(false);
@@ -125,7 +126,7 @@ public class MainMenu extends JPanel implements ActionListener {
         loadGame = new JLabel();
         loadGame.setVisible(false);
         loadGame.setText("Load game?");
-        loadGame.setFont(Storage.getInstance().font);
+        loadGame.setFont(s.font);
         loadGame.setForeground(Color.WHITE);
         loadGame.setHorizontalAlignment(SwingConstants.CENTER);
         loadGame.setVerticalAlignment(SwingConstants.CENTER);
@@ -196,7 +197,21 @@ public class MainMenu extends JPanel implements ActionListener {
             player.setLevel(intArray[3]);
             player.setExp(intArray[4]);
             player.setLevelCap(intArray[5]);
-            Storage.getInstance().ironAxe.setAmount(intArray[6]);
+            s.ironAxe.setAmount(intArray[6]);
+            s.silverAxe.setAmount(intArray[7]);
+            s.goldAxe.setAmount(intArray[8]);
+            s.steelAxe.setAmount(intArray[9]);
+            s.copperAxe.setAmount(intArray[10]);
+            s.titaniumAxe.setAmount(intArray[11]);
+            s.fieryAxe.setAmount(intArray[12]);
+            s.moltenAxe.setAmount(intArray[13]);
+            s.waterAxe.setAmount(intArray[14]);
+            s.healthPot.setAmount(intArray[15]);
+            s.shield.setAmount(intArray[16]);
+            s.bomb.setAmount(intArray[17]);
+            s.poisonDart.setAmount(intArray[18]);
+            s.bigBomb.setAmount(intArray[19]);
+            s.biggerBomb.setAmount(intArray[20]);
             
             loadGame.setVisible(true);
         	yesLoad.setVisible(true);
