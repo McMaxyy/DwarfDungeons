@@ -41,6 +41,18 @@ public class Storage {
 	public Abilities whirlwind = new Whirlwind();
 	public Abilities weaken = new Weaken();
 	public Abilities stun = new Stun();
+	public Abilities bubble = new Bubble();
+	public Abilities heal = new Heal();
+	public Abilities block = new Block();
+	public Abilities poisonSlash = new PoisonSlash();
+	public Abilities explosiveAttack = new ExplosiveAttack();
+	public Abilities confuse = new Confuse();
+	public Abilities pummel = new Pummel();
+	public Abilities tendonCutter = new TendonCutter();
+	public Abilities lifeSteal = new LifeSteal();
+	public Abilities groundBreaker = new GroundBreaker();
+	public Abilities shieldWall = new ShieldWall();
+	public Abilities fortifiedAttack = new FortifiedAttack();
 	
 	// Load weapons
 	public Weapons ironAxe = new IronAxe();

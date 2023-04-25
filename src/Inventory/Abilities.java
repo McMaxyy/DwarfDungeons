@@ -40,8 +40,8 @@ public abstract class Abilities {
 class Swing extends Abilities{
 	public Swing() {
 		setAbilityName("Swing");
-		setAttackPower(7);
-		setAbilityCost(3);
+		setAttackPower(6);
+		setAbilityCost(2);
 		setID(1);
 	}
 }
@@ -49,7 +49,7 @@ class Swing extends Abilities{
 class Decapitate extends Abilities{
 	public Decapitate() {
 		setAbilityName("Decapitate");
-		setAttackPower(10);
+		setAttackPower(15);
 		setAbilityCost(4);
 		setID(2);
 	}
@@ -58,7 +58,7 @@ class Decapitate extends Abilities{
 class Riposte extends Abilities{
 	public Riposte() {
 		setAbilityName("Riposte");
-		setAttackPower(4);
+		setAttackPower(3);
 		setAbilityCost(2);
 		setID(3);
 	}
@@ -76,8 +76,7 @@ class Rend extends Abilities{
 class Harden extends Abilities{
 	public Harden() {
 		setAbilityName("Harden");
-		setAttackPower(2);
-		setAbilityCost(2);
+		setAbilityCost(1);
 		setID(5);
 	}
 }
@@ -94,8 +93,7 @@ class Whirlwind extends Abilities{
 class Weaken extends Abilities{
 	public Weaken() {
 		setAbilityName("Weaken");
-		setAttackPower(4);
-		setAbilityCost(2);
+		setAbilityCost(1);
 		setID(7);
 	}
 }
@@ -103,8 +101,112 @@ class Weaken extends Abilities{
 class Stun extends Abilities{
 	public Stun() {
 		setAbilityName("Stun");
-		setAttackPower(0);
-		setAbilityCost(2);
+		setAbilityCost(1);
 		setID(8);
+	}
+}
+
+class Bubble extends Abilities{
+	public Bubble() {
+		setAbilityName("Bubble");
+		setAttackPower(6);
+		setAbilityCost(3);
+		setID(9);
+	}
+}
+
+class Heal extends Abilities{
+	public Heal() {
+		setAbilityName("Heal");
+		setAttackPower(5);
+		setAbilityCost(2);
+		setID(10);
+	}
+}
+
+class Block extends Abilities{
+	public Block() {
+		setAbilityName("Block");
+		setAbilityCost(1);
+		setID(11);
+	}
+}
+
+class PoisonSlash extends Abilities{
+	public PoisonSlash() {
+		setAbilityName("PoisonSlash");
+		setAttackPower(3);
+		setAbilityCost(2);
+		setID(12);
+	}
+}
+
+class ExplosiveAttack extends Abilities{
+	public ExplosiveAttack() {
+		setAbilityName("Explosive Attack");
+		setAttackPower(3);
+		setAbilityCost(2);
+		setID(12);
+	}
+}
+
+class Confuse extends Abilities{
+	public Confuse() {
+		setAbilityName("Confuse");
+		setAbilityCost(1);
+		setID(13);
+	}
+}
+
+class Pummel extends Abilities{
+	public Pummel() {
+		setAbilityName("Pummel");
+		setAttackPower(7);
+		setAbilityCost(3);
+		setID(14);
+	}
+}
+
+class TendonCutter extends Abilities{
+	public TendonCutter() {
+		setAbilityName("Tendon Cutter");
+		setAttackPower(7);
+		setAbilityCost(3);
+		setID(15);
+	}
+}
+
+class LifeSteal extends Abilities{
+	public LifeSteal() {
+		setAbilityName("Life Steal");
+		setAttackPower(4);
+		setAbilityCost(4);
+		setID(16);
+	}
+}
+
+class GroundBreaker extends Abilities{
+	public GroundBreaker() {
+		setAbilityName("Ground Breaker");
+		setAttackPower(15);
+		setAbilityCost(6);
+		setID(17);
+	}
+}
+
+class ShieldWall extends Abilities{
+	public ShieldWall() {
+		setAbilityName("Shield Wall");
+		setAbilityCost(5);
+		setID(18);
+	}
+}
+
+class FortifiedAttack extends Abilities{
+	public FortifiedAttack() {
+		setAbilityName("Fortified Attack");
+		setAttackPower(10);
+		setAbilityCost(6);
+		setID(19);
 	}
 }

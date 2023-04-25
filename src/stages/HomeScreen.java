@@ -37,7 +37,7 @@ public class HomeScreen extends JPanel implements ActionListener {
     private JButton bagW[] = new JButton[s.waterAxe.getID()];
     private JButton bagI[] = new JButton[s.biggerBomb.getID()];
     private JButton activeBag[] = new JButton[8];
-    private boolean bagVisible = false, weaponAdded = false, itemAdded = false;
+    private boolean bagVisible = false, weaponAdded = false;
     private JLabel weaponName[] = new JLabel[s.waterAxe.getID()];
     private JLabel itemName[] = new JLabel[s.biggerBomb.getID()];
 

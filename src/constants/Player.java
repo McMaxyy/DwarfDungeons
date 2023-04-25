@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Player {
 
-	private static int maxHP = 20;
+	private static int maxHP = 30;
 	private static int hp;
 	private static int strength = 2;
 	private static int mana = 4;
@@ -20,6 +20,7 @@ public class Player {
 	private static int unlockedStage = 1;
 	private static int tempStr;
 	private static int merchantVisits;
+	private int bubble = 0;
 	public static JButton activeBag[] = new JButton[8];
 	protected JLabel lblPlayerHP;
 	private Random rand = new Random();
@@ -244,5 +245,13 @@ public class Player {
 
 	public void setActiveBag(JButton activeBag[]) {
 		Player.activeBag = activeBag;
+	}
+
+	public int getBubble() {
+		return bubble;
+	}
+
+	public void setBubble(int bubble) {
+		this.bubble = bubble;
 	}
 }
