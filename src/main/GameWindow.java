@@ -16,6 +16,7 @@ public class GameWindow{
     private static Merchant merchant;
     private static Bonfire bonfire;
     private static Store store;
+    private static EndlessLevel endless;
     JFrame frame = new JFrame("Lemony Squeeze");
 
     public GameWindow() {
@@ -78,6 +79,12 @@ public class GameWindow{
     public void showStore() {
     	store = new Store(this);
     	frame.setContentPane(store);
+    	frame.revalidate();
+    }
+    
+    public void showFunMode(int currentLevel) {
+    	endless = new EndlessLevel(this, currentLevel);
+    	frame.setContentPane(endless);
     	frame.revalidate();
     }
 

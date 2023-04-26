@@ -33,7 +33,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	private Storage s = Storage.getInstance();
 	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblExp, lblLevelUp, lblEnemyName, lblReward;
 	private JButton returnButton, attackButton, menuButton, turnButton, levelUpHPButton, levelUpStrButton, 
-			ability1, ability2, ability3, yesAdd, noAdd;
+			ability1, ability2, ability3, ability4, yesAdd, noAdd;
 	private JButton[] buttons = new JButton[] {attackButton, menuButton, turnButton, ability1, ability2, ability3};
 	private JButton[] actionButtons = new JButton[] {attackButton, ability1, ability2, ability3};
 	String youLost = "You\nLost";
@@ -41,7 +41,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	private Random rand = new Random();
 	private int enemySelectRand = rand.nextInt(2), weaponWon;
 	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated, rendLeft, 
-			weakLeft, poisonLeft;
+			weakLeft, poisonLeft, bubbleAmount;
 	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack, hardenActive,
 			enemyDead, stunActive, bossActive, shieldActive, explosionActive, enemyConfused;
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
@@ -52,14 +52,12 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			returnBtn, turnBtn, stunBtn, weakenBtn, bubbleBtn, healBtn, blockBtn,
 			poisonBtn, explosiveBtn, confuseBtn, pummelBtn, tendonBtn, stealBtn, breakerBtn,
 			shieldBtn, fortifyBtn;
-	private Image swingCard, rendCard, hardenCard, stunCard, riposteCard, whirlwindCard,
+	private Image swingCard, rendCard, hardenCard, stunCard, riposteCard, whirlwindCard, currentCard,
 			decapCard, weakenCard, attackCard, bubbleCard, healCard, blockCard, poisonCard,
 			explosiveCard, confuseCard, pummelCard, tendonCard, stealCard, breakerCard, shieldCard, fortifyCard;
 	private JButton activeBag[] = new JButton[8];
-	private boolean isHovering, hoverAttack, hoverSwing, hoverRend, hoverHarden, hoverRiposte, hoverWhirlwind,
-			hoverDecap, hoverWeaken, hoverBubble, hoverHeal, hoverBlock, hoverPoison, hoverExplosive, hoverConfuse,
-			hoverPummel, hoverTendon, hoverSteal, hoverBreaker, hoverShield, hoverFortify, hoverStun;
-
+	private boolean isHovering;
+	
 	public FightScene(GameWindow window, int levelIndex, int selectedStage){
 		this.window = window;
 		turnCounter = player.getMana();
@@ -178,6 +176,46 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	turnCounter -= s.weaken.getAbilityCost();
         	enableActionButtons();
         	break;
+        case "Bubble":
+        	bubbleAmount = s.bubble.getAttackPower();
+        	turnCounter -= s.bubble.getAbilityCost();
+        	player.setBubble(s.bubble.getAttackPower());
+        	lblDamageDealt.setText("Surrounded player with a protective bubble");
+        	enableActionButtons();
+        	break;
+        case "Heal":
+        	turnCounter -= s.heal.getAbilityCost();
+        	player.increaseHP(s.heal.getAttackPower());
+        	if (player.getHp() > player.getMaxHP())
+        		player.setHp(player.getMaxHP());
+        	lblDamageDealt.setText("Player healed");
+        	enableActionButtons();
+        	break;
+        case "Block":
+        	turnCounter -= s.block.getAbilityCost();
+        	if(rand.nextInt(3) == 0) {
+        		shieldActive = false;
+        		lblDamageDealt.setText("Block unsucessful");
+        	}
+        	else {
+        		shieldActive = true;
+        		lblDamageDealt.setText("Preparing to block enemy attack");
+        	}
+        	enableActionButtons();
+        	break;
+        case "PoisonSlash":
+        	lblDamageDealt.setText("Poison applied to enemy");
+        	poisonLeft = 3;
+        	turnCounter -= s.poisonSlash.getAbilityCost();
+        	enableActionButtons();
+        	playerAttack = true;
+        	break;
+        case "ExplosiveAttack":
+        	turnCounter -= s.explosiveAttack.getAbilityCost();
+        	abilityID = s.explosiveAttack.getID();
+        	if(rand.nextInt(2) == 0)
+        		explosionActive = true;
+        	doAttack();
         case "Turn":
             enemyAttack();       
             turnCounter = player.getMana();      
@@ -786,6 +824,26 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	            button.setActionCommand("Stun");
 	            button.setIcon(new ImageIcon(stunBtn));
 	            break;
+	        case 9:
+	            button.setActionCommand("Bubble");
+	            button.setIcon(new ImageIcon(bubbleBtn));
+	            break;
+	        case 10:
+	            button.setActionCommand("Heal");
+	            button.setIcon(new ImageIcon(healBtn));
+	            break;
+	        case 11:
+	            button.setActionCommand("Block");
+	            button.setIcon(new ImageIcon(blockBtn));
+	            break;
+	        case 12:
+	            button.setActionCommand("PoisonSlash");
+	            button.setIcon(new ImageIcon(poisonBtn));
+	            break;
+	        case 13:
+	            button.setActionCommand("PoisonSlash");
+	            button.setIcon(new ImageIcon(poisonBtn));
+	            break;
 	    }
 	    button.addActionListener(this);
 	    button.addMouseListener(this);
@@ -898,7 +956,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         menuButton.setOpaque(false);
         menuButton.setContentAreaFilled(false);
         menuButton.setBorderPainted(false);
-        menuButton.setBounds(1100, 25, 100, 50);
+        menuButton.setBounds(50, 25, 100, 50);
         add(menuButton);    
         
         // Button for returning to the level selector when the player either wins or dies
@@ -920,23 +978,26 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         attackButton.addActionListener(this);
         attackButton.addMouseListener(this);
         attackButton.addMouseMotionListener(this);
-        attackButton.setBounds(790, 550, 150, 100);
+        attackButton.setBounds(920, 570, 150, 100);
         add(attackButton);
         
         ability1 = new JButton();
-        configureAbilityButton(ability1, player.getAbility1ID(), 250, 550);
+        configureAbilityButton(ability1, player.getAbility1ID(), 200, 570);
                 
         ability2 = new JButton();
-        configureAbilityButton(ability2, player.getAbility2ID(), 430, 550);
+        configureAbilityButton(ability2, player.getAbility2ID(), 380, 570);
                 
         ability3 = new JButton();
-        configureAbilityButton(ability3, player.getAbility3ID(), 610, 550);       
+        configureAbilityButton(ability3, player.getAbility3ID(), 560, 570);       
+        
+        ability4 = new JButton();
+        configureAbilityButton(ability4, player.getAbility4ID(), 740, 570);   
         
         turnButton = new JButton();
         turnButton.setActionCommand("Turn");
         turnButton.setIcon(new ImageIcon(turnBtn));
         turnButton.addActionListener(this);
-        turnButton.setBounds(950, 600, 100, 50);
+        turnButton.setBounds(870, 500, 100, 50);
         add(turnButton);
         
         // Inventory
@@ -1058,8 +1119,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		float hpProc, hpProc2;
-		int bubbleLoc, width, width2;
+		float hpProc, hpProc2, shieldProc;
+		int bubbleLoc, width, width2, width3;
 	    
 	    // Draw background
 	    g.drawImage(backgroundImg, 0, 0, null);
@@ -1138,75 +1199,110 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		}	
 		g.setColor(Color.RED);
 		g.fillRect(1000, 270, width2, 30);
+		
+		//Player shield bar
+	    g.setColor(Color.WHITE);
+	    g.fillRect(1000, 245, 200, 20);
+	    if(player.getBubble() > 0)
+	    	shieldProc = (float)player.getBubble() / bubbleAmount;
+	    else
+	    	shieldProc = 0;
+	    width3 = (int)(shieldProc * 200);
+		width3 = (width3 / 10) * 10;	
+		if (width3 < 10) {
+		     width3 = 0;
+		}	
+		g.setColor(Color.GRAY);
+		g.fillRect(1000, 245, width3, 20);
 	    
 	    // Mana bubbles
 	    bubbleLoc = 1000;
 	    for(int i = 1; i <= player.getMana(); i++) {
 	    	g.setColor(Color.BLACK);
-		    g.drawOval(bubbleLoc, 240, 20, 20);
+		    g.drawOval(bubbleLoc, 220, 20, 20);
 		    bubbleLoc += 30;
 	    }
 	    bubbleLoc = 1000;
 	    for(int i = 1; i <= turnCounter; i++) {
 	    	g.setColor(new Color(255, 200, 0));
-		    g.fillOval(bubbleLoc, 240, 20, 20);
+		    g.fillOval(bubbleLoc, 220, 20, 20);
 		    bubbleLoc += 30;
 	    }
 	    
-	    if (isHovering) {
-	    	if(hoverAttack)
-	    		g.drawImage(attackCard, 500, 200, this);
-	    	else if(hoverSwing)
-		    	g.drawImage(swingCard, 500, 200, this);
-	    	else if(hoverHarden)
-		    	g.drawImage(hardenCard, 500, 200, this);
-	    	else if(hoverStun)
-		    	g.drawImage(stunCard, 500, 200, this);
-	    	else if(hoverRiposte)
-		    	g.drawImage(riposteCard, 500, 200, this);
-        }
+	    if(isHovering && currentCard != null) {
+	    	g.drawImage(currentCard, 500, 200, this);
+	    }
+	    
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
+		
 		if (e.getSource() instanceof JButton) {
 	        String actionCommand = ((JButton) e.getSource()).getActionCommand();
 	        switch (actionCommand) {
 	        case "Swing":
-	        	hoverSwing = true;
+	        	currentCard = swingCard;
 	        	break;
 	        case "Attack":
-	        	hoverAttack = true;
+	        	currentCard = attackCard;
 	        	break;
 	        case "Harden":
-	        	hoverHarden = true;
+	        	currentCard = hardenCard;
 	        	break;
 	        case "Stun":
-	        	hoverStun = true;
+	        	currentCard = stunCard;
 	        	break;
 	        case "Riposte":
-	        	hoverRiposte = true;
+	        	currentCard = riposteCard;
 	        	break;
 	        case "Rend":
-	        	hoverRend = true;
+	        	currentCard = rendCard;
 	        	break;
 	        case "Whirlwind":
-	        	hoverWhirlwind = true;
+	        	currentCard = whirlwindCard;
 	        	break;
 	        case "Decapitate":
-	        	hoverDecap = true;
+	        	currentCard = decapCard;
 	        	break;
 	        case "Weaken":
-	        	hoverWeaken = true;
+	        	currentCard = weakenCard;
 	        	break;
 	        case "Bubble":
-	        	hoverBubble = true;
+	        	currentCard = bubbleCard;
 	        	break;
 	        case "Heal":
-	        	hoverHeal = true;
+	        	currentCard = healCard;
 	        	break;
 	        case "Block":
-	        	hoverBlock = true;
+	        	currentCard = blockCard;
+	        	break;
+	        case "PoisonSlash":
+	        	currentCard = poisonCard;
+	        	break;
+	        case "ExplosiveAttack":
+	        	currentCard = explosiveCard;
+	        	break;
+	        case "Confuse":
+	        	currentCard = confuseCard;
+	        	break;
+	        case "Pummel":
+	        	currentCard = pummelCard;
+	        	break;
+	        case "TendonCutter":
+	        	currentCard = tendonCard;
+	        	break;
+	        case "LifeSteal":
+	        	currentCard = stealCard;
+	        	break;
+	        case "GroundBreaker":
+	        	currentCard = breakerCard;
+	        	break;
+	        case "ShieldWall":
+	        	currentCard = shieldCard;
+	        	break;
+	        case "FortifiedAttack":
+	        	currentCard = fortifyCard;
 	        	break;
 	        }
 	        isHovering = true;	
@@ -1216,11 +1312,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	@Override
 	public void mouseExited(MouseEvent e) {
 		isHovering = false;  
-		hoverAttack = false;
-		hoverSwing = false;
-		hoverHarden = false;
-		hoverStun = false;
-		hoverRiposte = false;
+		currentCard = null;
 	}	
 	
 	@Override

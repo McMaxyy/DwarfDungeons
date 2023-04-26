@@ -146,7 +146,7 @@ class ExplosiveAttack extends Abilities{
 		setAbilityName("Explosive Attack");
 		setAttackPower(4);
 		setAbilityCost(2);
-		setID(12);
+		setID(13);
 	}
 }
 
@@ -154,7 +154,7 @@ class Confuse extends Abilities{
 	public Confuse() {
 		setAbilityName("Confuse");
 		setAbilityCost(1);
-		setID(13);
+		setID(14);
 	}
 }
 
@@ -163,7 +163,7 @@ class Pummel extends Abilities{
 		setAbilityName("Pummel");
 		setAttackPower(7);
 		setAbilityCost(3);
-		setID(14);
+		setID(15);
 	}
 }
 
@@ -172,7 +172,7 @@ class TendonCutter extends Abilities{
 		setAbilityName("Tendon Cutter");
 		setAttackPower(7);
 		setAbilityCost(3);
-		setID(15);
+		setID(16);
 	}
 }
 
@@ -181,7 +181,7 @@ class LifeSteal extends Abilities{
 		setAbilityName("Life Steal");
 		setAttackPower(4);
 		setAbilityCost(3);
-		setID(16);
+		setID(17);
 	}
 }
 
@@ -190,7 +190,7 @@ class GroundBreaker extends Abilities{
 		setAbilityName("Ground Breaker");
 		setAttackPower(15);
 		setAbilityCost(6);
-		setID(17);
+		setID(18);
 	}
 }
 
@@ -198,7 +198,7 @@ class ShieldWall extends Abilities{
 	public ShieldWall() {
 		setAbilityName("Shield Wall");
 		setAbilityCost(5);
-		setID(18);
+		setID(19);
 	}
 }
 
@@ -207,6 +207,6 @@ class FortifiedAttack extends Abilities{
 		setAbilityName("Fortified Attack");
 		setAttackPower(8);
 		setAbilityCost(6);
-		setID(19);
+		setID(20);
 	}
 }

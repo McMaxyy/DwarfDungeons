@@ -14,7 +14,7 @@ public class Player {
 	private static int coins = 0;
 	private static int level = 0;
 	private static int exp = 0;
-	private static int ability1ID, ability2ID, ability3ID;
+	private static int ability1ID, ability2ID, ability3ID, ability4ID;
 	private static int activeWeapon;
 	private static int levelCap = 10;
 	private static int unlockedStage = 1;
@@ -25,7 +25,7 @@ public class Player {
 	protected JLabel lblPlayerHP;
 	private Random rand = new Random();
 	private static JLabel playerIcon = new JLabel();
-	private int x, y, z;
+	private int x, y, z, w;
 	
 	public void playerShowHP(JLabel lblPlayerHP) {
 		lblPlayerHP.setText("HP: " + hp);
@@ -106,17 +106,21 @@ public class Player {
 		tempStr = 0;
 		mana = 4;
 		hp = maxHP;
-		x = rand.nextInt(1, 9);
-		y = rand.nextInt(1, 9);
-		z = rand.nextInt(1, 9);
+		x = rand.nextInt(1, 14);
+		y = rand.nextInt(1, 14);
+		z = rand.nextInt(1, 14);
+		w = rand.nextInt(1, 14);
 		ability1ID = x;
 		while(y == x) {
-			y = rand.nextInt(1, 9);
+			y = rand.nextInt(1, 14);
 		}
 		ability2ID = y;
 		while (z == y || z == x)
-			z = rand.nextInt(1, 9);
+			z = rand.nextInt(1, 14);
 		ability3ID = z;
+		while (w == y || w == x || w == z)
+			w = rand.nextInt(1, 14);
+		ability4ID = w;
 	}
 
 	public int getMana() {
@@ -209,6 +213,14 @@ public class Player {
 
 	public void setAbility3ID(int ability3id) {
 		ability3ID = ability3id;
+	}
+	
+	public int getAbility4ID() {
+		return ability4ID;
+	}
+
+	public void setAbility4ID(int ability4id) {
+		ability4ID = ability4id;
 	}
 
 	public int getUnlockedStage() {

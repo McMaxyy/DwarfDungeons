@@ -30,7 +30,7 @@ public class HomeScreen extends JPanel implements ActionListener {
     private Image returnBtn, quitBtn, saveBtn, ironBtn, silverBtn, goldBtn, steelBtn, copperBtn, titanBtn, fieryBtn,
     		moltenBtn, waterBtn, healthBtn, shieldBtn, bombBtn, dartBtn, dynamiteBtn, bombsBtn, bg, bagBtn;
     private JButton menuButton, quitButton, saveButton, levelSelectButton, slotMachineButton, 
-    		storeButton, bagButton;
+    		storeButton, bagButton, funModeButton;
     private Storage s = Storage.getInstance();
     private int xLoc1 = 607, yLoc1 = 300, itemsInRow1 = 0, xLoc2 = 642, yLoc2 = 500, itemsInRow2 = 0;
     private int xLocA = 660, yLocA = 90, itemsInRowA = 0;
@@ -95,6 +95,15 @@ public class HomeScreen extends JPanel implements ActionListener {
         levelSelectButton.setBorderPainted(false);
         levelSelectButton.setBounds(1040, 80, 175, 250);
         add(levelSelectButton);
+              
+        funModeButton = new JButton();
+        funModeButton.setActionCommand("FunMode");
+        funModeButton.setFocusable(false);
+        funModeButton.addActionListener(this);
+        funModeButton.setContentAreaFilled(false);
+        funModeButton.setBorderPainted(false);
+        funModeButton.setBounds(1040, 400, 175, 250);
+        add(funModeButton);
         
         slotMachineButton = new JButton();
         slotMachineButton.setActionCommand("Slot");
@@ -534,7 +543,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         case "Levels":
         	itemsInRowA = 0;
         	xLocA = 975;
-        	yLocA = 110;
+        	yLocA = 30;
         	for(int i = 0; i < activeBag.length; i++) {
         		String temp = "inv";
         		Player.activeBag[i].setActionCommand(temp + i);
@@ -551,6 +560,27 @@ public class HomeScreen extends JPanel implements ActionListener {
         		}      		
         	}
             window.showLevelSelector(1);
+            break;
+        case "FunMode":
+        	itemsInRowA = 0;
+        	xLocA = 975;
+        	yLocA = 30;
+        	for(int i = 0; i < activeBag.length; i++) {
+        		String temp = "inv";
+        		Player.activeBag[i].setActionCommand(temp + i);
+        		Player.activeBag[i].setContentAreaFilled(true);
+        		Player.activeBag[i].setBackground(Color.DARK_GRAY);
+        		if(activeBag[i].getIcon() != null)
+        			Player.activeBag[i].setIcon(activeBag[i].getIcon());
+        		Player.activeBag[i].setBounds(xLocA, yLocA, 60, 50);
+        		itemsInRowA++;
+        		xLocA += 60;
+        		if(itemsInRowA == 4) {
+        			xLocA = 975;
+        			yLocA += 50;
+        		}      		
+        	}
+            window.showFunMode(1);
             break;
         case "Slot":
             window.showSlotMachine();
