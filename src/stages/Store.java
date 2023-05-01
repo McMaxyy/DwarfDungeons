@@ -14,8 +14,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import Inventory.Storage;
 import constants.Player;
+import inventory.Storage;
 import main.GameWindow;
 
 @SuppressWarnings("serial")

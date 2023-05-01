@@ -1,6 +1,9 @@
 package main;
 
 import java.awt.Color;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.PointerInfo;
 
 import javax.swing.JFrame;
 
@@ -17,6 +20,8 @@ public class GameWindow{
     private static Bonfire bonfire;
     private static Store store;
     private static EndlessLevel endless;
+    private static Mining mining;
+    private static Blacksmith blacksmith;
     JFrame frame = new JFrame("Lemony Squeeze");
 
     public GameWindow() {
@@ -87,9 +92,26 @@ public class GameWindow{
     	frame.setContentPane(endless);
     	frame.revalidate();
     }
+    
+    public void showMine() {
+    	mining = new Mining(this);
+    	frame.setContentPane(mining);
+    	frame.revalidate();
+    }
+    
+    public void showBlacksmith() {
+    	blacksmith = new Blacksmith(this);
+    	frame.setContentPane(blacksmith);
+    	frame.revalidate();
+    }
 
 	public void setVisible(boolean b) {
 		frame.setVisible(b);		
+	}
+	
+	public Point getMousePosition() {
+	    PointerInfo info = MouseInfo.getPointerInfo();
+	    return info.getLocation();
 	}
 }
 

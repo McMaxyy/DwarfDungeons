@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 
 import com.google.gson.Gson;
 
-import Inventory.Storage;
 import constants.Player;
+import inventory.Storage;
 import main.GameWindow;
 
 @SuppressWarnings("serial")
@@ -30,7 +30,7 @@ public class HomeScreen extends JPanel implements ActionListener {
     private Image returnBtn, quitBtn, saveBtn, ironBtn, silverBtn, goldBtn, steelBtn, copperBtn, titanBtn, fieryBtn,
     		moltenBtn, waterBtn, healthBtn, shieldBtn, bombBtn, dartBtn, dynamiteBtn, bombsBtn, bg, bagBtn;
     private JButton menuButton, quitButton, saveButton, levelSelectButton, slotMachineButton, 
-    		storeButton, bagButton, funModeButton;
+    		storeButton, bagButton, funModeButton, mineGame, blacksmith;
     private Storage s = Storage.getInstance();
     private int xLoc1 = 607, yLoc1 = 300, itemsInRow1 = 0, xLoc2 = 642, yLoc2 = 500, itemsInRow2 = 0;
     private int xLocA = 660, yLocA = 90, itemsInRowA = 0;
@@ -121,7 +121,21 @@ public class HomeScreen extends JPanel implements ActionListener {
         storeButton.setContentAreaFilled(false);
         storeButton.setBorderPainted(false);
         storeButton.setBounds(90, 480, 130, 100);
-        add(storeButton);	
+        add(storeButton);
+        
+        mineGame = new JButton("Mining");
+        mineGame.setActionCommand("Mine");
+        mineGame.setFocusable(false);
+        mineGame.addActionListener(this);
+        mineGame.setBounds(140, 50, 130, 100);
+        add(mineGame);
+        
+        blacksmith = new JButton("Blacksmith");
+        blacksmith.setActionCommand("Blacksmith");
+        blacksmith.setFocusable(false);
+        blacksmith.addActionListener(this);
+        blacksmith.setBounds(300, 50, 130, 100);
+        add(blacksmith);
         
         bagButton = new JButton();
         bagButton.setIcon(new ImageIcon(bagBtn));
@@ -585,6 +599,12 @@ public class HomeScreen extends JPanel implements ActionListener {
         case "Slot":
             window.showSlotMachine();
             break;
+        case "Mine":
+        	window.showMine();
+        	break;
+        case "Blacksmith":
+        	window.showBlacksmith();
+        	break;
         case "Store":
         	window.showStore();
         	break;

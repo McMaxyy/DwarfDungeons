@@ -133,7 +133,7 @@ public class LevelSelector extends JPanel implements ActionListener{
 			break;
 		}		
 		
-        if(currentLevel > 1)
+        if(levelIndex > 1)
         	showLevels();
 	}
 	

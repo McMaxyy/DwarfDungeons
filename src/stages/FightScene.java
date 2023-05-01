@@ -15,13 +15,11 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-
-import Inventory.Storage;
-
 import javax.swing.JLabel;
 
 import main.GameWindow;
 import constants.*;
+import inventory.Storage;
 
 @SuppressWarnings({"serial"})
 public class FightScene extends JPanel implements ActionListener, MouseListener, MouseMotionListener{
@@ -34,8 +32,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblExp, lblLevelUp, lblEnemyName, lblReward;
 	private JButton returnButton, attackButton, menuButton, turnButton, levelUpHPButton, levelUpStrButton, 
 			ability1, ability2, ability3, ability4, yesAdd, noAdd;
-	private JButton[] buttons = new JButton[] {attackButton, menuButton, turnButton, ability1, ability2, ability3};
-	private JButton[] actionButtons = new JButton[] {attackButton, ability1, ability2, ability3};
+	private JButton[] buttons = new JButton[] {attackButton, menuButton, turnButton, ability1, ability2, ability3, ability4};
+	private JButton[] actionButtons = new JButton[] {attackButton, ability1, ability2, ability3, ability4};
 	String youLost = "You\nLost";
 	String youWon = "You\nWon";
 	private Random rand = new Random();
@@ -212,10 +210,10 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	break;
         case "ExplosiveAttack":
         	turnCounter -= s.explosiveAttack.getAbilityCost();
-        	abilityID = s.explosiveAttack.getID();
         	if(rand.nextInt(2) == 0)
         		explosionActive = true;
         	doAttack();
+        	break;
         case "Turn":
             enemyAttack();       
             turnCounter = player.getMana();      
@@ -258,6 +256,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	noAdd.setVisible(false);
         	yesAdd.setVisible(false);
         }
+        
         if (command.startsWith("remove")) {
 			int index = Integer.parseInt(command.substring(6));
 			switch(weaponWon) {
@@ -576,13 +575,13 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		if(turnCounter < s.getAttackButtonCost())
 			attackButton.setEnabled(false);
 		
-		for (JButton button : Arrays.asList(ability1, ability2, ability3)) {
+		for (JButton button : Arrays.asList(ability1, ability2, ability3, ability4)) {
 		    switch(button.getActionCommand()) {
 		        case "Swing":
 		            button.setEnabled(turnCounter >= s.overheadSwing.getAbilityCost());
 		            break;
 		        case "Decapitate":
-		            button.setEnabled(turnCounter >= s.decapitate.getAbilityCost() && enemy.getHp() <= (enemy.getMaxHP() / 3));
+		            button.setEnabled(turnCounter >= s.decapitate.getAbilityCost() && enemy.getHp() <= (enemy.getMaxHP() / 4));
 		            break;
 		        case "Riposte":
 		            button.setEnabled(turnCounter == s.riposte.getAbilityCost());
@@ -602,7 +601,42 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		        case "Stun":
 		        	button.setEnabled(turnCounter >= s.stun.getAbilityCost());
 		        	break;
-		            
+		        case "Bubble":
+		        	button.setEnabled(turnCounter >= s.bubble.getAbilityCost());
+		        	break;
+		        case "Heal":
+		        	button.setEnabled(turnCounter >= s.heal.getAbilityCost());
+		        	break;
+		        case "Block":
+		        	button.setEnabled(turnCounter >= s.block.getAbilityCost());
+		        	break;
+		        case "PoisonSlash":
+		        	button.setEnabled(turnCounter >= s.poisonSlash.getAbilityCost());
+		        	break;
+		        case "ExplosiveAttack":
+		        	button.setEnabled(turnCounter >= s.explosiveAttack.getAbilityCost());
+		        	break;
+		        case "Confuse":
+		        	button.setEnabled(turnCounter >= s.confuse.getAbilityCost());
+		        	break;
+		        case "Pummel":
+		        	button.setEnabled(turnCounter >= s.pummel.getAbilityCost());
+		        	break;
+		        case "TendonCutter":
+		        	button.setEnabled(turnCounter >= s.tendonCutter.getAbilityCost());
+		        	break;
+		        case "LifeSteal":
+		        	button.setEnabled(turnCounter >= s.lifeSteal.getAbilityCost());
+		        	break;
+		        case "GroundBreaker":
+		        	button.setEnabled(turnCounter >= s.groundBreaker.getAbilityCost());
+		        	break;
+		        case "ShieldWall":
+		        	button.setEnabled(turnCounter >= s.shieldWall.getAbilityCost());
+		        	break;
+		        case "FortifiedAttack":
+		        	button.setEnabled(turnCounter >= s.fortifiedAttack.getAbilityCost());
+		        	break;
 		    }
 		}
 		
@@ -643,7 +677,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    				if(hardenActive) {
 	    					temp = temp / 2;
 	    					if(weakLeft > 0) {						
-	    						temp = temp / 4;
+	    						temp = temp / 3;
 	    						if(temp == 0 && player.getBubble() > 0) {
 	    							player.setBubble(player.getBubble() - 1);
 	    							if(player.getBubble() < 0)
@@ -670,16 +704,22 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    					else
 	    						player.playerLoseHP(temp);	// Harden is active, enemy deals 50% dmg
 	    				}
+	    				else if(shieldActive)
+	    					temp = 0;
 	    				else if(weakLeft > 0) {
-	    					temp = temp / s.weaken.getAttackPower();
+	    					temp = temp / 3;
 	    					if(temp == 0)
     							player.playerLoseHP(1);
     						else
     							player.playerLoseHP(temp);
 	    					weakLeft--;
 	    				}
-	    				else if(player.getBubble() > 0)
-	    					player.setBubble(player.getBubble() - temp);
+	    				else if (player.getBubble() > 0) {
+    						player.setBubble(player.getBubble() - temp);
+    						temp = player.getBubble() * player.getBubble();
+    						if(player.getBubble() < 0)
+    							player.playerLoseHP(temp);
+    					}
 	    				else if(!shieldActive)
 	    					player.playerLoseHP(temp);
 	    				
@@ -841,8 +881,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	            button.setIcon(new ImageIcon(poisonBtn));
 	            break;
 	        case 13:
-	            button.setActionCommand("PoisonSlash");
-	            button.setIcon(new ImageIcon(poisonBtn));
+	            button.setActionCommand("ExplosiveAttack");
+	            button.setIcon(new ImageIcon(explosiveBtn));
 	            break;
 	    }
 	    button.addActionListener(this);
@@ -1035,11 +1075,13 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         buttons[3] = ability1;
         buttons[4] = ability2;
         buttons[5] = ability3;
+        buttons[6] = ability4;
         
         actionButtons[0] = attackButton;
         actionButtons[1] = ability1;
         actionButtons[2] = ability2;
         actionButtons[3] = ability3;
+        actionButtons[4] = ability4;
 	}
 	
 	private void loadAnimations() {

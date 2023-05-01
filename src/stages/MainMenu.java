@@ -18,8 +18,8 @@ import javax.swing.SwingConstants;
 
 import com.google.gson.Gson;
 
-import Inventory.Storage;
 import constants.Player;
+import inventory.Storage;
 import main.GameWindow;
 
 @SuppressWarnings("serial")

@@ -1,4 +1,4 @@
-package Inventory;
+package inventory;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -72,6 +72,18 @@ public class Storage {
 	public Items poisonDart = new PoisonDart();
 	public Items bigBomb = new Dynamite();
 	public Items biggerBomb = new Bombs();
+	
+	// Load materials
+	public Materials ironIngot = new IronIngot();
+	public Materials goldIngot = new GoldIngot();
+	public Materials sparkPowder = new SparkPowder();
+	public Materials lifePowder = new LifePowder();
+	
+	// Load recipes
+	public Recipes ironAxeR = new IronAxeRecipe();
+	public Recipes coinR = new CoinRecipe();
+	public Recipes bombR = new BombRecipe();
+	public Recipes healthPotR = new HealthPotRecipe();
 	
 	// Set animation to enemies
 	public Image setAnimation(String img) {

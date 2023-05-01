@@ -43,7 +43,8 @@ public class EndlessLevel extends JPanel implements ActionListener{
 		levelFive5, levelFive6, levelFive7, levelFive8, levelSix1, levelSix2, levelSeven1, levelSeven2,
 		levelSeven3, levelSeven4, levelSeven5, levelSeven6, levelSeven7, levelSeven8, levelEight1,
 		levelEight2, levelEight3, levelNine1, levelNine2, levelNine3, levelNine4, levelTen1, levelTen2, bossLevel};
-	private int arrL = 0;
+	private int arrL = 0, merchChance = 30, bonfireChance = 15, qChance = 60;
+	private int merchCount = 0, bonfireCount = 0, qCount = 0, strongCount = 0;
 	
 	public EndlessLevel(GameWindow window, int currentLevel) {
 		this.window = window;
@@ -52,11 +53,14 @@ public class EndlessLevel extends JPanel implements ActionListener{
 		enemy.setStrongEnemyActive(false);
 		
 		setLayout(null);
-		
+			
 		loadIcons();
 		initComponents();
 		setStage();
 		setButtons();
+		
+		if(levelIndex == 1)
+			levelOne.setEnabled(true);
 	}
 	
 	private void setButtons() {
@@ -71,16 +75,37 @@ public class EndlessLevel extends JPanel implements ActionListener{
 	private void setLevel(JButton button) {
 		int x;
 		x = rand.nextInt(100);
-        if(x < 15)
+        if(x < bonfireChance) {
         	button.setText("Bonfire");
-        else if (x < 30)
+        	bonfireCount++;
+        	bonfireChance--;
+        	merchChance--;
+        	qChance--;
+        }
+        else if (x < merchChance) {
         	button.setText("Merchant");
-        else if (x < 60)
+        	merchCount++;
+        	merchChance--;
+        	qChance--;
+        }
+        else if (x < qChance) {
         	button.setText("???");
-        else if (x < 90)
-        	button.setText("Fight");
-        else
+        	qCount++;
+        	qChance--;
+        }
+        else if (x < 90) {
+        	button.setText("Fight");        	
+        	if(bonfireChance < 15)
+        		bonfireChance++;
+        	if(merchChance < 30)
+        		merchChance++;
+        	if(qChance < 60)
+        		qChance++;
+        }
+        else {
         	button.setText("Strong Enemy");
+        	strongCount++;
+        }
         
         levelButtons[arrL] = button;
         arrL++;       
@@ -705,16 +730,13 @@ public class EndlessLevel extends JPanel implements ActionListener{
 	}
 	
 	private void resetStage() {
-		int x = 0, y = 0;
-		for(JButton button : levelButtons) {
-			if(button.getActionCommand() == "Merchant")
-				x++;
-			if(button.getActionCommand() == "Bonfire")
-				y++;
-		}
-		if(x >= 6 || y >= 6) {
+		if(merchCount >= 7 || bonfireCount >= 6 || qCount >= 11 || strongCount >= 5) {
+			merchCount = 0;
+			bonfireCount = 0;
+			qCount = 0;
+			strongCount = 0;
 			hideLevels();
-			setStage();
+			setStage();	
 		}
 	}
 
@@ -837,8 +859,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
 			else
 				hideLevels();
 			break;
-			}
-		
+			}		
 	}
 	
 	protected void paintComponent(Graphics g) {

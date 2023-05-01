@@ -1,4 +1,4 @@
-package Inventory;
+package inventory;
 
 public abstract class Abilities {
 	private int attackPower, abilityCost,  ID;
@@ -145,7 +145,7 @@ class ExplosiveAttack extends Abilities{
 	public ExplosiveAttack() {
 		setAbilityName("Explosive Attack");
 		setAttackPower(4);
-		setAbilityCost(2);
+		setAbilityCost(3);
 		setID(13);
 	}
 }

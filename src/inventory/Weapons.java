@@ -1,4 +1,4 @@
-package Inventory;
+package inventory;
 
 public abstract class Weapons {
 	private int attackPower, ID, amount, sellValue, buyValue;

@@ -5,7 +5,7 @@ import java.util.Random;
 
 import javax.swing.JLabel;
 
-import Inventory.Storage;
+import inventory.Storage;
 
 public class Enemies {
 

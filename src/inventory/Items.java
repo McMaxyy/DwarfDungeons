@@ -1,4 +1,4 @@
-package Inventory;
+package inventory;
 
 import constants.Player;
 

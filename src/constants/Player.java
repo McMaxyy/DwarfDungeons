@@ -11,7 +11,7 @@ public class Player {
 	private static int hp;
 	private static int strength = 2;
 	private static int mana = 4;
-	private static int coins = 0;
+	private static int coins = 100;
 	private static int level = 0;
 	private static int exp = 0;
 	private static int ability1ID, ability2ID, ability3ID, ability4ID;
@@ -106,7 +106,7 @@ public class Player {
 		tempStr = 0;
 		mana = 4;
 		hp = maxHP;
-		x = rand.nextInt(1, 14);
+		x = rand.nextInt(13, 14);
 		y = rand.nextInt(1, 14);
 		z = rand.nextInt(1, 14);
 		w = rand.nextInt(1, 14);
