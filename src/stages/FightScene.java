@@ -109,11 +109,14 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
             if (playerWin) {
 				if(currentLevel == 7) {
 					player.setUnlockedStage(player.getUnlockedStage() + 1);
-					currentLevel = 1;
+					currentLevel = 1;					
 				}
 				else
 					currentLevel++;
             }
+			for(int i = 0; i < activeBag.length; i++) {
+				Player.activeBag[i] = activeBag[i];
+			}
             window.showLevelSelector(currentLevel);
             break;
         case "Attack":
@@ -246,6 +249,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	for(int i = 0; i < activeBag.length; i++) {
         		activeBag[i].setActionCommand("remove" + i);
         		activeBag[i].addActionListener(this);
+        		System.out.println(activeBag[i].getActionCommand());
         	}
         	lblReward.setText("Choose an inventory slot"); 
         	noAdd.setVisible(false);
@@ -301,6 +305,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			for(int i = 0; i < activeBag.length; i++) {
 				activeBag[i].setActionCommand("inv" + i);
 				activeBag[i].addActionListener(this);
+				System.out.println(activeBag[i].getActionCommand());
 			}
 			lblReward.setVisible(false);					
         }
@@ -348,6 +353,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    case "Health":
         	activeBag[x].setIcon(null);
 	        player.increaseHP(5);
+	        if(player.getHp() > player.getMaxHP())
+	        	player.setHp(player.getMaxHP());
 	        player.playerShowHP(lblPlayerHP);
 	        lblPlayerHP.repaint();	        
 	        break;
@@ -454,7 +461,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			// Normal enemy rewards
 			player.gainCoin(enemy.getCoinValue());
 			lblReward.setText("You got " + enemy.getCoinValue() + " coins");
-			if(rand.nextInt(5) == 0 && !bossActive) {								
+			if(rand.nextInt(15) != 0 && !bossActive) {								
 				lblReward.setText("You got " + s.ironAxe.getWeaponName() + ". Add it to inv?");
 				weaponWon = 1;
 				yesAdd.setVisible(true);
@@ -514,6 +521,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 					lblReward.setText("You got " + enemy.getCoinValue() + " coins");									
 				if(bossActive && rand.nextInt(2) == 0) {
 					lblReward.setText("You got " + s.silverAxe.getWeaponName() + ". Add it to inv?");
+					yesAdd.setVisible(true);
+					noAdd.setVisible(true);
 					weaponWon = 2;
 				}
 				
@@ -660,7 +669,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			enemy.enemyLoseHP(temp);
 			enemy.enemyShowHP(lblEnemyHP);
 			lblEnemyHP.repaint();
-			lblDamageDealt.setText("Enemy got hit by Poison dart for: " + temp + " damage");
+			lblDamageDealt.setText("Enemy got hit by Poison for: " + temp + " damage");
 			lblDamageDealt.repaint();
 			isEnemyDead();
 			poisonLeft--;			
@@ -679,15 +688,17 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    					if(weakLeft > 0) {						
 	    						temp = temp / 3;
 	    						if(temp == 0 && player.getBubble() > 0) {
-	    							player.setBubble(player.getBubble() - 1);
+	    							temp = 1;
+	    							player.setBubble(player.getBubble() - temp);
 	    							if(player.getBubble() < 0)
 	    								player.playerLoseHP(player.getBubble() * player.getBubble());
 	    						}
 	    						else if (player.getBubble() > 0) {
 		    						player.setBubble(player.getBubble() - temp);
-		    						temp = player.getBubble() * player.getBubble();
-		    						if(player.getBubble() < 0)
+		    						if(player.getBubble() < 0) {
+		    							temp = player.getBubble() * (-1);
 		    							player.playerLoseHP(temp);
+		    						}
 		    					}
 	    						else if(temp == 0)
 	    							player.playerLoseHP(1);
@@ -696,10 +707,11 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    						weakLeft--;
 	    					}
 	    					else if (player.getBubble() > 0) {
-	    						player.setBubble(player.getBubble() - temp);
-	    						temp = player.getBubble() * player.getBubble();
-	    						if(player.getBubble() < 0)
+	    						player.setBubble(player.getBubble() - temp);	    						
+	    						if(player.getBubble() < 0) {
+	    							temp = player.getBubble() * (-1);
 	    							player.playerLoseHP(temp);
+	    						}
 	    					}
 	    					else
 	    						player.playerLoseHP(temp);	// Harden is active, enemy deals 50% dmg
@@ -716,9 +728,10 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    				}
 	    				else if (player.getBubble() > 0) {
     						player.setBubble(player.getBubble() - temp);
-    						temp = player.getBubble() * player.getBubble();
-    						if(player.getBubble() < 0)
+    						if(player.getBubble() < 0) {
+    							temp = player.getBubble() * (-1);
     							player.playerLoseHP(temp);
+    						}
     					}
 	    				else if(!shieldActive)
 	    					player.playerLoseHP(temp);

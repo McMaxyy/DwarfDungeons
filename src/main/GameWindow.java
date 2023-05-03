@@ -23,20 +23,17 @@ public class GameWindow{
     private static Mining mining;
     private static Blacksmith blacksmith;
     JFrame frame = new JFrame("Lemony Squeeze");
-
+    
     public GameWindow() {
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	frame.setSize(1280, 720);
     	frame.setLocationRelativeTo(null);
+    	frame.setUndecorated(true);
     	frame.setResizable(false);
-    	frame.getContentPane().setBackground(Color.BLUE);
-    	
-//        setUndecorated(true);
-//        getRootPane().setWindowDecorationStyle(JRootPane.NONE);
+    	frame.getContentPane().setBackground(Color.BLUE);  	
         
         mainMenu = new MainMenu(this);
-        frame.setContentPane(mainMenu);
-        
+        frame.setContentPane(mainMenu);     
     }
     
     public void showHomeScreen() {

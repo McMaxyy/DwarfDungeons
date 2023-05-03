@@ -132,7 +132,6 @@ public class MainMenu extends JPanel implements ActionListener {
         loadGame.setVerticalAlignment(SwingConstants.CENTER);
         loadGame.setBounds(540, 350, 200, 100);
         add(loadGame);
-                      
     }
     
     private void loadIcons() {
@@ -225,7 +224,7 @@ public class MainMenu extends JPanel implements ActionListener {
     	super.paintComponent(g);
     	
     	// Draw background
-	    g.drawImage(backgroundImg, 0, 0, null);
+    	g.drawImage(backgroundImg, 0, 0, null);
     }
 }
 

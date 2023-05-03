@@ -169,6 +169,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         
 	}
     
+    // Move the item from inventory to active bag
 	private void addItemToActiveBag(Image img, String name) {
 		for(int i = 0; i < activeBag.length; i++) {
 			if(weaponAdded) {
@@ -465,6 +466,7 @@ public class HomeScreen extends JPanel implements ActionListener {
 		}
 	}
 	
+	// Move item from active bag to inventory
 	private void addItemBack(int x) {		
 		if(activeBag[x].getName() == "Health")
 			s.healthPot.setAmount(s.healthPot.getAmount() + 1);

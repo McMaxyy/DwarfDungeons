@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import constants.*;
+import inventory.Storage;
 import main.GameWindow;
 
 @SuppressWarnings("serial")
@@ -24,6 +25,7 @@ public class LevelSelector extends JPanel implements ActionListener{
 	private GameWindow window;
 	private Player player = new Player();
 	private Enemies enemy = new Enemies();
+	private Storage s = Storage.getInstance();
 	private int levelIndex;
 	private static int selectedStage;
 	private JButton stageOne, stageTwo, stageThree, menuButton, quitButton;
@@ -703,6 +705,64 @@ public class LevelSelector extends JPanel implements ActionListener{
 		}			
 	}
 	
+	private void addItem(String item) {
+		switch(item) {
+		case "IronAxe":
+			s.ironAxe.setAmount(s.ironAxe.getAmount() + 1);
+			break;
+		case "SilverAxe":
+			s.silverAxe.setAmount(s.silverAxe.getAmount() + 1);
+			break;
+		case "GoldAxe":
+			s.goldAxe.setAmount(s.goldAxe.getAmount() + 1);
+			break;
+		case "SteelAxe":
+			s.steelAxe.setAmount(s.steelAxe.getAmount() + 1);
+			break;
+		case "CopperAxe":
+			s.copperAxe.setAmount(s.copperAxe.getAmount() + 1);
+			break;
+		case "TitaniumAxe":
+			s.titaniumAxe.setAmount(s.titaniumAxe.getAmount() + 1);
+			break;
+		case "FieryAxe":
+			s.fieryAxe.setAmount(s.fieryAxe.getAmount() + 1);
+			break;
+		case "MoltenAxe":
+			s.moltenAxe.setAmount(s.moltenAxe.getAmount() + 1);
+			break;
+		case "WaterAxe":
+			s.waterAxe.setAmount(s.waterAxe.getAmount() + 1);
+			break;
+		case "Health":
+			s.healthPot.setAmount(s.healthPot.getAmount() + 1);
+			break;
+		case "Shield":
+			s.shield.setAmount(s.shield.getAmount() + 1);
+			break;
+		case "Bomb":
+			s.bomb.setAmount(s.bomb.getAmount() + 1);
+			break;
+		case "PoisonDart":
+			s.poisonDart.setAmount(s.poisonDart.getAmount() + 1);
+			break;
+		case "Dynamite":
+			s.bigBomb.setAmount(s.bigBomb.getAmount() + 1);
+			break;
+		case "Bombs":
+			s.biggerBomb.setAmount(s.biggerBomb.getAmount() + 1);
+			break;
+		}
+	}
+	
+	private void checkInventory() {
+		for(int i = 1; i < Player.activeBag.length; i++) {
+			if(Player.activeBag[i].getIcon() != null) {
+				addItem(Player.activeBag[i].getName());
+			}
+		}
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
@@ -712,6 +772,7 @@ public class LevelSelector extends JPanel implements ActionListener{
 			System.exit(0);
 			break;
 		case "Return":
+			checkInventory();
 			window.showHomeScreen();
 			break;
 		case "Stage1":
