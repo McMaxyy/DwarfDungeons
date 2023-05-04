@@ -44,6 +44,12 @@ public class HomeScreen extends JPanel implements ActionListener {
     public HomeScreen(GameWindow window) {
         this.window = window;        
         player.setUnlockedStage(1);
+        player.setWeaponTaken(false);
+        player.setMaxHP(30);
+        player.setStrength(200);
+        player.setLevelCap(10);
+        player.setExp(0);
+        player.setLevel(0);
         
         setLayout(null); 
         
@@ -484,6 +490,38 @@ public class HomeScreen extends JPanel implements ActionListener {
 		checkAvailableItems();
 	}
 	
+	private void removeWeaponFromInventory(String name) {
+		switch(name) {
+		case "IronAxe":
+			s.ironAxe.setAmount(s.ironAxe.getAmount() - 1);
+			break;
+		case "SilverAxe":
+			s.silverAxe.setAmount(s.silverAxe.getAmount() - 1);
+			break;
+		case "GoldAxe":
+			s.goldAxe.setAmount(s.goldAxe.getAmount() - 1);
+			break;
+		case "SteelAxe":
+			s.steelAxe.setAmount(s.steelAxe.getAmount() - 1);
+			break;
+		case "CopperAxe":
+			s.copperAxe.setAmount(s.copperAxe.getAmount() - 1);
+			break;
+		case "TitaniumAxe":
+			s.titaniumAxe.setAmount(s.titaniumAxe.getAmount() - 1);
+			break;
+		case "FieryAxe":
+			s.fieryAxe.setAmount(s.fieryAxe.getAmount() - 1);
+			break;
+		case "MoltenAxe":
+			s.moltenAxe.setAmount(s.moltenAxe.getAmount() - 1);
+			break;
+		case "WaterAxe":
+			s.waterAxe.setAmount(s.waterAxe.getAmount() - 1);
+			break;
+		}
+	}
+	
 	private void loadIcons() {
 		try {
 			returnBtn = ImageIO.read(new File("res/FunctionButtons/ReturnButton.png"));
@@ -513,12 +551,12 @@ public class HomeScreen extends JPanel implements ActionListener {
 
 	private void saveGame() {
 		int[] saveS = new int[21];
-		saveS[0] = player.getMaxHP();
-		saveS[1] = player.getStrength();
+		saveS[0] = player.getStoryMaxHP();
+		saveS[1] = player.getStoryStrength();
 		saveS[2] = player.getCoins();
-		saveS[3] = player.getLevel();
-		saveS[4] = player.getExp();
-		saveS[5] = player.getLevelCap();
+		saveS[3] = player.getStoryLevel();
+		saveS[4] = player.getStoryExp();
+		saveS[5] = player.getStoryCap();
 		saveS[6] = s.ironAxe.getAmount();
 		saveS[7] = s.silverAxe.getAmount();
 		saveS[8] = s.goldAxe.getAmount();
@@ -557,6 +595,7 @@ public class HomeScreen extends JPanel implements ActionListener {
             System.exit(0);
             break;
         case "Levels":
+        	s.gameMode = 0;
         	itemsInRowA = 0;
         	xLocA = 975;
         	yLocA = 30;
@@ -574,10 +613,13 @@ public class HomeScreen extends JPanel implements ActionListener {
         			xLocA = 975;
         			yLocA += 50;
         		}      		
-        	}
+        	} 
+        	if(activeBag[0].getIcon() != null)
+        		removeWeaponFromInventory(activeBag[0].getName());
             window.showLevelSelector(1);
             break;
         case "FunMode":
+        	s.gameMode = 1;
         	itemsInRowA = 0;
         	xLocA = 975;
         	yLocA = 30;
@@ -596,6 +638,8 @@ public class HomeScreen extends JPanel implements ActionListener {
         			yLocA += 50;
         		}      		
         	}
+        	if(activeBag[0].getIcon() != null)
+        		removeWeaponFromInventory(activeBag[0].getName());
             window.showFunMode(1);
             break;
         case "Slot":

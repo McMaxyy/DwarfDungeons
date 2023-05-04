@@ -16,6 +16,7 @@ public class Storage {
 	public Font font, font2, font3, font4;
 	private static Storage instance = null;
 	public Border border = LineBorder.createBlackLineBorder();
+	public int gameMode = 0;
 	
 	public static Storage getInstance() {
         if (instance == null) {

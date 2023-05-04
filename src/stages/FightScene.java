@@ -29,7 +29,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	private Enemies enemy = new Enemies();
 	private Weapon weapon = new Weapon();
 	private Storage s = Storage.getInstance();
-	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblExp, lblLevelUp, lblEnemyName, lblReward;
+	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblExp, lblLevelUp, lblEnemyName, lblReward, lblBubble;
 	private JButton returnButton, attackButton, menuButton, turnButton, levelUpHPButton, levelUpStrButton, 
 			ability1, ability2, ability3, ability4, yesAdd, noAdd;
 	private JButton[] buttons = new JButton[] {attackButton, menuButton, turnButton, ability1, ability2, ability3, ability4};
@@ -85,6 +85,15 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			else
 				weapon.noWeapon();
 		}
+		if(s.gameMode == 0) {
+			player.setMaxHP(player.getStoryMaxHP());
+			player.setHp(player.getMaxHP());
+			player.setStrength(player.getStoryStrength());
+			player.setLevelCap(player.getStoryCap());
+			player.setExp(player.getStoryExp());
+			player.setLevel(player.getStoryLevel());			
+		}
+		
 		setLayout(null);
 		
 		loadImages();
@@ -107,9 +116,13 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
             break;
         case "Return":
             if (playerWin) {
-				if(currentLevel == 7) {
+				if(currentLevel == 7 && s.gameMode == 0) {
 					player.setUnlockedStage(player.getUnlockedStage() + 1);
 					currentLevel = 1;					
+				}
+				else if(currentLevel == 11 && s.gameMode == 1) {
+					player.setUnlockedStage(player.getUnlockedStage() + 1);
+					currentLevel = 1;	
 				}
 				else
 					currentLevel++;
@@ -117,7 +130,10 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			for(int i = 0; i < activeBag.length; i++) {
 				Player.activeBag[i] = activeBag[i];
 			}
-            window.showLevelSelector(currentLevel);
+			if(s.gameMode == 0)
+				window.showLevelSelector(currentLevel);
+			else
+				window.showFunMode(currentLevel);
             break;
         case "Attack":
             turnCounter -= s.getAttackButtonCost();            
@@ -174,21 +190,26 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	}
         	else
         		lblDamageDealt.setText("Stun failed");
-        	turnCounter -= s.weaken.getAbilityCost();
+        	turnCounter -= s.stun.getAbilityCost();
         	enableActionButtons();
         	break;
         case "Bubble":
-        	bubbleAmount = s.bubble.getAttackPower();
-        	turnCounter -= s.bubble.getAbilityCost();
-        	player.setBubble(s.bubble.getAttackPower());
+        	if(player.getBubble() < 0)
+        		player.setBubble(0);
+        	bubbleAmount = s.bubble.getAttackPower() + player.getBubble();
+        	turnCounter -= s.bubble.getAbilityCost();      	
+        	player.setBubble(s.bubble.getAttackPower() + player.getBubble());
         	lblDamageDealt.setText("Surrounded player with a protective bubble");
         	enableActionButtons();
+        	lblBubble.setText("" + player.getBubble());
         	break;
         case "Heal":
         	turnCounter -= s.heal.getAbilityCost();
         	player.increaseHP(s.heal.getAttackPower());
         	if (player.getHp() > player.getMaxHP())
         		player.setHp(player.getMaxHP());
+        	player.playerShowHP(lblPlayerHP);
+	        lblPlayerHP.repaint();
         	lblDamageDealt.setText("Player healed");
         	enableActionButtons();
         	break;
@@ -217,6 +238,34 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         		explosionActive = true;
         	doAttack();
         	break;
+        case "Confuse":
+        	if(rand.nextInt(2) == 0 ) {
+	        	stunActive = true;
+	        	lblDamageDealt.setText("Confuse succeeded");
+        	}
+        	else
+        		lblDamageDealt.setText("Confuse failed");
+        	turnCounter -= s.confuse.getAbilityCost();
+        	enableActionButtons();
+        	break;
+        case "Pummel":
+        	turnCounter -= s.pummel.getAbilityCost();
+        	abilityID = s.pummel.getID();
+        	doAttack();
+        	if(rand.nextInt(2) == 0)
+        		stunActive = true;
+        	break;
+        case "TendonCutter":
+        	turnCounter -= s.tendonCutter.getAbilityCost();
+        	abilityID = s.tendonCutter.getID();
+        	doAttack();
+        	weakLeft = 1;
+        	break;
+        case "LifeSteal":
+        	turnCounter -= s.lifeSteal.getAbilityCost();
+        	abilityID = s.lifeSteal.getID();
+        	doAttack();
+        	break;
         case "Turn":
             enemyAttack();       
             turnCounter = player.getMana();      
@@ -226,6 +275,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
             disableLevelUpComponents();
             player.playerShowHP(lblPlayerHP);
             lblPlayerHP.repaint(); 
+            if(s.gameMode == 0)
+    			player.setStoryMaxHP(player.getMaxHP());
             if(!gameOver) {
             	enableActionButtons();
             	turnButton.setEnabled(true);
@@ -238,6 +289,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
             disableLevelUpComponents();
             player.playerShowHP(lblPlayerHP);
             lblPlayerHP.repaint();
+            if(s.gameMode == 0)
+    			player.setStoryStrength(player.getStrength());
             if(!gameOver) {
             	enableActionButtons();
             	turnButton.setEnabled(true);
@@ -249,7 +302,6 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	for(int i = 0; i < activeBag.length; i++) {
         		activeBag[i].setActionCommand("remove" + i);
         		activeBag[i].addActionListener(this);
-        		System.out.println(activeBag[i].getActionCommand());
         	}
         	lblReward.setText("Choose an inventory slot"); 
         	noAdd.setVisible(false);
@@ -305,7 +357,6 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			for(int i = 0; i < activeBag.length; i++) {
 				activeBag[i].setActionCommand("inv" + i);
 				activeBag[i].addActionListener(this);
-				System.out.println(activeBag[i].getActionCommand());
 			}
 			lblReward.setVisible(false);					
         }
@@ -436,19 +487,9 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				button.setEnabled(false);
 			lblDamageDealt.setVisible(false);
 			gameOver = true;
-			if(player.getActiveWeapon() > 0) {
-				switch(player.getActiveWeapon()) {
-				case 1:
-					s.ironAxe.setAmount(s.ironAxe.getAmount() - 1);
-					lblReward.setText("You lost " + s.ironAxe.getWeaponName());
-					break;
-				case 2:
-					s.steelAxe.setAmount(s.steelAxe.getAmount() - 1);
-					lblReward.setText("You lost " + s.steelAxe.getWeaponName());
-					break;
-				}
-				player.setActiveWeapon(0);
-				lblReward.setVisible(true);
+			for(int i = 0; i < activeBag.length; i++) {
+				activeBag[i].setIcon(null);
+				activeBag[i].setName("");
 			}
 		}			
 	}
@@ -499,8 +540,12 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				lblEnemyHP.repaint();	
 				if (player.getLevel() <= 15) {	// Check if player is max level
 					player.increaseExp(enemy.getExpValue());	// Add EXP to player
+					player.setStoryExp(player.getExp());
 					if(player.getExp() >= player.getLevelCap()) {	// Check if player has enough EXP to level up
-						player.levelUp();
+						if(s.gameMode == 0)
+							player.levelUp(0);
+						else
+							player.levelUp(1);
 						enableLevelUpComponents();
 					}
 				}	
@@ -533,12 +578,15 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				for(JButton button : buttons)
 					button.setEnabled(false);	
 				lblDamageDealt.setVisible(false);
-				
-				
-				if (player.getLevel() <= 15) {
-					player.increaseExp(enemy.getExpValue()); // Add EXP to player
+								
+				if (player.getLevel() <= 15) {	// Check if player is max level
+					player.increaseExp(enemy.getExpValue());	// Add EXP to player
+					player.setStoryExp(player.getExp());
 					if(player.getExp() >= player.getLevelCap()) {	// Check if player has enough EXP to level up
-						player.levelUp();
+						if(s.gameMode == 0)
+							player.levelUp(0);
+						else
+							player.levelUp(1);
 						enableLevelUpComponents();
 					}
 				}	
@@ -736,6 +784,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    				else if(!shieldActive)
 	    					player.playerLoseHP(temp);
 	    				
+	    				lblBubble.setText("" + player.getBubble());
+	    				lblBubble.repaint();
 	    		    	player.playerShowHP(lblPlayerHP);
 	    		    	lblPlayerHP.repaint();
 	    		    	if (temp == 0)
@@ -812,11 +862,35 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 					y = s.whirlwind.getAttackPower();					
 					z = y;
 					break;
+				case 13:
+					y = s.explosiveAttack.getAttackPower();
+					z = y;
+					break;
+				case 15:
+					y = s.pummel.getAttackPower();
+					z = y;
+					break;
+				case 16:
+					y = s.tendonCutter.getAttackPower();
+					z = y;
+					break;
+				case 17:
+					y = s.lifeSteal.getAttackPower();
+					z = y;
+					break;
 				}
 				x = rand.nextInt(z, player.getStrength() / 2 + weapon.getWeaponDamage()+ y + player.getTempStr() / 2 + 1); // Ability attack
 				if(abilityID == 6)	// Whirlwind
 					for(int i = 1; i < 3; i++)
 						x = x + (player.getStrength() / 2 + weapon.getWeaponDamage()+ y + player.getTempStr() / 2 + 1);					
+				if(abilityID == 17) {
+					player.increaseHP(x/2);
+					if(player.getHp() > player.getMaxHP())
+						player.setHp(player.getMaxHP());
+					
+					player.playerShowHP(lblPlayerHP);
+			        lblPlayerHP.repaint();
+				}
 				abilityID = 0;
 			}
 			else
@@ -897,6 +971,34 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	            button.setActionCommand("ExplosiveAttack");
 	            button.setIcon(new ImageIcon(explosiveBtn));
 	            break;
+	        case 14:
+	            button.setActionCommand("Confuse");
+	            button.setIcon(new ImageIcon(confuseBtn));
+	            break;
+	        case 15:
+	            button.setActionCommand("Pummel");
+	            button.setIcon(new ImageIcon(pummelBtn));
+	            break;
+	        case 16:
+	            button.setActionCommand("TendonCutter");
+	            button.setIcon(new ImageIcon(tendonBtn));
+	            break;
+	        case 17:
+	            button.setActionCommand("LifeSteal");
+	            button.setIcon(new ImageIcon(stealBtn));
+	            break;
+	        case 18:
+	            button.setActionCommand("GroundBreaker");
+	            button.setIcon(new ImageIcon(breakerBtn));
+	            break;
+	        case 19:
+	            button.setActionCommand("ShieldWall");
+	            button.setIcon(new ImageIcon(shieldBtn));
+	            break;
+	        case 20:
+	            button.setActionCommand("FortifiedAttack");
+	            button.setIcon(new ImageIcon(fortifyBtn));
+	            break;
 	    }
 	    button.addActionListener(this);
 	    button.addMouseListener(this);
@@ -922,6 +1024,13 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		lblEnemyHP.setForeground(Color.BLACK);
 		lblEnemyHP.setBounds(50, 270, 100, 30);		
 		add(lblEnemyHP);
+		
+		lblBubble = new JLabel();
+		lblBubble.setFont(s.font2);
+		lblBubble.setText("" + player.getBubble());
+		lblBubble.setForeground(Color.BLACK);
+		lblBubble.setBounds(1010, 240, 100, 30);
+		add(lblBubble);
 		
 		lblEnemyName = new JLabel();
 		lblEnemyName.setFont(s.font2);

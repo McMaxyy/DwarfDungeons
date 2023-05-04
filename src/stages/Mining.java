@@ -14,19 +14,17 @@ import javax.swing.Timer;
 
 import inventory.Storage;
 
-import constants.Player;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import main.GameWindow;
 
+@SuppressWarnings("serial")
 public class Mining extends JPanel implements ActionListener, KeyListener{
 	private GameWindow window;
-	private Player player = new Player();
 	private Storage s = Storage.getInstance();
-	private JLabel letterArray[] = new JLabel[10];
+	private JLabel letterArray[] = new JLabel[15];
 	private JButton openGame, material, startMining, returnButton;
 	private int arrayLoc = 0, arrayX = 200;
 	private Random rand = new Random();
@@ -160,8 +158,7 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 			arrayX += 50;
 		}
 		
-		this.requestFocusInWindow();
-		timer.start();
+		this.requestFocusInWindow();		
 	}
 	
 	private void gameWon() {
@@ -299,6 +296,8 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 		case KeyEvent.VK_A:
 			if(minigameActive) {
 				if(letterArray[arrayLoc].getText() == "A") {
+					if(arrayLoc == 0)
+						timer.start();
 					letterArray[arrayLoc].setEnabled(false);
 					arrayLoc++;
 					gameWon();
@@ -320,6 +319,8 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 			break;
 		case KeyEvent.VK_S:
 			if(letterArray[arrayLoc].getText() == "S") {
+				if(arrayLoc == 0)
+					timer.start();
 				letterArray[arrayLoc].setEnabled(false);
 				arrayLoc++;
 				gameWon();
@@ -330,6 +331,8 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 		case KeyEvent.VK_D:
 			if(minigameActive) {
 				if(letterArray[arrayLoc].getText() == "D") {
+					if(arrayLoc == 0)
+						timer.start();
 					letterArray[arrayLoc].setEnabled(false);
 					arrayLoc++;
 					gameWon();
@@ -351,6 +354,8 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 			break;
 		case KeyEvent.VK_W:
 			if(letterArray[arrayLoc].getText() == "W") {
+				if(arrayLoc == 0)
+					timer.start();
 				letterArray[arrayLoc].setEnabled(false);
 				arrayLoc++;
 				gameWon();

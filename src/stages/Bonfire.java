@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import constants.Player;
+import inventory.Storage;
 import main.GameWindow;
 
 @SuppressWarnings("serial")
@@ -16,6 +17,7 @@ public class Bonfire extends JPanel implements ActionListener{
 	private int currentLevel;
 	private JButton healthPot, strengthUp, returnButton;
 	private Player player = new Player();
+	private Storage s = Storage.getInstance();
 	
 	public Bonfire(GameWindow window, int levelIndex) {
 		this.window = window;
@@ -44,7 +46,10 @@ public class Bonfire extends JPanel implements ActionListener{
 		}
 		else if (command.equals("Return")) {
 			currentLevel++;
-			window.showLevelSelector(currentLevel);
+			if(s.gameMode == 0)
+				window.showLevelSelector(currentLevel);
+			else
+				window.showFunMode(currentLevel);
 		}
 		
 	}

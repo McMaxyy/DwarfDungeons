@@ -756,10 +756,9 @@ public class LevelSelector extends JPanel implements ActionListener{
 	}
 	
 	private void checkInventory() {
-		for(int i = 1; i < Player.activeBag.length; i++) {
-			if(Player.activeBag[i].getIcon() != null) {
+		for(int i = 0; i < Player.activeBag.length; i++) {
+			if(Player.activeBag[i].getIcon() != null)
 				addItem(Player.activeBag[i].getName());
-			}
 		}
 	}
 	

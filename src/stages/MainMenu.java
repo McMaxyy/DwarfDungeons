@@ -190,12 +190,12 @@ public class MainMenu extends JPanel implements ActionListener {
     	try (FileReader reader = new FileReader("savegame.json")) {
             int[] intArray = gson.fromJson(reader, int[].class);
 
-            player.setMaxHP(intArray[0]);
-            player.setStrength(intArray[1]);
+            player.setStoryMaxHP(intArray[0]);
+            player.setStoryStrength(intArray[1]);
             player.setCoins(intArray[2]);
-            player.setLevel(intArray[3]);
-            player.setExp(intArray[4]);
-            player.setLevelCap(intArray[5]);
+            player.setStoryLevel(intArray[3]);
+            player.setStoryExp(intArray[4]);
+            player.setStoryCap(intArray[5]);
             s.ironAxe.setAmount(intArray[6]);
             s.silverAxe.setAmount(intArray[7]);
             s.goldAxe.setAmount(intArray[8]);

@@ -134,7 +134,7 @@ class Block extends Abilities{
 
 class PoisonSlash extends Abilities{
 	public PoisonSlash() {
-		setAbilityName("PoisonSlash");
+		setAbilityName("Poison Slash");
 		setAttackPower(3);
 		setAbilityCost(2);
 		setID(12);

@@ -6,10 +6,9 @@ import javax.swing.JLabel;
 import java.util.*;
 
 public class Player {
-
 	private static int maxHP = 30;
 	private static int hp;
-	private static int strength = 2;
+	private static int strength = 200;
 	private static int mana = 4;
 	private static int coins = 100;
 	private static int level = 0;
@@ -20,6 +19,12 @@ public class Player {
 	private static int unlockedStage = 1;
 	private static int tempStr;
 	private static int merchantVisits;
+	private static int storyMaxHP = 30;
+	private static int storyStrength = 2;
+	private static int storyLevel = 0;
+	private static int storyExp = 0;
+	private static int storyCap = 10;
+	private static boolean weaponTaken;
 	private int bubble = 0;
 	public static JButton activeBag[] = new JButton[8];
 	protected JLabel lblPlayerHP;
@@ -69,7 +74,7 @@ public class Player {
 	
 	public void increaseMaxHP() {
 		maxHP += 5;
-		hp = maxHP;
+		hp = maxHP;		
 	}
 	
 	public void increasePlayerStr() {
@@ -87,39 +92,52 @@ public class Player {
 			hp = maxHP;
 	}
 	
-	public void levelUp() {
-		if(level <= 15) {
-			level++;
-			exp = 0;
-			if(level <= 5)
-				levelCap += 20;
-			else if (level >= 6 && level <= 9)
-				levelCap += 40;
-			else if (level == 10)
-				levelCap += 50;
-			else if (level >= 11 && level <= 15)
-				levelCap += 100;
-		}
+	public void levelUp(int x) {
+		switch(x) {
+		case 0:
+			if(level <= 15) {
+				level++;
+				exp = 0;
+				if(level <= 5)
+					levelCap += 20;
+				else if (level >= 6 && level <= 9)
+					levelCap += 40;
+				else if (level == 10)
+					levelCap += 50;
+				else if (level >= 11 && level <= 15)
+					levelCap += 100;
+			}
+			storyCap = levelCap;
+			storyLevel = level;			
+			break;
+		case 1:
+			if(level <= 15) {
+				level++;
+				exp = 0;
+				levelCap += 30;
+			}
+			break;
+		}	
 	}
 	
 	public void playerOne() {
 		tempStr = 0;
 		mana = 4;
 		hp = maxHP;
-		x = rand.nextInt(13, 14);
-		y = rand.nextInt(1, 14);
-		z = rand.nextInt(1, 14);
-		w = rand.nextInt(1, 14);
+		x = rand.nextInt(1, 10);
+		y = rand.nextInt(1, 10);
+		z = rand.nextInt(1, 10);
+		w = rand.nextInt(1, 10);
 		ability1ID = x;
 		while(y == x) {
-			y = rand.nextInt(1, 14);
+			y = rand.nextInt(1, 10);
 		}
 		ability2ID = y;
 		while (z == y || z == x)
-			z = rand.nextInt(1, 14);
+			z = rand.nextInt(1, 10);
 		ability3ID = z;
 		while (w == y || w == x || w == z)
-			w = rand.nextInt(1, 14);
+			w = rand.nextInt(1, 10);
 		ability4ID = w;
 	}
 
@@ -266,4 +284,53 @@ public class Player {
 	public void setBubble(int bubble) {
 		this.bubble = bubble;
 	}
+
+	public boolean isWeaponTaken() {
+		return weaponTaken;
+	}
+
+	public void setWeaponTaken(boolean weaponTaken) {
+		Player.weaponTaken = weaponTaken;
+	}
+
+	public int getStoryMaxHP() {
+		return storyMaxHP;
+	}
+
+	public void setStoryMaxHP(int storyMaxHP) {
+		Player.storyMaxHP = storyMaxHP;
+	}
+
+	public int getStoryStrength() {
+		return storyStrength;
+	}
+
+	public void setStoryStrength(int storyStrength) {
+		Player.storyStrength = storyStrength;
+	}
+
+	public int getStoryLevel() {
+		return storyLevel;
+	}
+
+	public void setStoryLevel(int storyLevel) {
+		Player.storyLevel = storyLevel;
+	}
+
+	public int getStoryExp() {
+		return storyExp;
+	}
+
+	public void setStoryExp(int storyExp) {
+		Player.storyExp = storyExp;
+	}
+
+	public int getStoryCap() {
+		return storyCap;
+	}
+
+	public void setStoryCap(int storyCap) {
+		Player.storyCap = storyCap;
+	}
+	
 }

@@ -28,7 +28,7 @@ public class GameWindow{
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	frame.setSize(1280, 720);
     	frame.setLocationRelativeTo(null);
-    	frame.setUndecorated(true);
+//    	frame.setUndecorated(true);
     	frame.setResizable(false);
     	frame.getContentPane().setBackground(Color.BLUE);  	
         

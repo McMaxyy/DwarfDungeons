@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 import constants.Player;
 import constants.Weapon;
+import inventory.Storage;
 import main.GameWindow;
 
 @SuppressWarnings("serial")
@@ -19,17 +20,18 @@ public class Merchant extends JPanel implements ActionListener{
 	private GameWindow window;
 	private Player player = new Player();
 	private Weapon weapon = new Weapon();
-	private JButton healthPot, ability1, active1, active2, active3, 
+	private JButton healthPot, ability1, active1, active2, active3, active4, 
 			returnButton, manaIncrease, upgradeWeapon;
 	private JLabel coins;
-	private String a1, a2, a3, abilityText;
+	private String a1, a2, a3, a4, abilityText;
 	private int abilityID, currentLevel, x;
 	private static int hpPrice, mpPrice, weaponPrice, abPrice;
 	private float newPrice;
 	private Random rand = new Random();
 	private boolean playerPurchased, hpPurchased, mpPurchased, weaponPurchased, abPurchased;
-	private int[] abilityIds = {player.getAbility1ID(), player.getAbility2ID(), player.getAbility3ID()};
-	private String[] abilities = new String[3];
+	private int[] abilityIds = {player.getAbility1ID(), player.getAbility2ID(), player.getAbility3ID(), player.getAbility4ID()};
+	private String[] abilities = new String[4];
+	private Storage s = Storage.getInstance();
 	
 	public Merchant(GameWindow window, int levelIndex){
 		this.window = window;
@@ -56,7 +58,7 @@ public class Merchant extends JPanel implements ActionListener{
 			break;
 		}
 		
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 4; i++) {
 		    switch (abilityIds[i]) {
 		        case 1:
 		            abilities[i] = "Swing";
@@ -82,12 +84,40 @@ public class Merchant extends JPanel implements ActionListener{
 		        case 8:
 		            abilities[i] = "Stun";
 		            break;
+		        case 9:
+		        	abilities[i] = "Bubble";
+		        	break;
+		        case 10:
+		        	abilities[i] = "Heal";
+					break;
+				case 11:
+					abilities[i] = "Block";
+					break;
+				case 12:
+					abilities[i] = "Poison Slash";
+					break;
+				case 13:
+					abilities[i] = "Explosive Attack";
+					break;
+				case 14:
+					abilities[i] = "Confuse";
+					break;
+				case 15:
+					abilities[i] = "Pummel";
+					break;
+				case 16:
+					abilities[i] = "Tendon Cutter";
+					break;
+				case 17:
+					abilities[i] = "Life Steal";
+					break;
 		    }
 		}
 
 		a1 = abilities[0];
 		a2 = abilities[1];
-		a3 = abilities[2];		
+		a3 = abilities[2];	
+		a4 = abilities[3];
 		
 		setLayout(null);
 		
@@ -104,7 +134,10 @@ public class Merchant extends JPanel implements ActionListener{
 	    	if(!playerPurchased)
 	    		player.decreaseMerchantVisits();
 	        currentLevel++;
-	        window.showLevelSelector(currentLevel);
+	        if(s.gameMode == 0)
+	        	window.showLevelSelector(currentLevel);
+	        else
+	        	window.showFunMode(currentLevel);
 	        break;
 	    case "Mana":
 	        player.increaseMana(1);
@@ -133,6 +166,7 @@ public class Merchant extends JPanel implements ActionListener{
 	        active1.setVisible(true);
 	        active2.setVisible(true);
 	        active3.setVisible(true);
+	        active4.setVisible(true);
 	        setAbilityID();
 	        break;
 	    case "ac1":
@@ -157,6 +191,14 @@ public class Merchant extends JPanel implements ActionListener{
 	    	checkAvailability();
 	    	disableAbilityButtons();
 	        player.setAbility3ID(abilityID);	        
+	        playerPurchased = true;
+	        break;
+	    case "ac4":
+	    	player.loseCoin(abPrice);
+	    	abPurchased = true;
+	    	checkAvailability();
+	    	disableAbilityButtons();
+	        player.setAbility4ID(abilityID);	        
 	        playerPurchased = true;
 	        break;
 		}			
@@ -201,6 +243,7 @@ public class Merchant extends JPanel implements ActionListener{
 		active1.setEnabled(false);
         active2.setEnabled(false);
         active3.setEnabled(false);
+        active4.setEnabled(false);
         ability1.setEnabled(false);
 	}
 
@@ -230,6 +273,33 @@ public class Merchant extends JPanel implements ActionListener{
 		case "Stun":
 			abilityID = 8;
 			break;
+		case "Bubble":
+			abilityID = 9;
+			break;
+		case "Heal":
+			abilityID = 10;
+			break;
+		case "Block":
+			abilityID = 11;
+			break;
+		case "Poison Slash":
+			abilityID = 12;
+			break;
+		case "Explosive Attack":
+			abilityID = 13;
+			break;
+		case "Confuse":
+			abilityID = 14;
+			break;
+		case "Pummel":
+			abilityID = 15;
+			break;
+		case "Tendon Cutter":
+			abilityID = 16;
+			break;
+		case "Life Steal":
+			abilityID = 17;
+			break;
 		}
 	}
 	
@@ -258,6 +328,33 @@ public class Merchant extends JPanel implements ActionListener{
 			break;
 		case 8:
 			abilityText = "Stun";
+			break;
+		case 9:
+			abilityText = "Bubble";
+			break;
+		case 10:
+			abilityText = "Heal";
+			break;
+		case 11:
+			abilityText = "Block";
+			break;
+		case 12:
+			abilityText = "Poison Slash";
+			break;
+		case 13:
+			abilityText = "Explosive Attack";
+			break;
+		case 14:
+			abilityText = "Confuse";
+			break;
+		case 15:
+			abilityText = "Pummel";
+			break;
+		case 16:
+			abilityText = "Tendon Cutter";
+			break;
+		case 17:
+			abilityText = "Life Steal";
 			break;
 		}
 	}
@@ -302,8 +399,8 @@ public class Merchant extends JPanel implements ActionListener{
         ability1 = new JButton();
         ability1.setEnabled(false);
         ability1.setActionCommand("ab1");
-        while(x == player.getAbility1ID() || x == player.getAbility2ID() || x == player.getAbility3ID())
-        	x = rand.nextInt(1, 9);
+        while(x == player.getAbility1ID() || x == player.getAbility2ID() || x == player.getAbility3ID() || x == player.getAbility4ID())
+        	x = rand.nextInt(1, 18);
         setAbilityText();
         ability1.setText(abilityText);
         ability1.addActionListener(this);
@@ -315,7 +412,7 @@ public class Merchant extends JPanel implements ActionListener{
         active1.setActionCommand("ac1");
         active1.setText(a1);
         active1.addActionListener(this);
-        active1.setBounds(460, 560, 150, 100);
+        active1.setBounds(560, 560, 150, 100);
         add(active1);
         
         active2 = new JButton();
@@ -333,6 +430,14 @@ public class Merchant extends JPanel implements ActionListener{
         active3.addActionListener(this);
         active3.setBounds(880, 560, 150, 100);
         add(active3);
+        
+        active4 = new JButton();
+        active4.setVisible(false);
+        active4.setActionCommand("ac4");
+        active4.setText(a4);
+        active4.addActionListener(this);
+        active4.setBounds(1040, 560, 150, 100);
+        add(active4);
 	}
 	
 }

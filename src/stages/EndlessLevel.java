@@ -17,11 +17,13 @@ import javax.swing.JPanel;
 
 import constants.Enemies;
 import constants.Player;
+import inventory.Storage;
 import main.GameWindow;
 
+@SuppressWarnings("serial")
 public class EndlessLevel extends JPanel implements ActionListener{
-
 	private GameWindow window;
+	private Storage s = Storage.getInstance();
 	private Player player = new Player();
 	private Enemies enemy = new Enemies();
 	private int levelIndex;
@@ -45,6 +47,8 @@ public class EndlessLevel extends JPanel implements ActionListener{
 		levelEight2, levelEight3, levelNine1, levelNine2, levelNine3, levelNine4, levelTen1, levelTen2, bossLevel};
 	private int arrL = 0, merchChance = 30, bonfireChance = 15, qChance = 60;
 	private int merchCount = 0, bonfireCount = 0, qCount = 0, strongCount = 0;
+	private static boolean left1, left2, right1, right2, mid1, mid2;
+	private static int selectedStage;
 	
 	public EndlessLevel(GameWindow window, int currentLevel) {
 		this.window = window;
@@ -58,9 +62,159 @@ public class EndlessLevel extends JPanel implements ActionListener{
 		initComponents();
 		setStage();
 		setButtons();
+		unlockStage();
 		
-		if(levelIndex == 1)
+		if(player.getUnlockedStage() > 1)
+			stageOne.setEnabled(false);
+		
+		if(levelIndex > 1) {
+			stageOne.setEnabled(false);
+			stageTwo.setEnabled(false);
+			stageThree.setEnabled(false);
+		}
+		
+		if(levelIndex > 1)
+        	showLevels();
+	}
+	
+	private void unlockStage() {
+		switch(levelIndex) {
+		case 1:
 			levelOne.setEnabled(true);
+			break;
+		case 2:
+			levelTwo1.setEnabled(true);
+			levelTwo2.setEnabled(true);
+			break;
+		case 3:
+			if(right1) {
+				levelThree1.setEnabled(true);
+				levelThree2.setEnabled(true);
+				right1 = false;
+			}
+			else if(left2) {
+				levelThree2.setEnabled(true);
+				levelThree3.setEnabled(true);
+				left2 = false;
+			}
+			break;
+		case 4:
+			if(right1) {
+				levelFour1.setEnabled(true);
+				levelFour2.setEnabled(true);
+				right1 = false;
+			}
+			if(left1 || right2) {
+				levelFour2.setEnabled(true);
+				levelFour3.setEnabled(true);
+				left1 = right2 = false;
+			}
+			else if(left2) {
+				levelFour3.setEnabled(true);
+				levelFour4.setEnabled(true);
+				left2 = false;
+			}
+			break;
+		case 5:
+			if(right1) {
+				levelFive1.setEnabled(true);
+				levelFive2.setEnabled(true);
+				right1 = false;
+			}
+			else if(left1) {
+				levelFive3.setEnabled(true);
+				levelFive4.setEnabled(true);
+				left1 = false;
+			}
+			else if(right2) {
+				levelFive5.setEnabled(true);
+				levelFive6.setEnabled(true);
+				right2 = false;
+			}
+			else if(left2) {
+				levelFive7.setEnabled(true);
+				levelFive8.setEnabled(true);
+				left2 = false;
+			}
+			break;
+		case 6:
+			if(mid1) {
+				levelSix1.setEnabled(true);
+				mid1 = false;
+			}
+			else if(mid2) {
+				levelSix2.setEnabled(true);
+				mid2 = false;
+			}
+		case 7:
+			if(mid1) {
+				levelSeven1.setEnabled(true);
+				levelSeven2.setEnabled(true);
+				levelSeven3.setEnabled(true);
+				levelSeven4.setEnabled(true);
+				mid1 = false;
+			}
+			else if(mid2) {
+				levelSeven5.setEnabled(true);
+				levelSeven6.setEnabled(true);
+				levelSeven7.setEnabled(true);
+				levelSeven8.setEnabled(true);
+				mid2 = false;
+			}
+		case 8:
+			if(right1) {
+				levelEight1.setEnabled(true);
+				right1 = false;
+			}
+			else if(left1) {
+				levelEight1.setEnabled(true);
+				levelEight2.setEnabled(true);
+				left1 = false;
+			}
+			else if(right2) {
+				levelEight2.setEnabled(true);
+				levelEight3.setEnabled(true);
+				right2 = false;
+			}
+			else if(left2) {
+				levelEight3.setEnabled(true);
+				left2 = false;
+			}
+			else if(mid2) {
+				levelEight2.setEnabled(true);
+				mid2 = false;
+			}
+			break;
+		case 9:
+			if(right1) {
+				levelNine1.setEnabled(true);
+				levelNine2.setEnabled(true);
+				right1 = false;
+			}
+			else if(left1) {
+				levelNine2.setEnabled(true);
+				levelNine3.setEnabled(true);
+				left1 = false;
+			}
+			else if(right2) {
+				levelNine3.setEnabled(true);
+				levelNine4.setEnabled(true);
+				right2 = false;
+			}
+			break;
+		case 10:
+			if(right1 || left1) {
+				levelTen1.setEnabled(true);
+				right1 = left1 = false;
+			}
+			else if(right2 || left2) {
+				levelTen2.setEnabled(true);
+				right2 = left2 = false;
+			}
+			break;
+		case 11:
+			bossLevel.setEnabled(true);
+		}
 	}
 	
 	private void setButtons() {
@@ -78,20 +232,20 @@ public class EndlessLevel extends JPanel implements ActionListener{
         if(x < bonfireChance) {
         	button.setText("Bonfire");
         	bonfireCount++;
-        	bonfireChance--;
-        	merchChance--;
-        	qChance--;
+        	bonfireChance -= 2;
+        	merchChance -= 2;
+        	qChance -= 2;
         }
         else if (x < merchChance) {
         	button.setText("Merchant");
         	merchCount++;
-        	merchChance--;
-        	qChance--;
+        	merchChance -= 2;
+        	qChance -= 2;
         }
         else if (x < qChance) {
         	button.setText("???");
         	qCount++;
-        	qChance--;
+        	qChance -= 2;
         }
         else if (x < 90) {
         	button.setText("Fight");        	
@@ -105,10 +259,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
         else {
         	button.setText("Strong Enemy");
         	strongCount++;
-        }
-        
-        levelButtons[arrL] = button;
-        arrL++;       
+        }         
 	}
 
 	private void setStage() { 
@@ -117,8 +268,8 @@ public class EndlessLevel extends JPanel implements ActionListener{
 		
         levelOne = new JButton();
         levelOne.setEnabled(false);
-        levelOne.setVisible(true);
-		levelOne.setActionCommand("Level One");
+        levelOne.setVisible(false);
+		levelOne.setActionCommand("Fight");
 		levelOne.setIcon(new ImageIcon(fightIcon));
 		levelOne.addActionListener(this);
 		levelOne.setBounds(200, 25, 70, 70);
@@ -128,7 +279,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
 		
 		levelTwo1 = new JButton();
         levelTwo1.setEnabled(false);
-        levelTwo1.setVisible(true);
+        levelTwo1.setVisible(false);
         levelTwo1.setActionCommand("Fight");
         levelTwo1.setIcon(new ImageIcon(setIcons(levelTwo1.getActionCommand())));
         levelTwo1.addActionListener(this);
@@ -139,7 +290,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
         
         levelTwo2 = new JButton();
         levelTwo2.setEnabled(false);
-        levelTwo2.setVisible(true);
+        levelTwo2.setVisible(false);
         levelTwo2.setActionCommand("Fight");
         levelTwo2.setIcon(new ImageIcon(setIcons(levelTwo2.getActionCommand())));
         levelTwo2.addActionListener(this);
@@ -150,10 +301,10 @@ public class EndlessLevel extends JPanel implements ActionListener{
         
         levelThree1 = new JButton();
         levelThree1.setEnabled(false);
-        levelThree1.setVisible(true);
+        levelThree1.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelThree1);        
-        levelThree1Txt = levelThree1.getText();
+        	levelThree1Txt = levelThree1.getText();
         }
         else
         	levelThree1.setText(levelThree1Txt);
@@ -163,10 +314,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelThree1.addActionListener(this);
         levelThree1.setBounds(240, 220, 70, 70);
         add(levelThree1);
+        levelButtons[arrL] = levelThree1;
+        arrL++;   
 		
         levelThree2 = new JButton();
         levelThree2.setEnabled(false);
-        levelThree2.setVisible(true);
+        levelThree2.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelThree2);        
         	levelThree2Txt = levelThree2.getText();
@@ -179,10 +332,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelThree2.addActionListener(this);
         levelThree2.setBounds(320, 135, 70, 70);
         add(levelThree2);
+        levelButtons[arrL] = levelThree2;
+        arrL++; 
         
         levelThree3 = new JButton();
         levelThree3.setEnabled(false);
-        levelThree3.setVisible(true);
+        levelThree3.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelThree3);        
         	levelThree3Txt =levelThree3.getText();
@@ -195,10 +350,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelThree3.addActionListener(this);
         levelThree3.setBounds(400, 50, 70, 70);
         add(levelThree3);
+        levelButtons[arrL] = levelThree3;
+        arrL++; 
         
         levelFour1 = new JButton();
         levelFour1.setEnabled(false);
-        levelFour1.setVisible(true);
+        levelFour1.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFour1);        
         	levelFour1Txt =levelFour1.getText();
@@ -211,10 +368,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFour1.addActionListener(this);
         levelFour1.setBounds(240, 320, 70, 70);
         add(levelFour1);
+        levelButtons[arrL] = levelFour1;
+        arrL++; 
         
         levelFour2 = new JButton();
         levelFour2.setEnabled(false);
-        levelFour2.setVisible(true);
+        levelFour2.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFour2);        
         	levelFour2Txt =levelFour2.getText();
@@ -227,10 +386,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFour2.addActionListener(this);
         levelFour2.setBounds(340, 250, 70, 70);
         add(levelFour2);
+        levelButtons[arrL] = levelFour2;
+        arrL++;
         
         levelFour3 = new JButton();
         levelFour3.setEnabled(false);
-        levelFour3.setVisible(true);
+        levelFour3.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFour3);       
         	levelFour3Txt = levelFour3.getText();
@@ -243,10 +404,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFour3.addActionListener(this);
         levelFour3.setBounds(420, 155, 70, 70);
         add(levelFour3);
+        levelButtons[arrL] = levelFour3;
+        arrL++;
         
         levelFour4 = new JButton();
         levelFour4.setEnabled(false);
-        levelFour4.setVisible(true);
+        levelFour4.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFour4);      
         	levelFour4Txt =levelFour4.getText();
@@ -259,10 +422,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFour4.addActionListener(this);
         levelFour4.setBounds(500, 50, 70, 70);
         add(levelFour4);
+        levelButtons[arrL] = levelFour4;
+        arrL++;
         
         levelFive1 = new JButton();
         levelFive1.setEnabled(false);
-        levelFive1.setVisible(true);
+        levelFive1.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFive1);       
         	levelFive1Txt =levelFive1.getText();
@@ -275,10 +440,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFive1.addActionListener(this);
         levelFive1.setBounds(200, 520, 70, 70);       
         add(levelFive1);
+        levelButtons[arrL] = levelFive1;
+        arrL++;
         
         levelFive2 = new JButton();
         levelFive2.setEnabled(false);
-        levelFive2.setVisible(true);
+        levelFive2.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFive2);
         	levelFive2Txt =levelFive2.getText();
@@ -291,10 +458,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFive2.addActionListener(this);
         levelFive2.setBounds(290, 455, 70, 70);
         add(levelFive2);
+        levelButtons[arrL] = levelFive2;
+        arrL++;
         
         levelFive3 = new JButton();
         levelFive3.setEnabled(false);
-        levelFive3.setVisible(true);
+        levelFive3.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFive3);        
         	levelFive3Txt =levelFive3.getText();
@@ -307,10 +476,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFive3.addActionListener(this);
         levelFive3.setBounds(375, 410, 70, 70);
         add(levelFive3);
+        levelButtons[arrL] = levelFive3;
+        arrL++;
         
         levelFive4 = new JButton();
         levelFive4.setEnabled(false);
-        levelFive4.setVisible(true);
+        levelFive4.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFive4);        
         	levelFive4Txt =levelFive4.getText();
@@ -323,10 +494,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFive4.addActionListener(this);
         levelFive4.setBounds(460, 340, 70, 70);
         add(levelFive4);
+        levelButtons[arrL] = levelFive4;
+        arrL++;
         
         levelFive5 = new JButton();
         levelFive5.setEnabled(false);
-        levelFive5.setVisible(true);
+        levelFive5.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFive5);       
         	levelFive5Txt = levelFive5.getText();
@@ -339,10 +512,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFive5.addActionListener(this);
         levelFive5.setBounds(530, 260, 70, 70);
         add(levelFive5);
+        levelButtons[arrL] = levelFive5;
+        arrL++;
         
         levelFive6 = new JButton();
         levelFive6.setEnabled(false);
-        levelFive6.setVisible(true);
+        levelFive6.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFive6);        
         	levelFive6Txt = levelFive6.getText();
@@ -355,10 +530,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFive6.addActionListener(this);
         levelFive6.setBounds(580, 180, 70, 70);
         add(levelFive6);
+        levelButtons[arrL] = levelFive6;
+        arrL++;
         
         levelFive7 = new JButton();
         levelFive7.setEnabled(false);
-        levelFive7.setVisible(true);
+        levelFive7.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFive7);        
         	levelFive7Txt =levelFive7.getText();
@@ -371,10 +548,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFive7.addActionListener(this);
         levelFive7.setBounds(620, 100, 70, 70);
         add(levelFive7);
+        levelButtons[arrL] = levelFive7;
+        arrL++;
         
         levelFive8 = new JButton();
         levelFive8.setEnabled(false);
-        levelFive8.setVisible(true);
+        levelFive8.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelFive8);        
         	levelFive8Txt =levelFive8.getText();
@@ -387,10 +566,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelFive8.addActionListener(this);
         levelFive8.setBounds(650, 20, 70, 70);
         add(levelFive8);
+        levelButtons[arrL] = levelFive8;
+        arrL++;
         
         levelSix1 = new JButton();
         levelSix1.setEnabled(false);
-        levelSix1.setVisible(true);
+        levelSix1.setVisible(false);
         if(levelIndex == 1) {
         	x = rand.nextInt(2);
             if(x == 0)
@@ -412,7 +593,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
         
         levelSix2 = new JButton();
         levelSix2.setEnabled(false);
-        levelSix2.setVisible(true);
+        levelSix2.setVisible(false);
         if(levelIndex == 1) {
         	x = rand.nextInt(2);
             if(x == 0)
@@ -434,7 +615,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
         
         levelSeven1 = new JButton();
         levelSeven1.setEnabled(false);
-        levelSeven1.setVisible(true);
+        levelSeven1.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelSeven1);       
         	levelSeven1Txt =levelSeven1.getText();
@@ -447,10 +628,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelSeven1.addActionListener(this);
         levelSeven1.setBounds(520, 590, 70, 70);       
         add(levelSeven1);
+        levelButtons[arrL] = levelSeven1;
+        arrL++;
         
         levelSeven2 = new JButton();
         levelSeven2.setEnabled(false);
-        levelSeven2.setVisible(true);
+        levelSeven2.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelSeven2);
         	levelSeven2Txt =levelSeven2.getText();
@@ -463,10 +646,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelSeven2.addActionListener(this);
         levelSeven2.setBounds(610, 525, 70, 70);
         add(levelSeven2);
+        levelButtons[arrL] = levelSeven2;
+        arrL++;
         
         levelSeven3 = new JButton();
         levelSeven3.setEnabled(false);
-        levelSeven3.setVisible(true);
+        levelSeven3.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelSeven3);        
         	levelSeven3Txt =levelSeven3.getText();
@@ -479,10 +664,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelSeven3.addActionListener(this);
         levelSeven3.setBounds(695, 480, 70, 70);
         add(levelSeven3);
+        levelButtons[arrL] = levelSeven3;
+        arrL++;
         
         levelSeven4 = new JButton();
         levelSeven4.setEnabled(false);
-        levelSeven4.setVisible(true);
+        levelSeven4.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelSeven4);        
         	levelSeven4Txt =levelSeven4.getText();
@@ -495,10 +682,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelSeven4.addActionListener(this);
         levelSeven4.setBounds(780, 410, 70, 70);
         add(levelSeven4);
+        levelButtons[arrL] = levelSeven4;
+        arrL++;
         
         levelSeven5 = new JButton();
         levelSeven5.setEnabled(false);
-        levelSeven5.setVisible(true);
+        levelSeven5.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelSeven5);       
         	levelSeven5Txt = levelSeven5.getText();
@@ -511,10 +700,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelSeven5.addActionListener(this);
         levelSeven5.setBounds(850, 330, 70, 70);
         add(levelSeven5);
+        levelButtons[arrL] = levelSeven5;
+        arrL++;
         
         levelSeven6 = new JButton();
         levelSeven6.setEnabled(false);
-        levelSeven6.setVisible(true);
+        levelSeven6.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelSeven6);        
         	levelSeven6Txt = levelSeven6.getText();
@@ -527,10 +718,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelSeven6.addActionListener(this);
         levelSeven6.setBounds(900, 250, 70, 70);
         add(levelSeven6);
+        levelButtons[arrL] = levelSeven6;
+        arrL++;
         
         levelSeven7 = new JButton();
         levelSeven7.setEnabled(false);
-        levelSeven7.setVisible(true);
+        levelSeven7.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelSeven7);        
         	levelSeven7Txt =levelSeven7.getText();
@@ -543,10 +736,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelSeven7.addActionListener(this);
         levelSeven7.setBounds(940, 170, 70, 70);
         add(levelSeven7);
+        levelButtons[arrL] = levelSeven7;
+        arrL++;
         
         levelSeven8 = new JButton();
         levelSeven8.setEnabled(false);
-        levelSeven8.setVisible(true);
+        levelSeven8.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelSeven8);        
         	levelSeven8Txt =levelSeven8.getText();
@@ -559,10 +754,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelSeven8.addActionListener(this);
         levelSeven8.setBounds(970, 90, 70, 70);
         add(levelSeven8);
+        levelButtons[arrL] = levelSeven8;
+        arrL++;
         
         levelEight1 = new JButton();
         levelEight1.setEnabled(false);
-        levelEight1.setVisible(true);
+        levelEight1.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelEight1);       
         	levelEight1Txt =levelEight1.getText();
@@ -575,10 +772,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelEight1.addActionListener(this);
         levelEight1.setBounds(800, 550, 70, 70);       
         add(levelEight1);
+        levelButtons[arrL] = levelEight1;
+        arrL++;
         
         levelEight2 = new JButton();
         levelEight2.setEnabled(false);
-        levelEight2.setVisible(true);
+        levelEight2.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelEight2);
         	levelEight2Txt =levelEight2.getText();
@@ -591,10 +790,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelEight2.addActionListener(this);
         levelEight2.setBounds(940, 400, 70, 70);
         add(levelEight2);
+        levelButtons[arrL] = levelEight2;
+        arrL++;
         
         levelEight3 = new JButton();
         levelEight3.setEnabled(false);
-        levelEight3.setVisible(true);
+        levelEight3.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelEight3);        
         	levelEight3Txt =levelEight3.getText();
@@ -607,10 +808,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelEight3.addActionListener(this);
         levelEight3.setBounds(1050, 220, 70, 70);
         add(levelEight3);
+        levelButtons[arrL] = levelEight3;
+        arrL++;
         
         levelNine1 = new JButton();
         levelNine1.setEnabled(false);
-        levelNine1.setVisible(true);
+        levelNine1.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelNine1);       
         	levelNine1Txt =levelNine1.getText();
@@ -623,10 +826,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelNine1.addActionListener(this);
         levelNine1.setBounds(920, 590, 70, 70);       
         add(levelNine1);
+        levelButtons[arrL] = levelNine1;
+        arrL++;
         
         levelNine2 = new JButton();
         levelNine2.setEnabled(false);
-        levelNine2.setVisible(true);
+        levelNine2.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelNine2);
         	levelNine2Txt =levelNine2.getText();
@@ -639,10 +844,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelNine2.addActionListener(this);
         levelNine2.setBounds(980, 500, 70, 70);
         add(levelNine2);
+        levelButtons[arrL] = levelNine2;
+        arrL++;
         
         levelNine3 = new JButton();
         levelNine3.setEnabled(false);
-        levelNine3.setVisible(true);
+        levelNine3.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelNine3);        
         	levelNine3Txt =levelNine3.getText();
@@ -655,10 +862,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelNine3.addActionListener(this);
         levelNine3.setBounds(1060, 400, 70, 70);
         add(levelNine3);
+        levelButtons[arrL] = levelNine3;
+        arrL++;
         
         levelNine4 = new JButton();
         levelNine4.setEnabled(false);
-        levelNine4.setVisible(true);
+        levelNine4.setVisible(false);
         if(levelIndex == 1) {
         	setLevel(levelNine4);        
         	levelNine4Txt =levelNine4.getText();
@@ -671,10 +880,12 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelNine4.addActionListener(this);
         levelNine4.setBounds(1140, 310, 70, 70);
         add(levelNine4);
+        levelButtons[arrL] = levelNine4;
+        arrL++;
         
         levelTen1 = new JButton();
         levelTen1.setEnabled(false);
-        levelTen1.setVisible(true);
+        levelTen1.setVisible(false);
         if(levelIndex == 1) {
         	x = rand.nextInt(2);
             if(x == 0)
@@ -696,7 +907,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
         
         levelTen2 = new JButton();
         levelTen2.setEnabled(false);
-        levelTen2.setVisible(true);
+        levelTen2.setVisible(false);
         if(levelIndex == 1) {
         	x = rand.nextInt(2);
             if(x == 0)
@@ -718,7 +929,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
         
         bossLevel = new JButton();
 		bossLevel.setEnabled(false);
-		bossLevel.setVisible(true);
+		bossLevel.setVisible(false);
 		bossLevel.setActionCommand("Boss");
 		bossLevel.setIcon(new ImageIcon(bossIcon));
 		bossLevel.addActionListener(this);
@@ -727,6 +938,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
         levelButtons[arrL] = bossLevel;
         
         resetStage();
+        arrL = 0;
 	}
 	
 	private void resetStage() {
@@ -837,6 +1049,63 @@ public class EndlessLevel extends JPanel implements ActionListener{
 			button.setVisible(false);
 	}
 
+	private void addItem(String item) {
+		switch(item) {
+		case "IronAxe":
+			s.ironAxe.setAmount(s.ironAxe.getAmount() + 1);
+			break;
+		case "SilverAxe":
+			s.silverAxe.setAmount(s.silverAxe.getAmount() + 1);
+			break;
+		case "GoldAxe":
+			s.goldAxe.setAmount(s.goldAxe.getAmount() + 1);
+			break;
+		case "SteelAxe":
+			s.steelAxe.setAmount(s.steelAxe.getAmount() + 1);
+			break;
+		case "CopperAxe":
+			s.copperAxe.setAmount(s.copperAxe.getAmount() + 1);
+			break;
+		case "TitaniumAxe":
+			s.titaniumAxe.setAmount(s.titaniumAxe.getAmount() + 1);
+			break;
+		case "FieryAxe":
+			s.fieryAxe.setAmount(s.fieryAxe.getAmount() + 1);
+			break;
+		case "MoltenAxe":
+			s.moltenAxe.setAmount(s.moltenAxe.getAmount() + 1);
+			break;
+		case "WaterAxe":
+			s.waterAxe.setAmount(s.waterAxe.getAmount() + 1);
+			break;
+		case "Health":
+			s.healthPot.setAmount(s.healthPot.getAmount() + 1);
+			break;
+		case "Shield":
+			s.shield.setAmount(s.shield.getAmount() + 1);
+			break;
+		case "Bomb":
+			s.bomb.setAmount(s.bomb.getAmount() + 1);
+			break;
+		case "PoisonDart":
+			s.poisonDart.setAmount(s.poisonDart.getAmount() + 1);
+			break;
+		case "Dynamite":
+			s.bigBomb.setAmount(s.bigBomb.getAmount() + 1);
+			break;
+		case "Bombs":
+			s.biggerBomb.setAmount(s.biggerBomb.getAmount() + 1);
+			break;
+		}
+	}
+	
+	private void checkInventory() {
+		for(int i = 0; i < Player.activeBag.length; i++) {
+			if(Player.activeBag[i].getIcon() != null)
+				addItem(Player.activeBag[i].getName());
+		}
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
@@ -846,9 +1115,11 @@ public class EndlessLevel extends JPanel implements ActionListener{
 			System.exit(0);
 			break;
 		case "Return":
+			checkInventory();
 			window.showHomeScreen();
 			break;
 		case "Stage1":
+			selectedStage = 1;
 			player.setMerchantVisits(0);
 			if(!levelOne.isVisible()) {
 				setStage();
@@ -859,7 +1130,166 @@ public class EndlessLevel extends JPanel implements ActionListener{
 			else
 				hideLevels();
 			break;
-			}		
+		case "Fight":
+			if(e.getSource() == levelTwo1 || e.getSource() == levelThree1 || e.getSource() == levelFour1 ||
+				e.getSource() == levelSeven1 || e.getSource() == levelSeven2 || e.getSource() == levelSeven3 ||
+				e.getSource() == levelEight1 || e.getSource() == levelNine1)
+				right1 = true;
+			else if(e.getSource() == levelThree2 || e.getSource() == levelFour2 || e.getSource() == levelSeven4 ||
+					e.getSource() == levelEight2 || e.getSource() == levelNine2)
+				left1 = true;
+			else if(e.getSource() == levelThree2 || e.getSource() == levelFour3 || e.getSource() == levelSeven6 ||
+					e.getSource() == levelEight3 || e.getSource() == levelNine3)
+				right2 = true;
+			else if(e.getSource() == levelTwo2|| e.getSource() == levelThree3 || e.getSource() == levelFour4 ||
+					e.getSource() == levelSeven7 || e.getSource() == levelSeven8 ||
+					e.getSource() == levelEight3 || e.getSource() == levelNine4)
+				left2 = true;
+			else if(e.getSource() == levelFive1 || e.getSource() == levelFive2 || e.getSource() == levelFive3 ||
+					e.getSource() == levelFive4)
+				mid1 = true;
+			else if(e.getSource() == levelFive5 || e.getSource() == levelFive6 || e.getSource() == levelFive7 ||
+					e.getSource() == levelFive8 || e.getSource() == levelSeven5)
+				mid2 = true;
+			
+			window.showFightScene(levelIndex, selectedStage); 
+//			levelIndex++;
+//			for(int i = 0; i < levelButtons.length; i++)
+//				levelButtons[i].setEnabled(false);
+//			unlockStage();
+//			repaint();
+			break;
+		case "???":
+			if(e.getSource() == levelTwo1 || e.getSource() == levelThree1 || e.getSource() == levelFour1 ||
+				e.getSource() == levelSeven1 || e.getSource() == levelSeven2 || e.getSource() == levelSeven3 ||
+				e.getSource() == levelEight1 || e.getSource() == levelNine1)
+				right1 = true;
+			else if(e.getSource() == levelThree2 || e.getSource() == levelFour2 || e.getSource() == levelSeven4 ||
+					e.getSource() == levelEight2 || e.getSource() == levelNine2)
+				left1 = true;
+			else if(e.getSource() == levelThree2 || e.getSource() == levelFour3 || e.getSource() == levelSeven6 ||
+					e.getSource() == levelEight3 || e.getSource() == levelNine3)
+				right2 = true;
+			else if(e.getSource() == levelTwo2|| e.getSource() == levelThree3 || e.getSource() == levelFour4 ||
+					e.getSource() == levelSeven7 || e.getSource() == levelSeven8 ||
+					e.getSource() == levelEight3 || e.getSource() == levelNine4)
+				left2 = true;
+			else if(e.getSource() == levelFive1 || e.getSource() == levelFive2 || e.getSource() == levelFive3 ||
+					e.getSource() == levelFive4)
+				mid1 = true;
+			else if(e.getSource() == levelFive5 || e.getSource() == levelFive6 || e.getSource() == levelFive7 ||
+					e.getSource() == levelFive8 || e.getSource() == levelSeven5)
+				mid2 = true;
+			
+			window.showFightScene(levelIndex, selectedStage); 
+//			levelIndex++;
+//			for(int i = 0; i < levelButtons.length; i++)
+//				levelButtons[i].setEnabled(false);
+//			unlockStage();
+//			repaint();
+			break;
+		case "Strong Enemy":
+			if(e.getSource() == levelTwo1 || e.getSource() == levelThree1 || e.getSource() == levelFour1 ||
+				e.getSource() == levelSeven1 || e.getSource() == levelSeven2 || e.getSource() == levelSeven3 ||
+				e.getSource() == levelEight1 || e.getSource() == levelNine1)
+				right1 = true;
+			else if(e.getSource() == levelThree2 || e.getSource() == levelFour2 || e.getSource() == levelSeven4 ||
+					e.getSource() == levelEight2 || e.getSource() == levelNine2)
+				left1 = true;
+			else if(e.getSource() == levelThree2 || e.getSource() == levelFour3 || e.getSource() == levelSeven6 ||
+					e.getSource() == levelEight3 || e.getSource() == levelNine3)
+				right2 = true;
+			else if(e.getSource() == levelTwo2|| e.getSource() == levelThree3 || e.getSource() == levelFour4 ||
+					e.getSource() == levelSeven7 || e.getSource() == levelSeven8 ||
+					e.getSource() == levelEight3 || e.getSource() == levelNine4)
+				left2 = true;
+			else if(e.getSource() == levelFive1 || e.getSource() == levelFive2 || e.getSource() == levelFive3 ||
+					e.getSource() == levelFive4)
+				mid1 = true;
+			else if(e.getSource() == levelFive5 || e.getSource() == levelFive6 || e.getSource() == levelFive7 ||
+					e.getSource() == levelFive8 || e.getSource() == levelSeven5)
+				mid2 = true;
+			
+			enemy.setStrongEnemyActive(true);
+			window.showFightScene(levelIndex, selectedStage); 
+//			levelIndex++;
+//			for(int i = 0; i < levelButtons.length; i++)
+//				levelButtons[i].setEnabled(false);
+//			unlockStage();
+//			repaint();
+			break;
+		case "Bonfire":
+			if(e.getSource() == levelTwo1 || e.getSource() == levelThree1 || e.getSource() == levelFour1 ||
+				e.getSource() == levelSeven1 || e.getSource() == levelSeven2 || e.getSource() == levelSeven3 ||
+				e.getSource() == levelEight1 || e.getSource() == levelNine1)
+				right1 = true;
+			else if(e.getSource() == levelThree2 || e.getSource() == levelFour2 || e.getSource() == levelSeven4 ||
+					e.getSource() == levelEight2 || e.getSource() == levelNine2)
+				left1 = true;
+			else if(e.getSource() == levelThree2 || e.getSource() == levelFour3 || e.getSource() == levelSeven6 ||
+					e.getSource() == levelEight3 || e.getSource() == levelNine3)
+				right2 = true;
+			else if(e.getSource() == levelTwo2|| e.getSource() == levelThree3 || e.getSource() == levelFour4 ||
+					e.getSource() == levelSeven7 || e.getSource() == levelSeven8 ||
+					e.getSource() == levelEight3 || e.getSource() == levelNine4)
+				left2 = true;
+			else if(e.getSource() == levelFive1 || e.getSource() == levelFive2 || e.getSource() == levelFive3 ||
+					e.getSource() == levelFive4)
+				mid1 = true;
+			else if(e.getSource() == levelFive5 || e.getSource() == levelFive6 || e.getSource() == levelFive7 ||
+					e.getSource() == levelFive8 || e.getSource() == levelSeven5)
+				mid2 = true;
+			else if(e.getSource() == levelSix1)
+				mid1 = true;
+			else if(e.getSource() == levelSix2)
+				mid2 = true;
+			
+			window.showBonfire(levelIndex);
+//			levelIndex++;
+//			for(int i = 0; i < levelButtons.length; i++)
+//				levelButtons[i].setEnabled(false);
+//			unlockStage();
+//			repaint();
+			break;
+		case "Merchant":
+			if(e.getSource() == levelTwo1 || e.getSource() == levelThree1 || e.getSource() == levelFour1 ||
+			e.getSource() == levelSeven1 || e.getSource() == levelSeven2 || e.getSource() == levelSeven3 ||
+			e.getSource() == levelEight1 || e.getSource() == levelNine1)
+			right1 = true;
+			else if(e.getSource() == levelThree2 || e.getSource() == levelFour2 || e.getSource() == levelSeven4 ||
+					e.getSource() == levelEight2 || e.getSource() == levelNine2)
+				left1 = true;
+			else if(e.getSource() == levelThree2 || e.getSource() == levelFour3 || e.getSource() == levelSeven6 ||
+					e.getSource() == levelEight3 || e.getSource() == levelNine3)
+				right2 = true;
+			else if(e.getSource() == levelTwo2|| e.getSource() == levelThree3 || e.getSource() == levelFour4 ||
+					e.getSource() == levelSeven7 || e.getSource() == levelSeven8 ||
+					e.getSource() == levelEight3 || e.getSource() == levelNine4)
+				left2 = true;
+			else if(e.getSource() == levelFive1 || e.getSource() == levelFive2 || e.getSource() == levelFive3 ||
+					e.getSource() == levelFive4)
+				mid1 = true;
+			else if(e.getSource() == levelFive5 || e.getSource() == levelFive6 || e.getSource() == levelFive7 ||
+					e.getSource() == levelFive8 || e.getSource() == levelSeven5)
+				mid2 = true;			
+			else if(e.getSource() == levelSix1)
+				mid1 = true;
+			else if(e.getSource() == levelSix2)
+				mid2 = true;	
+			
+			player.increaseMerchantVisits();
+			window.showMerchant(levelIndex);
+//			levelIndex++;
+//			for(int i = 0; i < levelButtons.length; i++)
+//				levelButtons[i].setEnabled(false);
+//			unlockStage();
+//			repaint();
+			break;
+		case "Boss":
+			enemy.setBossActive(true);
+			window.showFightScene(levelIndex, selectedStage); 
+			break;
+		}		
 	}
 	
 	protected void paintComponent(Graphics g) {
@@ -867,54 +1297,89 @@ public class EndlessLevel extends JPanel implements ActionListener{
 		Graphics2D g1 = (Graphics2D)g;
 		g1.setStroke(new BasicStroke(3));
 		
-		g1.drawLine(levelOne.getLocation().x + 35, levelOne.getLocation().y + 70, levelTwo1.getLocation().x + 35, levelTwo1.getLocation().y);
-		g1.drawLine(levelOne.getLocation().x + 70, levelOne.getLocation().y + 35, levelTwo2.getLocation().x, levelTwo2.getLocation().y + 35);
+		if(levelOne.isVisible()){
+			g1.drawLine(levelOne.getLocation().x + 35, levelOne.getLocation().y + 70, levelTwo1.getLocation().x + 35, levelTwo1.getLocation().y);
+			g1.drawLine(levelOne.getLocation().x + 70, levelOne.getLocation().y + 35, levelTwo2.getLocation().x, levelTwo2.getLocation().y + 35);
+			
+			g1.drawLine(levelTwo1.getLocation().x + 35, levelTwo1.getLocation().y + 70, levelThree1.getLocation().x, levelThree1.getLocation().y);
+			g1.drawLine(levelTwo1.getLocation().x + 70, levelTwo1.getLocation().y + 35, levelThree2.getLocation().x, levelThree2.getLocation().y + 35);
 		
-		g1.drawLine(levelTwo1.getLocation().x + 35, levelTwo1.getLocation().y + 70, levelThree1.getLocation().x, levelThree1.getLocation().y);
-		g1.drawLine(levelTwo1.getLocation().x + 70, levelTwo1.getLocation().y + 35, levelThree2.getLocation().x, levelThree2.getLocation().y + 35);
-	
-		g1.drawLine(levelTwo2.getLocation().x + 35, levelTwo2.getLocation().y + 70, levelThree2.getLocation().x + 35, levelThree2.getLocation().y);
-		g1.drawLine(levelTwo2.getLocation().x + 70, levelTwo2.getLocation().y + 35, levelThree3.getLocation().x, levelThree3.getLocation().y + 15);
-	
-		g1.drawLine(levelThree1.getLocation().x + 35, levelThree1.getLocation().y + 70, levelFour1.getLocation().x + 35, levelFour1.getLocation().y);
-		g1.drawLine(levelThree1.getLocation().x + 70, levelThree1.getLocation().y + 35, levelFour2.getLocation().x, levelFour2.getLocation().y + 15);
+			g1.drawLine(levelTwo2.getLocation().x + 35, levelTwo2.getLocation().y + 70, levelThree2.getLocation().x + 35, levelThree2.getLocation().y);
+			g1.drawLine(levelTwo2.getLocation().x + 70, levelTwo2.getLocation().y + 35, levelThree3.getLocation().x, levelThree3.getLocation().y + 15);
 		
-		g1.drawLine(levelThree2.getLocation().x + 35, levelThree2.getLocation().y + 70, levelFour2.getLocation().x + 35, levelFour2.getLocation().y);
-		g1.drawLine(levelThree2.getLocation().x + 70, levelThree2.getLocation().y + 35, levelFour3.getLocation().x, levelFour3.getLocation().y + 35);
+			g1.drawLine(levelThree1.getLocation().x + 35, levelThree1.getLocation().y + 70, levelFour1.getLocation().x + 35, levelFour1.getLocation().y);
+			g1.drawLine(levelThree1.getLocation().x + 70, levelThree1.getLocation().y + 35, levelFour2.getLocation().x, levelFour2.getLocation().y + 15);
+			
+			g1.drawLine(levelThree2.getLocation().x + 35, levelThree2.getLocation().y + 70, levelFour2.getLocation().x + 35, levelFour2.getLocation().y);
+			g1.drawLine(levelThree2.getLocation().x + 70, levelThree2.getLocation().y + 35, levelFour3.getLocation().x, levelFour3.getLocation().y + 35);
+			
+			g1.drawLine(levelThree3.getLocation().x + 35, levelThree3.getLocation().y + 70, levelFour3.getLocation().x + 35, levelFour3.getLocation().y);
+			g1.drawLine(levelThree3.getLocation().x + 70, levelThree3.getLocation().y + 35, levelFour4.getLocation().x, levelFour4.getLocation().y + 35);
+			
+			g1.drawLine(levelFour1.getLocation().x + 25, levelFour1.getLocation().y + 70, levelFive1.getLocation().x + 35, levelFive1.getLocation().y);
+			g1.drawLine(levelFour1.getLocation().x + 55, levelFour1.getLocation().y + 70, levelFive2.getLocation().x + 35, levelFive2.getLocation().y);
+			
+			g1.drawLine(levelFour2.getLocation().x + 35, levelFour2.getLocation().y + 70, levelFive3.getLocation().x + 35, levelFive3.getLocation().y);
+			g1.drawLine(levelFour2.getLocation().x + 70, levelFour2.getLocation().y + 35, levelFive4.getLocation().x + 35, levelFive4.getLocation().y);
+			
+			g1.drawLine(levelFour3.getLocation().x + 70, levelFour3.getLocation().y + 70, levelFive5.getLocation().x, levelFive5.getLocation().y);
+			g1.drawLine(levelFour3.getLocation().x + 70, levelFour3.getLocation().y + 35, levelFive6.getLocation().x, levelFive6.getLocation().y + 35);
+			
+			g1.drawLine(levelFour4.getLocation().x + 70, levelFour4.getLocation().y + 70, levelFive7.getLocation().x, levelFive7.getLocation().y + 35);
+			g1.drawLine(levelFour4.getLocation().x + 70, levelFour4.getLocation().y + 35, levelFive8.getLocation().x, levelFive8.getLocation().y + 35);
+			
+			g1.drawLine(levelFive1.getLocation().x + 70, levelFive1.getLocation().y + 55, levelSix1.getLocation().x, levelSix1.getLocation().y + 65);
+			g1.drawLine(levelFive2.getLocation().x + 70, levelFive2.getLocation().y + 55, levelSix1.getLocation().x, levelSix1.getLocation().y + 45);
+			g1.drawLine(levelFive3.getLocation().x + 70, levelFive3.getLocation().y + 35, levelSix1.getLocation().x, levelSix1.getLocation().y + 25);
+			g1.drawLine(levelFive4.getLocation().x + 70, levelFive4.getLocation().y + 55, levelSix1.getLocation().x, levelSix1.getLocation().y + 5);
+			
+			g1.drawLine(levelFive5.getLocation().x + 70, levelFive5.getLocation().y + 35, levelSix2.getLocation().x, levelSix2.getLocation().y + 55);
+			g1.drawLine(levelFive6.getLocation().x + 70, levelFive6.getLocation().y + 35, levelSix2.getLocation().x, levelSix2.getLocation().y + 25);
+			g1.drawLine(levelFive7.getLocation().x + 70, levelFive7.getLocation().y + 35, levelSix2.getLocation().x + 15, levelSix2.getLocation().y);
+			g1.drawLine(levelFive8.getLocation().x + 70, levelFive8.getLocation().y + 55, levelSix2.getLocation().x + 45, levelSix2.getLocation().y);
+			
+			g1.drawLine(levelSix1.getLocation().x + 25, levelSix1.getLocation().y + 70, levelSeven1.getLocation().x + 35, levelSeven1.getLocation().y);
+			g1.drawLine(levelSix1.getLocation().x + 55, levelSix1.getLocation().y + 70, levelSeven2.getLocation().x + 35, levelSeven2.getLocation().y);
+			g1.drawLine(levelSix1.getLocation().x + 70, levelSix1.getLocation().y + 35, levelSeven3.getLocation().x + 35, levelSeven3.getLocation().y);
+			g1.drawLine(levelSix1.getLocation().x + 70, levelSix1.getLocation().y + 15, levelSeven4.getLocation().x, levelSeven4.getLocation().y + 35);
+			
+			g1.drawLine(levelSix2.getLocation().x + 55, levelSix2.getLocation().y + 70, levelSeven5.getLocation().x, levelSeven5.getLocation().y + 35);
+			g1.drawLine(levelSix2.getLocation().x + 70, levelSix2.getLocation().y + 55, levelSeven6.getLocation().x, levelSeven6.getLocation().y + 35);
+			g1.drawLine(levelSix2.getLocation().x + 70, levelSix2.getLocation().y + 35, levelSeven7.getLocation().x, levelSeven7.getLocation().y + 35);
+			g1.drawLine(levelSix2.getLocation().x + 70, levelSix2.getLocation().y + 15, levelSeven8.getLocation().x, levelSeven8.getLocation().y + 35);
 		
-		g1.drawLine(levelThree3.getLocation().x + 35, levelThree3.getLocation().y + 70, levelFour3.getLocation().x + 35, levelFour3.getLocation().y);
-		g1.drawLine(levelThree3.getLocation().x + 70, levelThree3.getLocation().y + 35, levelFour4.getLocation().x, levelFour4.getLocation().y + 35);
-		
-		g1.drawLine(levelFour1.getLocation().x + 25, levelFour1.getLocation().y + 70, levelFive1.getLocation().x + 35, levelFive1.getLocation().y);
-		g1.drawLine(levelFour1.getLocation().x + 55, levelFour1.getLocation().y + 70, levelFive2.getLocation().x + 35, levelFive2.getLocation().y);
-		
-		g1.drawLine(levelFour2.getLocation().x + 35, levelFour2.getLocation().y + 70, levelFive3.getLocation().x + 35, levelFive3.getLocation().y);
-		g1.drawLine(levelFour2.getLocation().x + 70, levelFour2.getLocation().y + 35, levelFive4.getLocation().x + 35, levelFive4.getLocation().y);
-		
-		g1.drawLine(levelFour3.getLocation().x + 70, levelFour3.getLocation().y + 70, levelFive5.getLocation().x, levelFive5.getLocation().y);
-		g1.drawLine(levelFour3.getLocation().x + 70, levelFour3.getLocation().y + 35, levelFive6.getLocation().x, levelFive6.getLocation().y + 35);
-		
-		g1.drawLine(levelFour4.getLocation().x + 70, levelFour4.getLocation().y + 70, levelFive7.getLocation().x, levelFive7.getLocation().y + 35);
-		g1.drawLine(levelFour4.getLocation().x + 70, levelFour4.getLocation().y + 35, levelFive8.getLocation().x, levelFive8.getLocation().y + 35);
-		
-		g1.drawLine(levelFive1.getLocation().x + 70, levelFive1.getLocation().y + 55, levelSix1.getLocation().x, levelSix1.getLocation().y + 65);
-		g1.drawLine(levelFive2.getLocation().x + 70, levelFive2.getLocation().y + 55, levelSix1.getLocation().x, levelSix1.getLocation().y + 45);
-		g1.drawLine(levelFive3.getLocation().x + 70, levelFive3.getLocation().y + 35, levelSix1.getLocation().x, levelSix1.getLocation().y + 25);
-		g1.drawLine(levelFive4.getLocation().x + 70, levelFive4.getLocation().y + 55, levelSix1.getLocation().x, levelSix1.getLocation().y + 5);
-		
-		g1.drawLine(levelFive5.getLocation().x + 70, levelFive5.getLocation().y + 35, levelSix2.getLocation().x, levelSix2.getLocation().y + 55);
-		g1.drawLine(levelFive6.getLocation().x + 70, levelFive6.getLocation().y + 35, levelSix2.getLocation().x, levelSix2.getLocation().y + 25);
-		g1.drawLine(levelFive7.getLocation().x + 70, levelFive7.getLocation().y + 35, levelSix2.getLocation().x + 15, levelSix2.getLocation().y);
-		g1.drawLine(levelFive8.getLocation().x + 70, levelFive8.getLocation().y + 55, levelSix2.getLocation().x + 45, levelSix2.getLocation().y);
-		
-		g1.drawLine(levelSix1.getLocation().x + 25, levelSix1.getLocation().y + 70, levelSeven1.getLocation().x + 35, levelSeven1.getLocation().y);
-		g1.drawLine(levelSix1.getLocation().x + 55, levelSix1.getLocation().y + 70, levelSeven2.getLocation().x + 35, levelSeven2.getLocation().y);
-		g1.drawLine(levelSix1.getLocation().x + 70, levelSix1.getLocation().y + 35, levelSeven3.getLocation().x + 35, levelSeven3.getLocation().y);
-		g1.drawLine(levelSix1.getLocation().x + 70, levelSix1.getLocation().y + 15, levelSeven4.getLocation().x, levelSeven4.getLocation().y + 35);
-		
-		g1.drawLine(levelSix2.getLocation().x + 55, levelSix2.getLocation().y + 70, levelSeven5.getLocation().x, levelSeven5.getLocation().y + 35);
-		g1.drawLine(levelSix2.getLocation().x + 70, levelSix2.getLocation().y + 55, levelSeven6.getLocation().x, levelSeven6.getLocation().y + 35);
-		g1.drawLine(levelSix2.getLocation().x + 70, levelSix2.getLocation().y + 35, levelSeven7.getLocation().x, levelSeven7.getLocation().y + 35);
-		g1.drawLine(levelSix2.getLocation().x + 70, levelSix2.getLocation().y + 15, levelSeven8.getLocation().x, levelSeven8.getLocation().y + 35);
+			g1.drawLine(levelSeven1.getLocation().x + 70, levelSeven1.getLocation().y + 55, levelEight1.getLocation().x, levelEight1.getLocation().y + 55);
+			g1.drawLine(levelSeven2.getLocation().x + 70, levelSeven2.getLocation().y + 35, levelEight1.getLocation().x, levelEight1.getLocation().y + 35);
+			g1.drawLine(levelSeven3.getLocation().x + 70, levelSeven3.getLocation().y + 55, levelEight1.getLocation().x, levelEight1.getLocation().y);
+			
+			g1.drawLine(levelSeven4.getLocation().x + 35, levelSeven4.getLocation().y + 70, levelEight1.getLocation().x + 35, levelEight1.getLocation().y);
+			g1.drawLine(levelSeven4.getLocation().x + 70, levelSeven4.getLocation().y + 35, levelEight2.getLocation().x, levelEight2.getLocation().y + 35);
+			
+			g1.drawLine(levelSeven5.getLocation().x + 70, levelSeven5.getLocation().y + 55, levelEight2.getLocation().x, levelEight2.getLocation().y + 5);
+			
+			g1.drawLine(levelSeven6.getLocation().x + 55, levelSeven6.getLocation().y + 70, levelEight2.getLocation().x + 35, levelEight2.getLocation().y);
+			g1.drawLine(levelSeven6.getLocation().x + 70, levelSeven6.getLocation().y + 35, levelEight3.getLocation().x, levelEight3.getLocation().y + 55);
+			
+			g1.drawLine(levelSeven7.getLocation().x + 70, levelSeven7.getLocation().y + 35, levelEight3.getLocation().x, levelEight3.getLocation().y + 15);
+			g1.drawLine(levelSeven8.getLocation().x + 70, levelSeven8.getLocation().y + 55, levelEight3.getLocation().x + 35, levelEight3.getLocation().y);
+			
+			g1.drawLine(levelEight1.getLocation().x + 70, levelEight1.getLocation().y + 55, levelNine1.getLocation().x, levelNine1.getLocation().y + 35);
+			g1.drawLine(levelEight1.getLocation().x + 70, levelEight1.getLocation().y + 35, levelNine2.getLocation().x, levelNine2.getLocation().y + 35);
+			
+			g1.drawLine(levelEight2.getLocation().x + 55, levelEight2.getLocation().y + 70, levelNine2.getLocation().x + 35, levelNine2.getLocation().y);
+			g1.drawLine(levelEight2.getLocation().x + 70, levelEight2.getLocation().y + 35, levelNine3.getLocation().x, levelNine3.getLocation().y + 35);
+			
+			g1.drawLine(levelEight3.getLocation().x + 35, levelEight3.getLocation().y + 70, levelNine3.getLocation().x + 35, levelNine3.getLocation().y);
+			g1.drawLine(levelEight3.getLocation().x + 70, levelEight3.getLocation().y + 35, levelNine4.getLocation().x + 35, levelNine4.getLocation().y);
+			
+			g1.drawLine(levelNine1.getLocation().x + 70, levelNine1.getLocation().y + 35, levelTen1.getLocation().x, levelTen1.getLocation().y + 35);
+			g1.drawLine(levelNine2.getLocation().x + 70, levelNine2.getLocation().y + 35, levelTen1.getLocation().x + 15, levelTen1.getLocation().y);
+			
+			g1.drawLine(levelNine3.getLocation().x + 70, levelNine3.getLocation().y + 55, levelTen2.getLocation().x, levelTen2.getLocation().y);
+			g1.drawLine(levelNine4.getLocation().x + 35, levelNine4.getLocation().y + 70, levelTen2.getLocation().x + 35, levelTen2.getLocation().y);
+			
+			g1.drawLine(levelTen1.getLocation().x + 70, levelTen1.getLocation().y + 35, bossLevel.getLocation().x, bossLevel.getLocation().y + 35);
+			g1.drawLine(levelTen2.getLocation().x + 35, levelTen2.getLocation().y + 70, bossLevel.getLocation().x + 25, bossLevel.getLocation().y);
+		}
 	}
 }
