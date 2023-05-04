@@ -24,7 +24,6 @@ public class Player {
 	private static int storyLevel = 0;
 	private static int storyExp = 0;
 	private static int storyCap = 10;
-	private static boolean weaponTaken;
 	private int bubble = 0;
 	public static JButton activeBag[] = new JButton[8];
 	protected JLabel lblPlayerHP;
@@ -283,14 +282,6 @@ public class Player {
 
 	public void setBubble(int bubble) {
 		this.bubble = bubble;
-	}
-
-	public boolean isWeaponTaken() {
-		return weaponTaken;
-	}
-
-	public void setWeaponTaken(boolean weaponTaken) {
-		Player.weaponTaken = weaponTaken;
 	}
 
 	public int getStoryMaxHP() {
