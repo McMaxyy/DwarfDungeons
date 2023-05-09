@@ -2,10 +2,13 @@ package stages;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 import javax.swing.JPanel;
@@ -14,7 +17,9 @@ import javax.swing.Timer;
 
 import inventory.Storage;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
@@ -24,7 +29,7 @@ import main.GameWindow;
 public class Mining extends JPanel implements ActionListener, KeyListener{
 	private GameWindow window;
 	private Storage s = Storage.getInstance();
-	private JLabel letterArray[] = new JLabel[15];
+	private JLabel letterArray[] = new JLabel[12];
 	private JButton openGame, material, startMining, returnButton;
 	private int arrayLoc = 0, arrayX = 200;
 	private Random rand = new Random();
@@ -32,6 +37,7 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 	private int countdown = 5, y, x, timesReqToHit;
 	private Timer timer, fallingTimer;
 	private boolean timerStart, matClicked, minigameActive;
+	private Image ironIngot, goldIngot, lifePowder, sparkPowder;
 	
 	public Mining(GameWindow window) {
 		this.window = window;
@@ -41,7 +47,8 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 		setFocusable(true);
 		addKeyListener(this);
 		
-		initComponents();		
+		initComponents();
+		loadIcons();
 		
 		fallingTimer = new Timer(1, this);
 	}
@@ -106,6 +113,18 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 		this.requestFocusInWindow();
 	}
 	
+	private void loadIcons() {
+		try {
+			ironIngot = ImageIO.read(new File("res/Materials/IronIngot.png"));
+			goldIngot = ImageIO.read(new File("res/Materials/GoldIngot.png"));
+			sparkPowder = ImageIO.read(new File("res/Materials/SparkPowder.png"));
+			lifePowder = ImageIO.read(new File("res/Materials/LifePowder.png"));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void startMining() {
 		minigameActive = false;
 		timesReqToHit = rand.nextInt(10, 21);	
@@ -140,7 +159,7 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 			letterArray[i] = new JLabel();
 			int x = rand.nextInt(4);
 			letterArray[i].setFont(s.font2);
-			if(x == 0)
+			if(x == 0) 
 				letterArray[i].setText("A");
 			else if(x == 1)
 				letterArray[i].setText("S");
@@ -176,15 +195,15 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 			timerStart = false;
 			countdownLbl.setVisible(false);
 			
-			if(material.getText() == "II") {
+			if(material.getName() == "II") {
 				s.ironIngot.setAmount(s.ironIngot.getAmount() + 1);
 				winText.setText("Gained 1x Iron Ingot");
 			}
-			else if(material.getText() == "GI") {
+			else if(material.getName() == "GI") {
 				s.goldIngot.setAmount(s.goldIngot.getAmount() + 1);
 				winText.setText("Gained 1x Gold Ingot");
 			}
-			else if(material.getText() == "SP") {
+			else if(material.getName() == "SP") {
 				s.sparkPowder.setAmount(s.sparkPowder.getAmount() + 1);
 				winText.setText("Gained 1x Spark Powder");
 			}
@@ -241,14 +260,24 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 			
 			int x = rand.nextInt(4);
 			material = new JButton();
-			if(x == 0) 
-				material.setText("II");
-			else if(x == 1)
-				material.setText("GI");
-			else if(x == 2)
-				material.setText("SP");
-			else
-				material.setText("LP");
+			if(x == 0) {
+				material.setName("II");
+				material.setIcon(new ImageIcon(ironIngot));
+			}
+			else if(x == 1) {
+				material.setName("GI");
+				material.setIcon(new ImageIcon(goldIngot));
+			}
+			else if(x == 2) {
+				material.setName("SP");
+				material.setIcon(new ImageIcon(sparkPowder));
+			}
+			else {
+				material.setName("LP");
+				material.setIcon(new ImageIcon(lifePowder));
+			}
+			material.setBorderPainted(false);
+			material.setContentAreaFilled(false);
 			material.setSize(50, 50);
 			material.setActionCommand("Mat");
 			material.addActionListener(this);

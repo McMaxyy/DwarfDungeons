@@ -20,7 +20,7 @@ public class Player {
 	private static int tempStr;
 	private static int merchantVisits;
 	private static int storyMaxHP = 30;
-	private static int storyStrength = 2;
+	private static int storyStrength = 200;
 	private static int storyLevel = 0;
 	private static int storyExp = 0;
 	private static int storyCap = 10;

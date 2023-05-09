@@ -41,7 +41,7 @@ public class LevelSelector extends JPanel implements ActionListener{
 	private static String levelThree1Txt, levelThree2Txt, levelThree3Txt, 
 	levelThree4Txt, levelFour1Txt, levelFour2Txt, levelFour4Txt, levelFour5Txt, 
 	levelFive1Txt, levelFive2Txt, levelFive3Txt,levelFive4Txt, levelSix1Txt, levelSix2Txt;
-	private Image bonfireIcon, bossIcon, fightIcon, merchIcon, randIcon, strEnemyIcon, quitBtn, returnBtn;
+	private Image bonfireIcon, bossIcon, fightIcon, merchIcon, randIcon, strEnemyIcon, quitBtn, returnBtn, bg;
 	
 	public LevelSelector(GameWindow window, int currentLevel) {
 		this.window = window;
@@ -675,6 +675,7 @@ public class LevelSelector extends JPanel implements ActionListener{
 			strEnemyIcon = ImageIO.read(new File("res/LevelIcons/StrEnemyIcon.png"));
 			quitBtn = ImageIO.read(new File("res/FunctionButtons/QuitButton.png"));
 			returnBtn = ImageIO.read(new File("res/FunctionButtons/ReturnButton.png"));
+			bg = ImageIO.read(new File("res/Backgrounds/LevelSelect_BG.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -887,6 +888,8 @@ public class LevelSelector extends JPanel implements ActionListener{
         super.paintComponent(g);
         Graphics2D g1 = (Graphics2D)g;
         g1.setStroke(new BasicStroke(3));
+        
+        g.drawImage(bg, 0, 0, null);
         
         if(levelOne.isVisible()) {
 	        g1.drawLine(levelOne.getLocation().x, levelOne.getLocation().y, levelTwo1.getLocation().x + 70, levelTwo1.getLocation().y + 70);

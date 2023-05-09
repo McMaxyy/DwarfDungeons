@@ -84,15 +84,16 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				setWeapon();
 			else
 				weapon.noWeapon();
-		}
-		if(s.gameMode == 0) {
-			player.setMaxHP(player.getStoryMaxHP());
-			player.setHp(player.getMaxHP());
-			player.setStrength(player.getStoryStrength());
-			player.setLevelCap(player.getStoryCap());
-			player.setExp(player.getStoryExp());
-			player.setLevel(player.getStoryLevel());			
-		}
+			
+			if(s.gameMode == 0) {
+				player.setMaxHP(player.getStoryMaxHP());
+				player.setHp(player.getMaxHP());
+				player.setStrength(player.getStoryStrength());
+				player.setLevelCap(player.getStoryCap());
+				player.setExp(player.getStoryExp());
+				player.setLevel(player.getStoryLevel());			
+			}
+		}		
 		
 		setLayout(null);
 		
@@ -128,6 +129,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 					currentLevel++;
             }
 			for(int i = 0; i < activeBag.length; i++) {
+				activeBag[i].removeActionListener(this); 
 				Player.activeBag[i] = activeBag[i];
 			}
 			if(s.gameMode == 0)
@@ -300,6 +302,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
             break;       
         case "Yes":
         	for(int i = 0; i < activeBag.length; i++) {
+        		activeBag[i].removeActionListener(this);
         		activeBag[i].setActionCommand("remove" + i);
         		activeBag[i].addActionListener(this);
         	}
@@ -311,10 +314,38 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	lblReward.setVisible(false);   
         	noAdd.setVisible(false);
         	yesAdd.setVisible(false);
+        	break;
+        case "remove0":
+        case "remove1":
+        case "remove2":
+        case "remove3":
+        case "remove4":
+        case "remove5":
+        case "remove6":
+        case "remove7":
+        	int index = Integer.parseInt(command.substring(6));  
+        	addWeapon(index);
+        	weaponWon = 0;
+			lblReward.setVisible(false);			
+        	break;
+        case "inv0":
+        case "inv1":
+        case "inv2":
+        case "inv3":
+        case "inv4":
+        case "inv5":
+        case "inv6":
+        case "inv7":
+        	int index2 = Integer.parseInt(command.substring(3));
+        	if(activeBag[index2].getIcon() != null)
+        		itemAction(index2);
+        	break;
         }
-        
-        if (command.startsWith("remove")) {
-			int index = Integer.parseInt(command.substring(6));
+	}
+	
+	private void addWeapon(int index) {		
+		if(weaponWon > 0) {
+			
 			switch(weaponWon) {
 			case 1:
 				activeBag[index].setIcon(new ImageIcon("res/Weapons/IronAxe.png"));
@@ -355,16 +386,11 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			}
 			
 			for(int i = 0; i < activeBag.length; i++) {
+				activeBag[i].removeActionListener(this); 
 				activeBag[i].setActionCommand("inv" + i);
 				activeBag[i].addActionListener(this);
-			}
-			lblReward.setVisible(false);					
-        }
-        if(command.startsWith("inv")) {
-        	int index = Integer.parseInt(command.substring(3));
-        	if(activeBag[index].getIcon() != null)
-        		itemAction(index);
-        }
+			}			
+		}
 	}
 	
 	private void setWeapon() {
@@ -400,81 +426,81 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	}
 	
 	private void itemAction(int x) {
-		switch (activeBag[x].getName()) {
-	    case "Health":
-        	activeBag[x].setIcon(null);
-	        player.increaseHP(5);
-	        if(player.getHp() > player.getMaxHP())
-	        	player.setHp(player.getMaxHP());
-	        player.playerShowHP(lblPlayerHP);
-	        lblPlayerHP.repaint();	        
-	        break;
-	    case "Shield":
-	    	activeBag[x].setIcon(null);
-	    	shieldActive = true;
-	        break;
-	    case "Bomb":
-	    	activeBag[x].setIcon(null);
-	        enemy.enemyLoseHP(s.bomb.getItemPower());
-	        enemy.enemyShowHP(lblEnemyHP);
-	        lblEnemyHP.repaint();
-	        isEnemyDead();
-	        break;
-	    case "PoisonDart":
-	    	activeBag[x].setIcon(null);
-	        poisonLeft = 3;
-	        break;
-	    case "Dynamite":
-	    	activeBag[x].setIcon(null);
-	        enemy.enemyLoseHP(s.bigBomb.getItemPower());
-	        enemy.enemyShowHP(lblEnemyHP);
-	        lblEnemyHP.repaint();
-	        isEnemyDead();
-	        break;
-	    case "Bombs":
-	    	activeBag[x].setIcon(null);
-	        enemy.enemyLoseHP(s.biggerBomb.getItemPower());
-	        enemy.enemyShowHP(lblEnemyHP);
-	        lblEnemyHP.repaint();
-	        isEnemyDead();
-	        break;
-	    case "IronAxe":
-	    	player.setActiveWeapon(1);
-	    	setWeapon();
-			break;
-	    case "SilverAxe":
-	    	player.setActiveWeapon(2);
-			setWeapon();
-			break;
-	    case "GoldAxe":
-	    	player.setActiveWeapon(3);
-			setWeapon();
-			break;
-	    case "SteelAxe":
-	    	player.setActiveWeapon(4);
-			setWeapon();
-			break;
-	    case "CopperAxe":
-	    	player.setActiveWeapon(5);
-			setWeapon();
-			break;
-	    case "TitaniumAxe":
-	    	player.setActiveWeapon(6);
-			setWeapon();
-			break;
-	    case "FieryAxe":
-	    	player.setActiveWeapon(7);
-			setWeapon();
-			break;
-	    case "MoltenAxe":
-	    	player.setActiveWeapon(8);
-			setWeapon();
-			break;
-	    case "WaterAxe":
-	    	player.setActiveWeapon(9);
-			setWeapon();
-			break;
-		}		
+			switch (activeBag[x].getName()) {
+		    case "Health":
+	        	activeBag[x].setIcon(null);
+		        player.increaseHP(5);
+		        if(player.getHp() > player.getMaxHP())
+		        	player.setHp(player.getMaxHP());
+		        player.playerShowHP(lblPlayerHP);
+		        lblPlayerHP.repaint();	        
+		        break;
+		    case "Shield":
+		    	activeBag[x].setIcon(null);
+		    	shieldActive = true;
+		        break;
+		    case "Bomb":
+		    	activeBag[x].setIcon(null);
+		        enemy.enemyLoseHP(s.bomb.getItemPower());
+		        enemy.enemyShowHP(lblEnemyHP);
+		        lblEnemyHP.repaint();
+		        isEnemyDead();
+		        break;
+		    case "PoisonDart":
+		    	activeBag[x].setIcon(null);
+		        poisonLeft = 3;
+		        break;
+		    case "Dynamite":
+		    	activeBag[x].setIcon(null);
+		        enemy.enemyLoseHP(s.bigBomb.getItemPower());
+		        enemy.enemyShowHP(lblEnemyHP);
+		        lblEnemyHP.repaint();
+		        isEnemyDead();
+		        break;
+		    case "Bombs":
+		    	activeBag[x].setIcon(null);
+		        enemy.enemyLoseHP(s.biggerBomb.getItemPower());
+		        enemy.enemyShowHP(lblEnemyHP);
+		        lblEnemyHP.repaint();
+		        isEnemyDead();
+		        break;
+		    case "IronAxe":
+		    	player.setActiveWeapon(1);
+		    	setWeapon();
+				break;
+		    case "SilverAxe":
+		    	player.setActiveWeapon(2);
+				setWeapon();
+				break;
+		    case "GoldAxe":
+		    	player.setActiveWeapon(3);
+				setWeapon();
+				break;
+		    case "SteelAxe":
+		    	player.setActiveWeapon(4);
+				setWeapon();
+				break;
+		    case "CopperAxe":
+		    	player.setActiveWeapon(5);
+				setWeapon();
+				break;
+		    case "TitaniumAxe":
+		    	player.setActiveWeapon(6);
+				setWeapon();
+				break;
+		    case "FieryAxe":
+		    	player.setActiveWeapon(7);
+				setWeapon();
+				break;
+		    case "MoltenAxe":
+		    	player.setActiveWeapon(8);
+				setWeapon();
+				break;
+		    case "WaterAxe":
+		    	player.setActiveWeapon(9);
+				setWeapon();
+				break;
+			}
 	}
 	
 	public void isPlayerDead() {
@@ -555,6 +581,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				turnCounter = player.getMana();							
 				repaint();
 			}
+			
 			// Player has defeated 3 enemies, stage cleared
 			else {
 				turnCounter = 0;
@@ -564,7 +591,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				// Boss rewards
 				if(bossActive)
 					lblReward.setText("You got " + enemy.getCoinValue() + " coins");									
-				if(bossActive && rand.nextInt(2) == 0) {
+				if(bossActive && rand.nextInt(100) != 0) {
 					lblReward.setText("You got " + s.silverAxe.getWeaponName() + ". Add it to inv?");
 					yesAdd.setVisible(true);
 					noAdd.setVisible(true);
@@ -783,7 +810,9 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
     					}
 	    				else if(!shieldActive)
 	    					player.playerLoseHP(temp);
-	    				
+	    					    				
+	    				if(player.getBubble() < 0)
+	    					player.setBubble(0);
 	    				lblBubble.setText("" + player.getBubble());
 	    				lblBubble.repaint();
 	    		    	player.playerShowHP(lblPlayerHP);
@@ -1165,6 +1194,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         // Inventory
         for(int i = 0; i < activeBag.length; i++) {
         	activeBag[i] = Player.activeBag[i];
+        	activeBag[i].removeActionListener(this);
+        	activeBag[i].setActionCommand("inv" + i);
         	activeBag[i].addActionListener(this);
         	add(activeBag[i]);
         }

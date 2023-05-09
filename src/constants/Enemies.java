@@ -39,9 +39,9 @@ public class Enemies {
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
 				maxHP = 20;
 				hp = maxHP;
-				strength = 2;
-				expValue = 2;
-				coinValue = 3;
+				strength = 4;
+				expValue = 3;
+				coinValue = 5;
 				break;
 			case 2:
 				enemyName = "Wolf";
@@ -49,18 +49,18 @@ public class Enemies {
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
 				maxHP = 30;
 				hp = maxHP;
-				strength = 4;
+				strength = 6;
 				expValue = 5;
-				coinValue = 6;
+				coinValue = 8;
 				break;
 			case 3:
 				if(rand.nextInt(2) == 0) {
-					enemyName = "Baby spider";
+					enemyName = "Spider";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
 					maxHP = 30;
 					hp = maxHP;
-					strength = 4;
+					strength = 6;
 					expValue = 7;
 					coinValue = 8;
 				}
@@ -70,7 +70,7 @@ public class Enemies {
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
 					maxHP = 40;
 					hp = maxHP;
-					strength = 6;
+					strength = 8;
 					expValue = 10;
 					coinValue = 12;
 				}
@@ -86,7 +86,7 @@ public class Enemies {
 				hp = maxHP;
 				strength = 4;
 				expValue = 3;
-				coinValue = 3;
+				coinValue = 5;
 			}
 			else {
 				enemyName = "Wolf";
@@ -94,9 +94,9 @@ public class Enemies {
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
 				maxHP = 30;
 				hp = maxHP;
-				strength = 5;
+				strength = 6;
 				expValue = 5;
-				coinValue = 6;
+				coinValue = 8;
 			}
 		}
 	}
@@ -110,9 +110,9 @@ public class Enemies {
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
 				maxHP = 30;
 				hp = maxHP;
-				strength = 4;
-				expValue = 4;
-				coinValue = 5;
+				strength = 6;
+				expValue = 6;
+				coinValue = 7;
 				break;
 			case 2:
 				enemyName = "Skeleton";
@@ -120,8 +120,8 @@ public class Enemies {
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
 				maxHP = 40;
 				hp = maxHP;
-				strength = 6;
-				expValue = 8;
+				strength = 8;
+				expValue = 9;
 				coinValue = 10;
 				break;
 			case 3:
@@ -131,7 +131,7 @@ public class Enemies {
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
 					maxHP = 40;
 					hp = maxHP;
-					strength = 6;
+					strength = 8;
 					expValue = 10;
 					coinValue = 12;
 				}
@@ -141,7 +141,7 @@ public class Enemies {
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
 					maxHP = 50;
 					hp = maxHP;
-					strength = 8;
+					strength = 9;
 					expValue = 14;
 					coinValue = 16;
 				}
@@ -153,20 +153,20 @@ public class Enemies {
 				enemyName = "Goblin";
 				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
-				maxHP = 35;
+				maxHP = 30;
 				hp = maxHP;
-				strength = 5;
-				expValue = 4;
-				coinValue = 5;
+				strength = 6;
+				expValue = 6;
+				coinValue = 7;
 			}
 			else {
 				enemyName = "Skeleton";
 				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
-				maxHP = 45;
+				maxHP = 40;
 				hp = maxHP;
-				strength = 6;
-				expValue = 8;
+				strength = 8;
+				expValue = 9;
 				coinValue = 10;
 			}
 		}
@@ -180,7 +180,7 @@ public class Enemies {
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackFatlin.gif");
 				maxHP = 50;
 				hp = maxHP;
-				strength = 6;
+				strength = 8;
 				expValue = 15;
 				coinValue = 15;
 			}
@@ -191,7 +191,7 @@ public class Enemies {
 			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackFatlin.gif");
 			maxHP = 60;
 			hp = maxHP;
-			strength = 7;
+			strength = 8;
 			expValue = 15;
 			coinValue = 15;
 		}
@@ -206,7 +206,7 @@ public class Enemies {
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve.gif");
 				maxHP = 80;
 				hp = maxHP;
-				strength = 8;
+				strength = 10;
 				expValue = 25;
 				coinValue = 30;
 				break;
@@ -216,7 +216,7 @@ public class Enemies {
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve2.gif");
 				maxHP = 110;
 				hp = maxHP;
-				strength = 10;
+				strength = 12;
 				expValue = 40;
 				coinValue = 50;
 				break;
@@ -226,7 +226,7 @@ public class Enemies {
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve3.gif");
 				maxHP = 150;
 				hp = maxHP;
-				strength = 14;
+				strength = 15;
 				expValue = 100;
 				coinValue = 100;
 				break;
@@ -238,7 +238,7 @@ public class Enemies {
 			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve2.gif");
 			maxHP = 110;
 			hp = maxHP;
-			strength = 10;
+			strength = 12;
 			expValue = 40;
 			coinValue = 50;
 		}

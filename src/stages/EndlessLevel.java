@@ -27,7 +27,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
 	private Player player = new Player();
 	private Enemies enemy = new Enemies();
 	private int levelIndex;
-	private Image bonfireIcon, bossIcon, fightIcon, merchIcon, randIcon, strEnemyIcon, quitBtn, returnBtn;
+	private Image bonfireIcon, bossIcon, fightIcon, merchIcon, randIcon, strEnemyIcon, quitBtn, returnBtn, bg;
 	private JButton stageOne, stageTwo, stageThree, menuButton, quitButton, levelOne, bossLevel;
 	private Random rand = new Random();
 	private JButton levelTwo1, levelTwo2, levelThree1, levelThree2, levelThree3,
@@ -1018,6 +1018,7 @@ public class EndlessLevel extends JPanel implements ActionListener{
 			strEnemyIcon = ImageIO.read(new File("res/LevelIcons/StrEnemyIcon.png"));
 			quitBtn = ImageIO.read(new File("res/FunctionButtons/QuitButton.png"));
 			returnBtn = ImageIO.read(new File("res/FunctionButtons/ReturnButton.png"));
+			bg = ImageIO.read(new File("res/Backgrounds/LevelSelect_BG.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1153,11 +1154,6 @@ public class EndlessLevel extends JPanel implements ActionListener{
 				mid2 = true;
 			
 			window.showFightScene(levelIndex, selectedStage); 
-//			levelIndex++;
-//			for(int i = 0; i < levelButtons.length; i++)
-//				levelButtons[i].setEnabled(false);
-//			unlockStage();
-//			repaint();
 			break;
 		case "???":
 			if(e.getSource() == levelTwo1 || e.getSource() == levelThree1 || e.getSource() == levelFour1 ||
@@ -1182,11 +1178,6 @@ public class EndlessLevel extends JPanel implements ActionListener{
 				mid2 = true;
 			
 			window.showFightScene(levelIndex, selectedStage); 
-//			levelIndex++;
-//			for(int i = 0; i < levelButtons.length; i++)
-//				levelButtons[i].setEnabled(false);
-//			unlockStage();
-//			repaint();
 			break;
 		case "Strong Enemy":
 			if(e.getSource() == levelTwo1 || e.getSource() == levelThree1 || e.getSource() == levelFour1 ||
@@ -1212,11 +1203,6 @@ public class EndlessLevel extends JPanel implements ActionListener{
 			
 			enemy.setStrongEnemyActive(true);
 			window.showFightScene(levelIndex, selectedStage); 
-//			levelIndex++;
-//			for(int i = 0; i < levelButtons.length; i++)
-//				levelButtons[i].setEnabled(false);
-//			unlockStage();
-//			repaint();
 			break;
 		case "Bonfire":
 			if(e.getSource() == levelTwo1 || e.getSource() == levelThree1 || e.getSource() == levelFour1 ||
@@ -1245,11 +1231,6 @@ public class EndlessLevel extends JPanel implements ActionListener{
 				mid2 = true;
 			
 			window.showBonfire(levelIndex);
-//			levelIndex++;
-//			for(int i = 0; i < levelButtons.length; i++)
-//				levelButtons[i].setEnabled(false);
-//			unlockStage();
-//			repaint();
 			break;
 		case "Merchant":
 			if(e.getSource() == levelTwo1 || e.getSource() == levelThree1 || e.getSource() == levelFour1 ||
@@ -1279,11 +1260,6 @@ public class EndlessLevel extends JPanel implements ActionListener{
 			
 			player.increaseMerchantVisits();
 			window.showMerchant(levelIndex);
-//			levelIndex++;
-//			for(int i = 0; i < levelButtons.length; i++)
-//				levelButtons[i].setEnabled(false);
-//			unlockStage();
-//			repaint();
 			break;
 		case "Boss":
 			enemy.setBossActive(true);
@@ -1296,6 +1272,8 @@ public class EndlessLevel extends JPanel implements ActionListener{
 		super.paintComponent(g);
 		Graphics2D g1 = (Graphics2D)g;
 		g1.setStroke(new BasicStroke(3));
+		
+		g.drawImage(bg, 0, 0, null);
 		
 		if(levelOne.isVisible()){
 			g1.drawLine(levelOne.getLocation().x + 35, levelOne.getLocation().y + 70, levelTwo1.getLocation().x + 35, levelTwo1.getLocation().y);

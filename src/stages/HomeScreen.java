@@ -116,7 +116,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         slotMachineButton.addActionListener(this);
         slotMachineButton.setContentAreaFilled(false);
         slotMachineButton.setBorderPainted(false);
-        slotMachineButton.setBounds(105, 265, 100, 150);
+        slotMachineButton.setBounds(15, 295, 100, 150);
         add(slotMachineButton);
         
         storeButton = new JButton();
@@ -125,21 +125,25 @@ public class HomeScreen extends JPanel implements ActionListener {
         storeButton.addActionListener(this);
         storeButton.setContentAreaFilled(false);
         storeButton.setBorderPainted(false);
-        storeButton.setBounds(90, 480, 130, 100);
+        storeButton.setBounds(165, 340, 130, 100);
         add(storeButton);
         
-        mineGame = new JButton("Mining");
+        mineGame = new JButton();
         mineGame.setActionCommand("Mine");
         mineGame.setFocusable(false);
         mineGame.addActionListener(this);
-        mineGame.setBounds(140, 50, 130, 100);
+        mineGame.setContentAreaFilled(false);
+        mineGame.setBorderPainted(false);
+        mineGame.setBounds(25, 480, 100, 90);
         add(mineGame);
         
-        blacksmith = new JButton("Blacksmith");
+        blacksmith = new JButton();
         blacksmith.setActionCommand("Blacksmith");
         blacksmith.setFocusable(false);
         blacksmith.addActionListener(this);
-        blacksmith.setBounds(300, 50, 130, 100);
+        blacksmith.setContentAreaFilled(false);
+        blacksmith.setBorderPainted(false);
+        blacksmith.setBounds(185, 500, 100, 80);
         add(blacksmith);
         
         bagButton = new JButton();
