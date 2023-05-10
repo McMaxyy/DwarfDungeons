@@ -97,12 +97,12 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 		
 		loseText = new JLabel("You lost");
 		loseText.setVisible(false);
-		loseText.setBounds(200, 200, 100, 50);
+		loseText.setBounds(200, 200, 300, 50);
 		add(loseText);
 		
 		winText = new JLabel("You won");
 		winText.setVisible(false);
-		winText.setBounds(200, 200, 100, 50);
+		winText.setBounds(200, 200, 300, 50);
 		add(winText);
 		
 		countdownLbl = new JLabel("Time: " + countdown);

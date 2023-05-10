@@ -239,13 +239,13 @@ public class EndlessLevel extends JPanel implements ActionListener{
         else if (x < merchChance) {
         	button.setText("Merchant");
         	merchCount++;
-        	merchChance -= 2;
-        	qChance -= 2;
+        	merchChance--;
+        	qChance--;
         }
         else if (x < qChance) {
         	button.setText("???");
         	qCount++;
-        	qChance -= 2;
+        	qChance--;
         }
         else if (x < 90) {
         	button.setText("Fight");        	
@@ -942,12 +942,11 @@ public class EndlessLevel extends JPanel implements ActionListener{
 	}
 	
 	private void resetStage() {
-		if(merchCount >= 7 || bonfireCount >= 6 || qCount >= 11 || strongCount >= 5) {
+		if(merchCount >= 6 || bonfireCount >= 5 || qCount >= 7 || strongCount >= 5) {
 			merchCount = 0;
 			bonfireCount = 0;
 			qCount = 0;
 			strongCount = 0;
-			hideLevels();
 			setStage();	
 		}
 	}

@@ -13,7 +13,7 @@ import javax.swing.border.LineBorder;
 
 public class Storage {
 	private final int attackButtonCost = 1;
-	public Font font, font2, font3, font4;
+	public Font font, font2, font3, font4, font5;
 	private static Storage instance = null;
 	public Border border = LineBorder.createBlackLineBorder();
 	public int gameMode = 0;
@@ -97,8 +97,9 @@ public class Storage {
 		try {
 		    font = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(25f);
 		    font2 = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(18f);
-		    font3 = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(11f);
-		    font4 = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(10f);
+		    font3 = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(14f);
+		    font4 = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(11f);
+		    font5 = Font.createFont(Font.TRUETYPE_FONT, new File("Retro Gaming.ttf")).deriveFont(10f);
 		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		    // Register the font
 		    ge.registerFont(font);

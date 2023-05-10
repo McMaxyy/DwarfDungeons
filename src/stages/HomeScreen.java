@@ -27,8 +27,9 @@ public class HomeScreen extends JPanel implements ActionListener {
     private GameWindow window;
     private Player player = new Player();
     Gson gson = new Gson();
+    private JLabel lblCoins;
     private Image returnBtn, quitBtn, saveBtn, ironBtn, silverBtn, goldBtn, steelBtn, copperBtn, titanBtn, fieryBtn,
-    		moltenBtn, waterBtn, healthBtn, shieldBtn, bombBtn, dartBtn, dynamiteBtn, bombsBtn, bg, bagBtn;
+    		moltenBtn, waterBtn, healthBtn, shieldBtn, bombBtn, dartBtn, dynamiteBtn, bombsBtn, bg, bagBtn, coin;
     private JButton menuButton, quitButton, saveButton, levelSelectButton, slotMachineButton, 
     		storeButton, bagButton, funModeButton, mineGame, blacksmith;
     private Storage s = Storage.getInstance();
@@ -45,7 +46,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         this.window = window;        
         player.setUnlockedStage(1);
         player.setMaxHP(30);
-        player.setStrength(200);
+        player.setStrength(2);
         player.setLevelCap(10);
         player.setExp(0);
         player.setLevel(0);
@@ -92,6 +93,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         saveButton.setBounds(25, 135, 100, 50);
         add(saveButton);
         
+        // Story mode button
         levelSelectButton = new JButton();
         levelSelectButton.setActionCommand("Levels");
         levelSelectButton.setFocusable(false);
@@ -101,6 +103,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         levelSelectButton.setBounds(1040, 80, 175, 250);
         add(levelSelectButton);
               
+        // Endless mode button
         funModeButton = new JButton();
         funModeButton.setActionCommand("FunMode");
         funModeButton.setFocusable(false);
@@ -128,6 +131,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         storeButton.setBounds(165, 340, 130, 100);
         add(storeButton);
         
+        // Mining minigame button
         mineGame = new JButton();
         mineGame.setActionCommand("Mine");
         mineGame.setFocusable(false);
@@ -137,6 +141,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         mineGame.setBounds(25, 480, 100, 90);
         add(mineGame);
         
+        // Blacksmith button
         blacksmith = new JButton();
         blacksmith.setActionCommand("Blacksmith");
         blacksmith.setFocusable(false);
@@ -146,6 +151,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         blacksmith.setBounds(185, 500, 100, 80);
         add(blacksmith);
         
+        // Inventory open button
         bagButton = new JButton();
         bagButton.setIcon(new ImageIcon(bagBtn));
         bagButton.setActionCommand("Bag");
@@ -156,6 +162,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         bagButton.setBounds(730, 200, 100, 50);
         add(bagButton);
         
+        // Create inventory
         for(int i = 0; i < activeBag.length; i++) {
         	String temp = "active";
         	activeBag[i] = new JButton();
@@ -176,6 +183,13 @@ public class HomeScreen extends JPanel implements ActionListener {
         	Player.activeBag[i] = activeBag[i];
         }
         
+        lblCoins = new JLabel();
+        lblCoins.setVisible(false);
+        lblCoins.setFont(s.font3);
+        lblCoins.setText(Integer.toString(player.getCoins()));
+        lblCoins.setForeground(Color.WHITE);
+        lblCoins.setBounds(885, 205, 100, 40);
+        add(lblCoins);
 	}
     
     // Move the item from inventory to active bag
@@ -316,7 +330,7 @@ public class HomeScreen extends JPanel implements ActionListener {
 		bagW[x - 1].addActionListener(this);
 		bagW[x - 1].setBounds(xLoc1, yLoc1, 60, 50);
 		add(bagW[x - 1]);	
-		weaponName[x - 1].setFont(s.font4);
+		weaponName[x - 1].setFont(s.font5);
 		weaponName[x - 1].setForeground(Color.WHITE);
 		xLoc1 += 70;
 		itemsInRow1++;
@@ -387,7 +401,7 @@ public class HomeScreen extends JPanel implements ActionListener {
 		bagI[x - 1].addActionListener(this);
 		bagI[x - 1].setBounds(xLoc2, yLoc2, 60, 50);
 		add(bagI[x - 1]);
-		itemName[x - 1].setFont(s.font4);
+		itemName[x - 1].setFont(s.font5);
 		itemName[x - 1].setForeground(Color.WHITE);
 		xLoc2 += 70;
 		itemsInRow2++;
@@ -411,6 +425,7 @@ public class HomeScreen extends JPanel implements ActionListener {
 				itemName[i].setVisible(true);
 			}
 		}
+		lblCoins.setVisible(true);
 		bagVisible = true;
 	}
 	
@@ -427,6 +442,7 @@ public class HomeScreen extends JPanel implements ActionListener {
 				itemName[i].setVisible(false);
 			}
 		}
+		lblCoins.setVisible(false);
 		bagVisible = false;
 	}
 	
@@ -547,6 +563,7 @@ public class HomeScreen extends JPanel implements ActionListener {
 			bombsBtn = ImageIO.read(new File("res/Items/Bombs.png"));
 			bg = ImageIO.read(new File("res/Backgrounds/HomeScreen_BG.png"));
 			bagBtn = ImageIO.read(new File("res/FunctionButtons/BagButton.png"));
+			coin = ImageIO.read(new File("res/LevelIcons/MerchIcon.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -812,6 +829,9 @@ public class HomeScreen extends JPanel implements ActionListener {
     	super.paintComponent(g);
     	// Draw background
 	    g.drawImage(bg, 0, 0, null);
+	    
+	    if(bagVisible)
+	    	g.drawImage(coin, 850, 210, 30, 30, this);
     }
 }
 

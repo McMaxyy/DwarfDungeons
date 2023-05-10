@@ -239,7 +239,7 @@ public class Store extends JPanel implements ActionListener{
 		bagW[x - 1].addActionListener(this);
 		bagW[x - 1].setBounds(xLoc1, yLoc1, 60, 50);
 		add(bagW[x - 1]);	
-		weaponName[x - 1].setFont(s.font4);
+		weaponName[x - 1].setFont(s.font5);
 		weaponName[x - 1].setForeground(Color.WHITE);
 		xLoc1 += 70;		
 	}
@@ -298,7 +298,7 @@ public class Store extends JPanel implements ActionListener{
 		bagI[x - 1].addActionListener(this);
 		bagI[x - 1].setBounds(xLoc2, yLoc2, 60, 50);
 		add(bagI[x - 1]);	
-		itemName[x - 1].setFont(s.font4);
+		itemName[x - 1].setFont(s.font5);
 		itemName[x - 1].setForeground(Color.WHITE);
 		xLoc2 += 70;			
 	}
@@ -333,7 +333,7 @@ public class Store extends JPanel implements ActionListener{
 		for(int i = 0; i < buyButtons.length; i++) {
 			buyButtons[i] = new JButton();
 			buyName[i] = new JLabel();
-			buyName[i].setFont(s.font4);
+			buyName[i].setFont(s.font5);
 			buyName[i].setForeground(Color.WHITE);
 			switch(i) {
 			case 0:

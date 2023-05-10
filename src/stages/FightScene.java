@@ -39,7 +39,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	private Random rand = new Random();
 	private int enemySelectRand = rand.nextInt(2), weaponWon;
 	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated, rendLeft, 
-			weakLeft, poisonLeft, bubbleAmount;
+			weakLeft, poisonLeft, bubbleAmount, wallLeft;
 	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack, hardenActive,
 			enemyDead, stunActive, bossActive, shieldActive, explosionActive, enemyConfused;
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
@@ -54,7 +54,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			decapCard, weakenCard, attackCard, bubbleCard, healCard, blockCard, poisonCard,
 			explosiveCard, confuseCard, pummelCard, tendonCard, stealCard, breakerCard, shieldCard, fortifyCard;
 	private JButton activeBag[] = new JButton[8];
-	private boolean isHovering;
+	private boolean isHovering, ab1Used, ab2Used, ab3Used, ab4Used, legendaryUsed;
 	
 	public FightScene(GameWindow window, int levelIndex, int selectedStage){
 		this.window = window;
@@ -93,7 +93,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				player.setExp(player.getStoryExp());
 				player.setLevel(player.getStoryLevel());			
 			}
-		}		
+		}	
 		
 		setLayout(null);
 		
@@ -110,6 +110,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
+        
+        checkButton();
         
         switch (command) {
         case "Main menu":
@@ -268,9 +270,41 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	abilityID = s.lifeSteal.getID();
         	doAttack();
         	break;
+        case "GroundBreaker":
+        	legendaryUsed = true;
+        	turnCounter -= s.groundBreaker.getAbilityCost();
+        	abilityID = s.groundBreaker.getID();
+        	doAttack();
+        	break;
+        case "ShieldWall":
+        	legendaryUsed = true;
+        	turnCounter -= s.shieldWall.getAbilityCost();
+        	wallLeft = 3;
+        	break;
+        case "FortifiedAttack":
+        	legendaryUsed = true;
+        	turnCounter -= s.fortifiedAttack.getAbilityCost();
+        	if(player.getBubble() < 0)
+        		player.setBubble(0);
+        	bubbleAmount = s.fortifiedAttack.getAttackPower() + player.getBubble();
+        	player.setBubble(s.fortifiedAttack.getAttackPower() + player.getBubble());
+        	lblBubble.setText("" + player.getBubble());
+        	doAttack();
+        	break;
         case "Turn":
             enemyAttack();       
-            turnCounter = player.getMana();      
+            turnCounter = player.getMana();    
+            ab1Used = ab2Used = ab3Used = ab4Used = false;
+            if(wallLeft > 0) {
+            	if(player.getBubble() < 0)
+            		player.setBubble(0);
+            	bubbleAmount = s.shieldWall.getAttackPower() + player.getBubble();
+            	player.setBubble(s.shieldWall.getAttackPower() + player.getBubble());
+            	lblDamageDealt.setText("Surrounded player with a protective bubble");
+            	lblBubble.setText("" + player.getBubble());
+            	wallLeft--;
+            }    
+            enableActionButtons();
             break;
         case "HP up":
             player.increaseMaxHP();
@@ -343,6 +377,18 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         }
 	}
 	
+	private void checkButton() {
+		if(ability1.getModel().isArmed())
+			ab1Used = true;
+		else if(ability2.getModel().isArmed())
+			ab2Used = true;
+		else if(ability3.getModel().isArmed())
+			ab3Used = true;
+		else if(ability4.getModel().isArmed())
+			ab4Used = true;	
+	}
+	
+	// Add weapon to inventory by switching out the current inventory slot
 	private void addWeapon(int index) {		
 		if(weaponWon > 0) {
 			
@@ -393,6 +439,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		}
 	}
 	
+	// Set active weapon
 	private void setWeapon() {
 		switch(player.getActiveWeapon()) {
 		case 1:
@@ -425,6 +472,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		}
 	}
 	
+	// Inventory item actions
 	private void itemAction(int x) {
 			switch (activeBag[x].getName()) {
 		    case "Health":
@@ -503,6 +551,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			}
 	}
 	
+	// Check if player is dead
 	public void isPlayerDead() {
 		if(player.getHp() <= 0) {
 			returnButton.setText("<html>" + youLost.replaceAll("\\n", "<br>") + "</html>");
@@ -520,8 +569,10 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		}			
 	}
 	
+	// Check if enemy is dead (also give player rewards if enemy died)
 	public void isEnemyDead() {
 		if(enemy.getHp() <= 0) {
+			legendaryUsed = false;
 			enemyDead = true;
 			rendLeft = 0;
 			
@@ -651,21 +702,40 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		}
 	}
 	
+	// Enable or disable buttons based on remaining energy points and/or if the ability was used
 	private void enableActionButtons() {		
 		if(enemiesDefeated != 3)
 			for(JButton button : actionButtons)
 				button.setEnabled(true);
 		
 		if(turnCounter < s.getAttackButtonCost())
-			attackButton.setEnabled(false);
-		
+			attackButton.setEnabled(false);	
+		System.out.println(legendaryUsed);
 		for (JButton button : Arrays.asList(ability1, ability2, ability3, ability4)) {
+			
+			if(button == ability1 && ab1Used && legendaryUsed) {
+				button.setEnabled(false);
+				continue;
+			}
+			else if(button == ability2 && ab2Used && legendaryUsed) {
+				button.setEnabled(false);
+				continue;
+			}
+			else if(button == ability3 && ab3Used && legendaryUsed) {
+				button.setEnabled(false);
+				continue;
+			}
+			else if(button == ability4 && ab4Used && legendaryUsed) {
+				button.setEnabled(false);
+				continue;
+			}
+
 		    switch(button.getActionCommand()) {
 		        case "Swing":
 		            button.setEnabled(turnCounter >= s.overheadSwing.getAbilityCost());
 		            break;
 		        case "Decapitate":
-		            button.setEnabled(turnCounter >= s.decapitate.getAbilityCost() && enemy.getHp() <= (enemy.getMaxHP() / 4));
+		            button.setEnabled(turnCounter >= s.decapitate.getAbilityCost() && enemy.getHp() <= (enemy.getMaxHP() / 3));
 		            break;
 		        case "Riposte":
 		            button.setEnabled(turnCounter == s.riposte.getAbilityCost());
@@ -728,6 +798,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			button.setVisible(true);
 	}	
 	
+	// Enemy attack function
 	private void enemyAttack() {		
 		if(rendLeft != 0) {
 			int temp = s.rend.getAttackPower() + player.getStrength() / 2;
@@ -869,8 +940,10 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	private void doAttack() {
         playerAttack();
         playerAttack = true;
+        enableActionButtons();
 	}
 	
+	// Player attack function
 	private void playerAttack(){
 		// Check if player attack missed
 		if(player.playerAttack()) {
@@ -881,42 +954,49 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				switch(abilityID) {
 				case 1:
 					y = s.overheadSwing.getAttackPower();
-					z = y;
 					break;
 				case 2:
-					y = s.decapitate.getAttackPower();
+					if(rand.nextInt(10) == 0)
+						y = 999;
+					else
+						y = s.decapitate.getAttackPower();					
 					z = 1;
 					break;
 				case 6:
 					y = s.whirlwind.getAttackPower();					
-					z = y;
 					break;
 				case 13:
 					y = s.explosiveAttack.getAttackPower();
-					z = y;
 					break;
 				case 15:
 					y = s.pummel.getAttackPower();
-					z = y;
 					break;
 				case 16:
 					y = s.tendonCutter.getAttackPower();
-					z = y;
 					break;
 				case 17:
 					y = s.lifeSteal.getAttackPower();
-					z = y;
+					break;
+				case 18:
+					if(rand.nextInt(10) == 0)
+						y = 999;
+					else
+						y = s.groundBreaker.getAttackPower();
+					break;
+				case 20:
+					y = s.fortifiedAttack.getAttackPower();					
 					break;
 				}
-				x = rand.nextInt(z, player.getStrength() / 2 + weapon.getWeaponDamage()+ y + player.getTempStr() / 2 + 1); // Ability attack
+				if(abilityID != 2)
+					z = y;
+				x = rand.nextInt(z, player.getStrength() / 2 + weapon.getWeaponDamage() + y + player.getTempStr() / 2 + 1); // Ability attack
 				if(abilityID == 6)	// Whirlwind
 					for(int i = 1; i < 3; i++)
-						x = x + (player.getStrength() / 2 + weapon.getWeaponDamage()+ y + player.getTempStr() / 2 + 1);					
-				if(abilityID == 17) {
-					player.increaseHP(x/2);
+						x = x + (player.getStrength() / 2 + weapon.getWeaponDamage() + y + player.getTempStr() / 2 + 1);					
+				if(abilityID == 17) { // Life steal heal effect
+					player.increaseHP(x / 2);
 					if(player.getHp() > player.getMaxHP())
-						player.setHp(player.getMaxHP());
-					
+						player.setHp(player.getMaxHP());				
 					player.playerShowHP(lblPlayerHP);
 			        lblPlayerHP.repaint();
 				}
@@ -944,6 +1024,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		isEnemyDead();	// Check if the player's attack killed the enemy
 	}
 	
+	// Set abilities to buttons
 	private void configureAbilityButton(JButton button, int abilityID, int x, int y) {
 	    switch(abilityID) {
 	        case 1:
@@ -1036,7 +1117,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    add(button);
 	}
 
-
+	// Initialize all components
 	private void initComponents() {	
 		
 		// Useful labels		
@@ -1097,7 +1178,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		
 		// Damage dealt label
 		lblDamageDealt = new JLabel();
-		lblDamageDealt.setFont(s.font3);
+		lblDamageDealt.setFont(s.font4);
 		lblDamageDealt.setBounds(400, 80, 450, 30);
 		lblDamageDealt.setBorder(blackline);
 		lblDamageDealt.setBackground(Color.WHITE);
@@ -1328,7 +1409,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    if (pAttackImg != null && wAttackImg != null && playerAttack) {
 	    	g.drawImage(pAttackImg, 980, 308, SCALE, SCALE, this);
 	    	g.drawImage(wAttackImg, 980, 308, SCALE, SCALE, this);
-	    	enableActionButtons();
+//	    	enableActionButtons();
 	    	for(JButton button : actionButtons) {
 				button.setVisible(false);			
 			}
@@ -1354,7 +1435,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    }
 	    if (eAttackImg != null && enemyAttack) {
 	    	g.drawImage(eAttackImg, 10, 308, SCALE, SCALE, this);
-	    	enableActionButtons();
+//	    	enableActionButtons();
 	    	turnButton.setEnabled(false);
 	    	
 	    	t.schedule( 
@@ -1430,6 +1511,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    
 	}
 
+	// Used for showing ability card upon hovering over the ability button
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		

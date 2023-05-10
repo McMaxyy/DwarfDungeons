@@ -8,9 +8,9 @@ import java.util.*;
 public class Player {
 	private static int maxHP = 30;
 	private static int hp;
-	private static int strength = 200;
+	private static int strength = 2;
 	private static int mana = 4;
-	private static int coins = 100;
+	private static int coins = 9999;
 	private static int level = 0;
 	private static int exp = 0;
 	private static int ability1ID, ability2ID, ability3ID, ability4ID;
@@ -121,9 +121,9 @@ public class Player {
 	
 	public void playerOne() {
 		tempStr = 0;
-		mana = 4;
+		mana = 7;
 		hp = maxHP;
-		x = rand.nextInt(1, 10);
+		x = rand.nextInt(20, 21);
 		y = rand.nextInt(1, 10);
 		z = rand.nextInt(1, 10);
 		w = rand.nextInt(1, 10);
