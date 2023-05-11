@@ -41,10 +41,14 @@ public class Player {
 	
 	public void gainCoin(int coin) {
 		coins += coin;
+		if (coins > 9999)
+			coins = 9999;
 	}
 	
 	public void loseCoin(int coin) {
 		coins -= coin;
+		if (coins < 0)
+			coins = 0;
 	}
 	
 	public void increaseMana(int x) {
@@ -121,22 +125,22 @@ public class Player {
 	
 	public void playerOne() {
 		tempStr = 0;
-		mana = 7;
+		mana = 4;
 		hp = maxHP;
-		x = rand.nextInt(20, 21);
-		y = rand.nextInt(1, 10);
-		z = rand.nextInt(1, 10);
-		w = rand.nextInt(1, 10);
+		x = rand.nextInt(1, 9);
+		y = rand.nextInt(1, 9);
+		z = rand.nextInt(1, 9);
+		w = rand.nextInt(1, 9);
 		ability1ID = x;
 		while(y == x) {
-			y = rand.nextInt(1, 10);
+			y = rand.nextInt(1, 9);
 		}
 		ability2ID = y;
 		while (z == y || z == x)
-			z = rand.nextInt(1, 10);
+			z = rand.nextInt(1, 9);
 		ability3ID = z;
 		while (w == y || w == x || w == z)
-			w = rand.nextInt(1, 10);
+			w = rand.nextInt(1, 9);
 		ability4ID = w;
 	}
 

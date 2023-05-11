@@ -17,6 +17,7 @@ public class Storage {
 	private static Storage instance = null;
 	public Border border = LineBorder.createBlackLineBorder();
 	public int gameMode = 0;
+	public int gameLevel = 1;
 	
 	public static Storage getInstance() {
         if (instance == null) {

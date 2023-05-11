@@ -50,6 +50,7 @@ public class HomeScreen extends JPanel implements ActionListener {
         player.setLevelCap(10);
         player.setExp(0);
         player.setLevel(0);
+        s.gameLevel = 1;
         
         setLayout(null); 
         
@@ -615,6 +616,12 @@ public class HomeScreen extends JPanel implements ActionListener {
             System.exit(0);
             break;
         case "Levels":
+        	if(player.getStoryLevel() > 5)
+        		s.gameLevel = 2;
+        	else if(player.getStoryLevel() > 10)
+        		s.gameLevel = 3;
+        	else if(player.getStoryLevel() == 15)
+        		s.gameLevel = 4;
         	s.gameMode = 0;
         	itemsInRowA = 0;
         	xLocA = 975;

@@ -197,7 +197,7 @@ class GroundBreaker extends Abilities{
 class ShieldWall extends Abilities{
 	public ShieldWall() {
 		setAbilityName("Shield Wall");
-		setAttackPower(6);
+		setAttackPower(8);
 		setAbilityCost(6);
 		setID(19);
 	}
@@ -206,7 +206,7 @@ class ShieldWall extends Abilities{
 class FortifiedAttack extends Abilities{
 	public FortifiedAttack() {
 		setAbilityName("Fortified Attack");
-		setAttackPower(8);
+		setAttackPower(10);
 		setAbilityCost(6);
 		setID(20);
 	}

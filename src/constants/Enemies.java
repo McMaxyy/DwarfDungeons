@@ -15,6 +15,7 @@ public class Enemies {
 	private int expValue;
 	private int coinValue;
 	private int currentStage;
+	private int currentLevel;
 	private static boolean bossActive, strongEnemyActive;
 	private String enemyName;
 	private Image enemyIdle, enemyAttack;
@@ -32,185 +33,237 @@ public class Enemies {
 	
 	public void enemyOne() {
 		if(s.gameMode == 0) {
-			switch(currentStage) {
+			switch(s.gameLevel) {
 			case 1:
-				enemyName = "Baby spider";
-				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
-				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
-				maxHP = 20;
-				hp = maxHP;
-				strength = 4;
-				expValue = 3;
-				coinValue = 5;
-				break;
-			case 2:
-				enemyName = "Wolf";
-				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleWolf.gif");
-				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
-				maxHP = 30;
-				hp = maxHP;
-				strength = 6;
-				expValue = 5;
-				coinValue = 8;
-				break;
-			case 3:
-				if(rand.nextInt(2) == 0) {
-					enemyName = "Spider";
+				switch(currentStage) {
+				case 1:
+					enemyName = "Baby spider";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
+					maxHP = 20;
+					hp = maxHP;
+					strength = 4;
+					expValue = 3;
+					coinValue = 5;
+					break;
+				case 2:
+					enemyName = "Wolf";
+					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleWolf.gif");
+					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
 					maxHP = 30;
 					hp = maxHP;
 					strength = 6;
-					expValue = 7;
+					expValue = 5;
 					coinValue = 8;
+					break;
+				case 3:
+					if(rand.nextInt(2) == 0) {
+						enemyName = "Spider";
+						enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
+						enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
+						maxHP = 30;
+						hp = maxHP;
+						strength = 6;
+						expValue = 7;
+						coinValue = 8;
+					}
+					else {
+						enemyName = "Wolf";
+						enemyIdle = s.setAnimation("res/EnemyAnimations/IdleWolf.gif");
+						enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
+						maxHP = 40;
+						hp = maxHP;
+						strength = 8;
+						expValue = 10;
+						coinValue = 12;
+					}
+					break;
+				}
+				break;
+			}			
+		}
+		else {
+			switch(s.gameLevel) {
+			case 1:
+				if(rand.nextInt(2) == 0) {
+					enemyName = "Baby spider";
+					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
+					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
+					maxHP = 20;
+					hp = maxHP;
+					strength = 4;
+					expValue = 3;
+					coinValue = 5;
 				}
 				else {
 					enemyName = "Wolf";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleWolf.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
-					maxHP = 40;
+					maxHP = 30;
 					hp = maxHP;
-					strength = 8;
-					expValue = 10;
-					coinValue = 12;
+					strength = 6;
+					expValue = 5;
+					coinValue = 8;
 				}
 				break;
-			}
-		}
-		else {
-			if(rand.nextInt(2) == 0) {
-				enemyName = "Baby spider";
-				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
-				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
-				maxHP = 20;
-				hp = maxHP;
-				strength = 4;
-				expValue = 3;
-				coinValue = 5;
-			}
-			else {
-				enemyName = "Wolf";
-				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleWolf.gif");
-				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
-				maxHP = 30;
-				hp = maxHP;
-				strength = 6;
-				expValue = 5;
-				coinValue = 8;
-			}
+			}			
 		}
 	}
 	
 	public void enemyTwo() {
 		if(s.gameMode == 0) {
-			switch(currentStage) {
+			switch(s.gameLevel) {
 			case 1:
-				enemyName = "Goblin";
-				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
-				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
-				maxHP = 30;
-				hp = maxHP;
-				strength = 6;
-				expValue = 6;
-				coinValue = 7;
+				switch(currentStage) {
+				case 1:
+					enemyName = "Goblin";
+					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
+					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
+					maxHP = 30;
+					hp = maxHP;
+					strength = 6;
+					expValue = 6;
+					coinValue = 7;
+					break;
+				case 2:
+					enemyName = "Skeleton";
+					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
+					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
+					maxHP = 40;
+					hp = maxHP;
+					strength = 8;
+					expValue = 9;
+					coinValue = 10;
+					break;
+				case 3:
+					if(rand.nextInt(2) == 0) {
+						enemyName = "Goblin";
+						enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
+						enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
+						maxHP = 40;
+						hp = maxHP;
+						strength = 8;
+						expValue = 10;
+						coinValue = 12;
+					}
+					else {
+						enemyName = "Skeleton";
+						enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
+						enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
+						maxHP = 50;
+						hp = maxHP;
+						strength = 9;
+						expValue = 14;
+						coinValue = 16;
+					}
+					break;
+				}
 				break;
-			case 2:
-				enemyName = "Skeleton";
-				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
-				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
-				maxHP = 40;
-				hp = maxHP;
-				strength = 8;
-				expValue = 9;
-				coinValue = 10;
-				break;
-			case 3:
+			}		
+		}
+		else {
+			switch(s.gameLevel) {
+			case 1:
 				if(rand.nextInt(2) == 0) {
 					enemyName = "Goblin";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
-					maxHP = 40;
+					maxHP = 30;
 					hp = maxHP;
-					strength = 8;
-					expValue = 10;
-					coinValue = 12;
+					strength = 6;
+					expValue = 6;
+					coinValue = 7;
 				}
 				else {
 					enemyName = "Skeleton";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
-					maxHP = 50;
+					maxHP = 40;
 					hp = maxHP;
-					strength = 9;
-					expValue = 14;
-					coinValue = 16;
+					strength = 8;
+					expValue = 9;
+					coinValue = 10;
 				}
 				break;
-			}
-		}
-		else {
-			if(rand.nextInt(2) == 0) {
-				enemyName = "Goblin";
-				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
-				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
-				maxHP = 30;
-				hp = maxHP;
-				strength = 6;
-				expValue = 6;
-				coinValue = 7;
-			}
-			else {
-				enemyName = "Skeleton";
-				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
-				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
-				maxHP = 40;
-				hp = maxHP;
-				strength = 8;
-				expValue = 9;
-				coinValue = 10;
-			}
+			}			
 		}
 	}
 	
 	public void strongEnemy() {
 		if(s.gameMode == 0) {
-			if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
+			switch(s.gameLevel) {
+			case 1:
+				if(currentStage == 1 || currentStage == 2 || currentStage == 3) {
+					enemyName = "Fatlin";
+					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleFatlin.gif");
+					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackFatlin.gif");
+					maxHP = 50;
+					hp = maxHP;
+					strength = 8;
+					expValue = 15;
+					coinValue = 15;
+				}
+				break;
+			}		
+		}
+		else {
+			switch(s.gameLevel) {
+			case 1:
 				enemyName = "Fatlin";
 				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleFatlin.gif");
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackFatlin.gif");
-				maxHP = 50;
+				maxHP = 60;
 				hp = maxHP;
 				strength = 8;
 				expValue = 15;
 				coinValue = 15;
-			}
-		}
-		else {
-			enemyName = "Fatlin";
-			enemyIdle = s.setAnimation("res/EnemyAnimations/IdleFatlin.gif");
-			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackFatlin.gif");
-			maxHP = 60;
-			hp = maxHP;
-			strength = 8;
-			expValue = 15;
-			coinValue = 15;
+				break;
+			}			
 		}
 	}
 	
 	public void boss() {
 		if(s.gameMode == 0) {
-			switch(currentStage) {
+			switch(s.gameLevel) {
 			case 1:
-				enemyName = "Basic Sbeve";
-				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve.gif");
-				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve.gif");
-				maxHP = 80;
-				hp = maxHP;
-				strength = 10;
-				expValue = 25;
-				coinValue = 30;
+				switch(currentStage) {
+				case 1:
+					enemyName = "Basic Sbeve";
+					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve.gif");
+					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve.gif");
+					maxHP = 80;
+					hp = maxHP;
+					strength = 10;
+					expValue = 25;
+					coinValue = 30;
+					break;
+				case 2:
+					enemyName = "Stronger Sbeve";
+					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve2.gif");
+					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve2.gif");
+					maxHP = 110;
+					hp = maxHP;
+					strength = 12;
+					expValue = 40;
+					coinValue = 50;
+					break;
+				case 3:
+					enemyName = "Angry Sbeve";
+					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve3.gif");
+					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve3.gif");
+					maxHP = 150;
+					hp = maxHP;
+					strength = 15;
+					expValue = 100;
+					coinValue = 100;
+					break;
+				}
 				break;
-			case 2:
+			}		
+		}
+		else {
+			switch(s.gameLevel) {
+			case 1:
 				enemyName = "Stronger Sbeve";
 				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve2.gif");
 				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve2.gif");
@@ -220,27 +273,7 @@ public class Enemies {
 				expValue = 40;
 				coinValue = 50;
 				break;
-			case 3:
-				enemyName = "Angry Sbeve";
-				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve3.gif");
-				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve3.gif");
-				maxHP = 150;
-				hp = maxHP;
-				strength = 15;
-				expValue = 100;
-				coinValue = 100;
-				break;
-			}
-		}
-		else {
-			enemyName = "Stronger Sbeve";
-			enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve2.gif");
-			enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve2.gif");
-			maxHP = 110;
-			hp = maxHP;
-			strength = 12;
-			expValue = 40;
-			coinValue = 50;
+			}			
 		}
 	}
 	
@@ -322,6 +355,14 @@ public class Enemies {
 
 	public void setStrongEnemyActive(boolean strongEnemyActive) {
 		Enemies.strongEnemyActive = strongEnemyActive;
+	}
+
+	public int getCurrentLevel() {
+		return currentLevel;
+	}
+
+	public void setCurrentLevel(int currentLevel) {
+		this.currentLevel = currentLevel;
 	}
 	
 }
