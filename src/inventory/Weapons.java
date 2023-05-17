@@ -134,3 +134,13 @@ class WaterAxe extends Weapons{
 		setSellValue(300);
 	}
 }
+
+class ObsidianAxe extends Weapons{
+	public ObsidianAxe() {
+		setWeaponName("Obsidian Axe");
+		setAttackPower(16);
+		setID(10);
+		setAmount(0);
+		setSellValue(700);
+	}
+}

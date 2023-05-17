@@ -666,21 +666,78 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				if(bossActive)
 					lblReward.setText("You got " + enemy.getCoinValue() + " coins");									
 				if(bossActive && rand.nextInt(3) != 0) {
-					if(currentStage == 1) {
-						lblReward.setText("You got " + s.silverAxe.getWeaponName() + ". Add it to inv?");
-						weaponWon = 2;
-					}
-					else if (currentStage == 2) {
-						lblReward.setText("You got " + s.goldAxe.getWeaponName() + ". Add it to inv?");
-						weaponWon = 3;
-					}
-					else {
-						lblReward.setText("You got " + s.steelAxe.getWeaponName() + ". Add it to inv?");
-						weaponWon = 4;
-					}
+					switch(s.gameMode) {
+					case 0:
+						switch(s.gameLevel) {
+						case 1:
+							if(currentStage == 1) {
+								lblReward.setText("You got " + s.silverAxe.getWeaponName() + ". Add it to inv?");
+								weaponWon = 2;
+							}
+							else if (currentStage == 2) {
+								lblReward.setText("You got " + s.goldAxe.getWeaponName() + ". Add it to inv?");
+								weaponWon = 3;
+							}
+							else {
+								lblReward.setText("You got " + s.steelAxe.getWeaponName() + ". Add it to inv?");
+								weaponWon = 4;
+							}
+							break;
+						case 2:
+							if(currentStage == 1) {
+								lblReward.setText("You got " + s.copperAxe.getWeaponName() + ". Add it to inv?");
+								weaponWon = 5;
+							}
+							else if (currentStage == 2) {
+								lblReward.setText("You got " + s.titaniumAxe.getWeaponName() + ". Add it to inv?");
+								weaponWon = 6;
+							}
+							else {
+								lblReward.setText("You got " + s.fieryAxe.getWeaponName() + ". Add it to inv?");
+								weaponWon = 7;
+							}
+							break;
+						case 3:
+							if(currentStage == 1) {
+								lblReward.setText("You got " + s.moltenAxe.getWeaponName() + ". Add it to inv?");
+								weaponWon = 8;
+							}
+							else if (currentStage == 2) {
+								lblReward.setText("You got " + s.waterAxe.getWeaponName() + ". Add it to inv?");
+								weaponWon = 9;
+							}
+							else {
+								if(rand.nextInt(2) == 0) {
+									lblReward.setText("You got 1x Bottled Lava");
+									s.bottledLava.setAmount(s.bottledLava.getAmount() + 1);
+								}
+								else {
+									lblReward.setText("You got 1x Bottled Water");
+									s.bottledWater.setAmount(s.bottledWater.getAmount() + 1);
+								}
+									
+							}
+							break;
+						}
+						break;
+					case 1:
+						switch(s.gameLevel) {
+						case 1:
+							lblReward.setText("You got " + s.steelAxe.getWeaponName() + ". Add it to inv?");
+							weaponWon = 4;
+							break;
+						case 2:
+							lblReward.setText("You got " + s.fieryAxe.getWeaponName() + ". Add it to inv?");
+							weaponWon = 7;
+							break;
+						case 3:
+							lblReward.setText("You got " + s.waterAxe.getWeaponName() + ". Add it to inv?");
+							weaponWon = 9;
+							break;
+						}
+					}									
 					yesAdd.setVisible(true);
-					noAdd.setVisible(true);
-					
+					noAdd.setVisible(true);					
 				}
 				
 				lblReward.setVisible(true);

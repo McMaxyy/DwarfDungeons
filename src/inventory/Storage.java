@@ -80,6 +80,8 @@ public class Storage {
 	public Materials goldIngot = new GoldIngot();
 	public Materials sparkPowder = new SparkPowder();
 	public Materials lifePowder = new LifePowder();
+	public Materials bottledLava = new BottledLava();
+	public Materials bottledWater = new BottledWater();
 	
 	// Load recipes
 	public Recipes ironAxeR = new IronAxeRecipe();

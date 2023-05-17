@@ -55,3 +55,19 @@ class LifePowder extends Materials{
 		setID(4);
 	}
 }
+
+class BottledLava extends Materials{
+	public BottledLava() {
+		setName("Bottled Lava");
+		setAmount(0);
+		setID(5);
+	}
+}
+
+class BottledWater extends Materials{
+	public BottledWater() {
+		setName("Bottled Water");
+		setAmount(0);
+		setID(6);
+	}
+}

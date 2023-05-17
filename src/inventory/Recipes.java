@@ -1,7 +1,5 @@
 package inventory;
 
-import constants.Player;
-
 public abstract class Recipes {
 	private int ID, reqMat1, reqMat2;
 	private String name;	
@@ -62,5 +60,14 @@ class HealthPotRecipe extends Recipes{
 		setName("Health Pot");
 		setReqMat1(2);
 		setID(4);
+	}
+}
+
+class ObsidianAxeRecipe extends Recipes{
+	public ObsidianAxeRecipe() {
+		setName("Obsidian Axe");
+		setReqMat1(1);
+		setReqMat2(1);
+		setID(5);
 	}
 }
