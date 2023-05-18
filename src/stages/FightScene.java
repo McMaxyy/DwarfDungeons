@@ -29,7 +29,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	private Enemies enemy = new Enemies();
 	private Weapon weapon = new Weapon();
 	private Storage s = Storage.getInstance();
-	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblExp, lblLevelUp, lblEnemyName, lblReward, lblBubble;
+	private JLabel lblPlayerHP, lblEnemyHP, lblDamageDealt, lblExp, lblLevelUp, lblEnemyName, lblReward, lblBubble, lblCard;
 	private JButton returnButton, attackButton, menuButton, turnButton, levelUpHPButton, levelUpStrButton, 
 			ability1, ability2, ability3, ability4, yesAdd, noAdd;
 	private JButton[] buttons = new JButton[] {attackButton, menuButton, turnButton, ability1, ability2, ability3, ability4};
@@ -37,11 +37,11 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	String youLost = "You\nLost";
 	String youWon = "You\nWon";
 	private Random rand = new Random();
-	private int enemySelectRand = rand.nextInt(2), weaponWon;
+	private int enemySelectRand = rand.nextInt(2), weaponWon, abilityWon;
 	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated, rendLeft, 
 			weakLeft, poisonLeft, bubbleAmount, wallLeft;
 	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack, hardenActive,
-			enemyDead, stunActive, bossActive, shieldActive, explosionActive, enemyConfused;
+			enemyDead, stunActive, bossActive, shieldActive, explosionActive, enemyConfused, playerStunned;
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
 	private Image pImg, wImg, pAttackImg, wAttackImg, eImg, eAttackImg, backgroundImg;
 	private Timer t = new java.util.Timer();
@@ -102,6 +102,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		loadAnimations();
         initComponents();
         disableButtonFocus();
+        enableActionButtons();
         
         for(JButton button : buttons)
         	button.setBorder(s.border);        	
@@ -299,8 +300,11 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	doAttack();
         	break;
         case "Turn":
-            enemyAttack();       
-            turnCounter = player.getMana();    
+            enemyAttack();   
+            if(playerStunned) 
+            	playerStunned = false;
+            else
+            	turnCounter = player.getMana(); 
             ab1Used = ab2Used = ab3Used = ab4Used = false;
             if(wallLeft > 0) {
             	if(player.getBubble() < 0)
@@ -352,9 +356,40 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	yesAdd.setVisible(false);	
         	break;
         case "No":
-        	lblReward.setVisible(false);   
+        	if(!bossActive) {
+        		lblReward.setVisible(false);   
+            	noAdd.setVisible(false);
+            	yesAdd.setVisible(false);
+        	}
+        	else {
+        		chooseLegAbility();
+        	}
+        	break;
+        case "YesA":
+        	lblReward.setText("Select which ability to change");
         	noAdd.setVisible(false);
         	yesAdd.setVisible(false);
+        	cardWon();
+        	break;
+        case "Change1":
+        	addAbility(1);
+        	disableActionButtons();
+        	lblCard.setVisible(false);
+        	break;
+        case "Change2":
+        	addAbility(2);
+        	disableActionButtons();
+        	lblCard.setVisible(false);
+        	break;
+        case "Change3":
+        	addAbility(3);
+        	disableActionButtons();
+        	lblCard.setVisible(false);
+        	break;
+        case "Change4":
+        	addAbility(4);
+        	disableActionButtons();
+        	lblCard.setVisible(false);
         	break;
         case "remove0":
         case "remove1":
@@ -367,7 +402,14 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	int index = Integer.parseInt(command.substring(6));  
         	addWeapon(index);
         	weaponWon = 0;
-			lblReward.setVisible(false);			
+			lblReward.setVisible(false);
+			
+			if(bossActive) {
+				chooseLegAbility();
+        		lblReward.setVisible(true);
+        		noAdd.setVisible(true);
+            	yesAdd.setVisible(true);
+			}
         	break;
         case "inv0":
         case "inv1":
@@ -384,6 +426,188 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         }
 	}
 	
+	// Randomly decide which legendary ability the player can get
+	private void chooseLegAbility() {
+		int x = rand.nextInt(3);
+		if(x == 0) {
+			abilityWon = 18;
+			lblCard.setIcon(new ImageIcon(breakerCard));
+		}	        			
+		else if(x == 1) {
+			abilityWon = 19;
+			lblCard.setIcon(new ImageIcon(shieldCard));
+		}	        			
+		else {
+			abilityWon = 20;
+			lblCard.setIcon(new ImageIcon(fortifyCard));
+		}
+		
+		chooseLegAbilityIfActive(player.getAbility1ID());
+		chooseLegAbilityIfActive(player.getAbility2ID());
+		chooseLegAbilityIfActive(player.getAbility3ID());
+		chooseLegAbilityIfActive(player.getAbility4ID());
+		
+		lblCard.setVisible(true);
+		lblReward.setText("You won a legendary card, add it?");
+		
+		yesAdd.removeActionListener(this);
+		yesAdd.setActionCommand("YesA");
+		yesAdd.addActionListener(this);
+		
+		bossActive = false;
+	}
+	
+	// If the player already has a legendary ability, get a new one
+	private void chooseLegAbilityIfActive(int abilityID) {
+		int x = rand.nextInt(2);
+		
+	    switch (abilityID) {
+        case 18:
+            if (x == 0) {
+                abilityWon = 19;
+                lblCard.setIcon(new ImageIcon(shieldCard));
+            } else {
+                abilityWon = 20;
+                lblCard.setIcon(new ImageIcon(fortifyCard));
+            }
+            break;
+        case 19:
+            if (x == 0) {
+                abilityWon = 18;
+                lblCard.setIcon(new ImageIcon(breakerCard));
+            } else {
+                abilityWon = 20;
+                lblCard.setIcon(new ImageIcon(fortifyCard));
+            }
+            break;
+        case 20:
+            if (x == 0) {
+                abilityWon = 18;
+                lblCard.setIcon(new ImageIcon(breakerCard));
+            } else {
+                abilityWon = 19;
+                lblCard.setIcon(new ImageIcon(shieldCard));
+            }
+            break;
+	    }
+	}
+	
+	// Choose which slot the legendary ability should be added to
+	private void addAbility(int abIndex) {
+		switch (abIndex) {
+		case 1:
+	        updateAbility(ability1, 1);
+	        break;
+		case 2:
+	        updateAbility(ability2, 2);
+	        break;
+		case 3:
+	        updateAbility(ability3, 3);
+	        break;
+	    case 4:
+	        updateAbility(ability4, 4);
+	        break;
+		}		
+	}
+	
+	// Update the ability slot
+	private void updateAbility(JButton ability, int index) {
+		ability.removeActionListener(this);
+		
+		switch(abilityWon) {
+		case 1:
+			ability.setActionCommand("GroundBreaker");
+			ability.setIcon(new ImageIcon(breakerBtn));
+			break;
+		case 2:
+			ability.setActionCommand("ShieldWall");
+			ability.setIcon(new ImageIcon(shieldBtn));
+			break;
+		case 3:
+			ability.setActionCommand("FortifiedAttack");
+			ability.setIcon(new ImageIcon(fortifyBtn));
+			break;
+		}
+
+	    ability.addActionListener(this);	    
+	    
+	    switch(index) {
+	    case 1:
+	    	player.setAbility1ID(abilityWon);
+	    	break;
+	    case 2:
+	    	player.setAbility2ID(abilityWon);
+	    	break;
+	    case 3:
+	    	player.setAbility3ID(abilityWon);
+	    	break;
+	    case 4:
+	    	player.setAbility4ID(abilityWon);
+	    	break;
+	    }
+	    
+	    abilityWon = 0;
+	}
+	
+	// Decide which ability buttons should show up (if the player has a legendary ability already, only show that one)
+	private void cardWon() {
+		boolean legActive = false;
+		
+		if(ability1.getActionCommand() == "GroundBreaker" ||
+		ability1.getActionCommand() == "ShieldWall" ||
+		ability1.getActionCommand() == "FortifiedAttack") {
+			ability1.setEnabled(true);
+			legActive = true;
+			ability1.setVisible(true);
+		}
+		else if(ability2.getActionCommand() == "GroundBreaker" ||
+				ability2.getActionCommand() == "ShieldWall" ||
+				ability2.getActionCommand() == "FortifiedAttack") {
+					ability2.setEnabled(true);
+					legActive = true;
+					ability2.setVisible(true);
+		}
+		else if(ability3.getActionCommand() == "GroundBreaker" ||
+				ability3.getActionCommand() == "ShieldWall" ||
+				ability3.getActionCommand() == "FortifiedAttack") {
+					ability3.setEnabled(true);
+					legActive = true;
+					ability3.setVisible(true);
+		}
+		else if(ability4.getActionCommand() == "GroundBreaker" ||
+				ability4.getActionCommand() == "ShieldWall" ||
+				ability4.getActionCommand() == "FortifiedAttack") {
+					ability4.setEnabled(true);
+					legActive = true;
+					ability4.setVisible(true);
+		}
+		
+		ability1.removeActionListener(this);
+		ability1.setActionCommand("Change1");
+		ability1.addActionListener(this);
+		ability2.removeActionListener(this);
+		ability2.setActionCommand("Change2");
+		ability2.addActionListener(this);
+		ability3.removeActionListener(this);
+		ability3.setActionCommand("Change3");
+		ability3.addActionListener(this);
+		ability4.removeActionListener(this);
+		ability4.setActionCommand("Change4");
+		ability4.addActionListener(this);
+		
+		if(!legActive) {
+			ability1.setEnabled(true);
+			ability1.setVisible(true);
+			ability2.setEnabled(true);
+			ability2.setVisible(true);
+			ability3.setEnabled(true);
+			ability3.setVisible(true);
+			ability4.setEnabled(true);
+			ability4.setVisible(true);
+		}
+	}
+	
+	// Check if an ability has been used and lock the button, so it's only 1 same ability per turn
 	private void checkButton() {
 		if(ability1.getModel().isArmed()) {
 			ab1Used = true;
@@ -411,6 +635,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		}
 	}
 	
+	// Add the dropped weapon to the player's inventory
 	// Add weapon to inventory by switching out the current inventory slot
 	private void addWeapon(int index) {		
 		if(weaponWon > 0) {
@@ -463,6 +688,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	}
 	
 	// Set active weapon
+	// Set active weapon
 	private void setWeapon() {
 		switch(player.getActiveWeapon()) {
 		case 1:
@@ -491,6 +717,9 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			break;
 		case 9:
 			weapon.weaponOne(s.waterAxe.getAttackPower());
+			break;
+		case 10:
+			weapon.weaponOne(s.obsidianAxe.getAttackPower());
 			break;
 		}
 	}
@@ -571,6 +800,10 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		    	player.setActiveWeapon(9);
 				setWeapon();
 				break;
+		    case "ObsidianAxe":
+		    	player.setActiveWeapon(10);
+				setWeapon();
+				break;
 			}
 	}
 	
@@ -596,15 +829,30 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	public void isEnemyDead() {
 		if(enemy.getHp() <= 0) {
 			legendary1Used = legendary2Used = legendary3Used = legendary4Used = false;
+			ab1Used = ab2Used = ab3Used = ab4Used = false;
 			enemyDead = true;
 			rendLeft = 0;
+			poisonLeft = 0;
 			
 			// Normal enemy rewards
 			player.gainCoin(enemy.getCoinValue());
 			lblReward.setText("You got " + enemy.getCoinValue() + " coins");
-			if(rand.nextInt(15) != 0 && !bossActive) {								
-				lblReward.setText("You got " + s.ironAxe.getWeaponName() + ". Add it to inv?");
-				weaponWon = 1;
+			if(rand.nextInt(15) != 0 && !bossActive) {	
+				switch(s.gameLevel) {
+				case 1:
+					lblReward.setText("You got " + s.ironAxe.getWeaponName() + ". Add it to inv?");
+					weaponWon = 1;
+					break;
+				case 2:
+					lblReward.setText("You got " + s.steelAxe.getWeaponName() + ". Add it to inv?");
+					weaponWon = 4;
+					break;
+				case 3:
+					lblReward.setText("You got " + s.fieryAxe.getWeaponName() + ". Add it to inv?");
+					weaponWon = 7;
+					break;
+				}
+				
 				yesAdd.setVisible(true);
 				noAdd.setVisible(true);
 			}
@@ -658,13 +906,17 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			
 			// Player has defeated 3 enemies, stage cleared
 			else {
+				disableActionButtons();
 				turnCounter = 0;
 				lblExp.setText("Gained " + enemy.getExpValue() + " exp");
 				lblExp.setVisible(true);
 				
 				// Boss rewards
-				if(bossActive)
-					lblReward.setText("You got " + enemy.getCoinValue() + " coins");									
+				if(bossActive) {
+					player.gainCoin(enemy.getCoinValue());
+					lblReward.setText("You got " + enemy.getCoinValue() + " coins");		
+				}		
+				
 				if(bossActive && rand.nextInt(3) != 0) {
 					switch(s.gameMode) {
 					case 0:
@@ -739,6 +991,12 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 					yesAdd.setVisible(true);
 					noAdd.setVisible(true);					
 				}
+				else if(bossActive){
+					chooseLegAbility();	        			        		
+					yesAdd.setVisible(true);
+					noAdd.setVisible(true);	
+					bossActive = false;
+				}
 				
 				lblReward.setVisible(true);
 				returnButton.setText("<html>" + youWon.replaceAll("\\n", "<br>") + "</html>");
@@ -759,12 +1017,11 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 						enableLevelUpComponents();
 					}
 				}	
-				gameOver = true;
-				disableActionButtons();
+				gameOver = true;				
 			}			
 		}
 	}
-	
+
 	private void disableButtonFocus() {		
 		for(JButton button : buttons)
 			button.setFocusable(false);			
@@ -776,7 +1033,6 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		returnButton.setVisible(false);
 		lblDamageDealt.setEnabled(false);
 		turnButton.setEnabled(false);
-		disableActionButtons();
 	}
 	
 	private void disableLevelUpComponents() {
@@ -897,7 +1153,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	}	
 	
 	// Enemy attack function
-	private void enemyAttack() {		
+	private void enemyAttack() {	
+		int x = rand.nextInt(4);
 		if(rendLeft != 0) {
 			int temp = s.rend.getAttackPower() + player.getStrength() / 2;
 			enemy.enemyLoseHP(temp);
@@ -919,101 +1176,126 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			poisonLeft--;			
 		}
 		
-		// Since Rend & Poison activate before the enemy attack, check if enemy died
-		if(!enemyDead && !stunActive) {
-			t.schedule(new TimerTask() {
-	            @Override
-	            public void run() {
-	            	int temp = rand.nextInt(1, enemy.getStrength() + 1);
-	            	enemyAttack = true;
-	            	
-	            	// Check if enemy attack missed
-	    			if(abilityID != 3 && enemy.enemyAttack() && !enemyConfused) {
-	    				// Debuff effects
-	    				if(hardenActive) {
-	    					temp = temp / 2;
-	    					if(weakLeft > 0) {						
-	    						temp = temp / 3;
-	    						if(temp == 0 && player.getBubble() > 0) {
-	    							temp = 1;
-	    							player.setBubble(player.getBubble() - temp);
-	    							if(player.getBubble() < 0)
-	    								player.playerLoseHP(player.getBubble() * player.getBubble());
-	    						}
-	    						else if (player.getBubble() > 0)
+		if(abilityID == 3)
+			x = 0;
+		
+		switch(x) {
+		case 0:
+		case 1:
+			if(!enemyDead && !stunActive) {
+				t.schedule(new TimerTask() {
+		            @Override
+		            public void run() {
+		            	int temp = rand.nextInt(1, enemy.getStrength() + 1);
+		            	enemyAttack = true;
+		            	
+		            	// Check if enemy attack missed
+		    			if(abilityID != 3 && enemy.enemyAttack() && !enemyConfused) {
+		    				// Debuff effects
+		    				if(hardenActive) {
+		    					temp = temp / 2;
+		    					if(weakLeft > 0) {						
+		    						temp = temp / 3;
+		    						if(temp == 0 && player.getBubble() > 0) {
+		    							temp = 1;
+		    							player.setBubble(player.getBubble() - temp);
+		    							if(player.getBubble() < 0)
+		    								player.playerLoseHP(player.getBubble() * player.getBubble());
+		    						}
+		    						else if (player.getBubble() > 0)
+			    						bubbleHit(temp);
+		    						else if(temp == 0)
+		    							player.playerLoseHP(1);
+		    						else
+		    							player.playerLoseHP(temp);
+		    						weakLeft--;
+		    					}
+		    					else if (player.getBubble() > 0)
 		    						bubbleHit(temp);
-	    						else if(temp == 0)
+		    					else
+		    						player.playerLoseHP(temp);	// Harden is active, enemy deals 50% dmg
+		    				}
+		    				else if(shieldActive)
+		    					temp = 0;
+		    				else if(weakLeft > 0) {
+		    					temp = temp / 3;
+		    					if (player.getBubble() > 0)
+		    						bubbleHit(temp);
+		    					else if(temp == 0)
 	    							player.playerLoseHP(1);
 	    						else
 	    							player.playerLoseHP(temp);
-	    						weakLeft--;
-	    					}
-	    					else if (player.getBubble() > 0)
+		    					weakLeft--;
+		    				}
+		    				else if (player.getBubble() > 0)
 	    						bubbleHit(temp);
-	    					else
-	    						player.playerLoseHP(temp);	// Harden is active, enemy deals 50% dmg
-	    				}
-	    				else if(shieldActive)
-	    					temp = 0;
-	    				else if(weakLeft > 0) {
-	    					temp = temp / 3;
-	    					if (player.getBubble() > 0)
-	    						bubbleHit(temp);
-	    					else if(temp == 0)
-    							player.playerLoseHP(1);
-    						else
-    							player.playerLoseHP(temp);
-	    					weakLeft--;
-	    				}
-	    				else if (player.getBubble() > 0)
-    						bubbleHit(temp);
-	    				else if(!shieldActive)
-	    					player.playerLoseHP(temp);
-	    					    				
-	    				if(player.getBubble() < 0)
-	    					player.setBubble(0);
-	    				lblBubble.setText("" + player.getBubble());
-	    				lblBubble.repaint();
-	    		    	player.playerShowHP(lblPlayerHP);
-	    		    	lblPlayerHP.repaint();
-	    		    	if (temp == 0)
-	    		    		temp = 1;
-	    		    	if(riposteActive)
-	    		    		lblDamageDealt.setText("Riposte failed and the enemy dealt: " + temp  + " damage");
-	    		    	else if (!shieldActive)
-	    		    		lblDamageDealt.setText("Enemy dealt: " + temp  + " damage"); 
-	    		    	else
-	    		    		lblDamageDealt.setText("Enemy attack blocked"); 
-	    				lblDamageDealt.repaint();
-	    		    	isPlayerDead();
-	    		    	riposteActive = false;	
-	    		    	shieldActive = false;
-	    	    	}
-	    			// Check if Riposte was successful
-	    			else if (abilityID == 3){
-	    				int x = enemy.getStrength() / 2 + s.riposte.getAttackPower();			
-	    				enemy.enemyLoseHP(x);
-	    				enemy.enemyShowHP(lblEnemyHP);
-	    				lblEnemyHP.repaint();
-	    				lblDamageDealt.setText("You reflected the attack and hit them for " + x + " damage");
-	    				lblDamageDealt.repaint();			
-	    				isEnemyDead();
-	    			}
-	    			else if(enemyConfused) {
-	    				lblDamageDealt.setText("Enemy confused and failed to attack");
-	    				lblDamageDealt.repaint();
-	    				enemyConfused = false;
-	    			}
-	    			else {
-	    				lblDamageDealt.setText("Enemy attack missed");
-	    				lblDamageDealt.repaint();
-	    			}
-	    			abilityID = 0;
-	    			hardenActive = false;
-	    			enemyDead = false;	    			
-	            }
-	        }, 350);	// Timer value in milliseconds        									
+		    				else if(!shieldActive)
+		    					player.playerLoseHP(temp);
+		    					    				
+		    				if(player.getBubble() < 0)
+		    					player.setBubble(0);
+		    				lblBubble.setText("" + player.getBubble());
+		    				lblBubble.repaint();
+		    		    	player.playerShowHP(lblPlayerHP);
+		    		    	lblPlayerHP.repaint();
+		    		    	if (temp == 0)
+		    		    		temp = 1;
+		    		    	if(riposteActive)
+		    		    		lblDamageDealt.setText("Riposte failed and the enemy dealt: " + temp  + " damage");
+		    		    	else if (!shieldActive)
+		    		    		lblDamageDealt.setText("Enemy dealt: " + temp  + " damage"); 
+		    		    	else
+		    		    		lblDamageDealt.setText("Enemy attack blocked"); 
+		    				lblDamageDealt.repaint();
+		    		    	isPlayerDead();
+		    		    	riposteActive = false;	
+		    		    	shieldActive = false;
+		    	    	}
+		    			// Check if Riposte was successful
+		    			else if (abilityID == 3){
+		    				int x = enemy.getStrength() / 2 + s.riposte.getAttackPower();			
+		    				enemy.enemyLoseHP(x);
+		    				enemy.enemyShowHP(lblEnemyHP);
+		    				lblEnemyHP.repaint();
+		    				lblDamageDealt.setText("You reflected the attack and hit them for " + x + " damage");
+		    				lblDamageDealt.repaint();			
+		    				isEnemyDead();
+		    			}
+		    			else if(enemyConfused) {
+		    				lblDamageDealt.setText("Enemy confused and failed to attack");
+		    				lblDamageDealt.repaint();
+		    				enemyConfused = false;
+		    			}
+		    			else {
+		    				lblDamageDealt.setText("Enemy attack missed");
+		    				lblDamageDealt.repaint();
+		    			}
+		    			abilityID = 0;
+		    			hardenActive = false;
+		    			enemyDead = false;	    			
+		            }
+		        }, 350);	// Timer value in milliseconds        									
+			}
+			break;
+		case 2:
+			enemy.setStrength(enemy.getStrength() + 1);
+			lblDamageDealt.setText("Enemy buffed itself");
+			lblDamageDealt.repaint();
+			break;
+		case 3:
+			if(rand.nextInt(2) == 0) {
+				playerStunned = true;
+				lblDamageDealt.setText("Enemy stunned the player");
+				lblDamageDealt.repaint();
+			}			
+			else {
+				lblDamageDealt.setText("Enemy failed to stun the player");
+				lblDamageDealt.repaint();
+			}
+			turnCounter = 0;
+			break;
 		}
+		
 		if(stunActive && !enemyConfused) {
 			t.schedule(new TimerTask() {
 	            @Override
@@ -1089,10 +1371,12 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				}
 				if(abilityID != 2)
 					z = y;
+				
 				x = rand.nextInt(z, player.getStrength() / 2 + weapon.getWeaponDamage() + y + player.getTempStr() / 2 + 1); // Ability attack
 				if(abilityID == 6)	// Whirlwind
 					for(int i = 1; i < 3; i++)
-						x = x + (player.getStrength() / 2 + weapon.getWeaponDamage() + y + player.getTempStr() / 2 + 1);					
+						x = x + rand.nextInt(z, weapon.getWeaponDamage() + y + player.getTempStr() / 2 + 1);					
+				
 				if(abilityID == 17) { // Life steal heal effect
 					player.increaseHP(x / 2);
 					if(player.getHp() > player.getMaxHP())
@@ -1266,6 +1550,13 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		lblReward.setBounds(385, 390, 500, 50);
 		lblReward.setVisible(false);
 		add(lblReward);
+		
+		lblCard = new JLabel();
+		lblCard.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCard.setVerticalAlignment(SwingConstants.CENTER);
+		lblCard.setBounds(385, 70, 250, 300);
+		lblCard.setVisible(false);
+		add(lblCard);
 		
 		lblLevelUp = new JLabel();
 		lblLevelUp.setFont(s.font2);

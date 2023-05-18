@@ -66,6 +66,7 @@ public class Storage {
 	public Weapons fieryAxe = new FieryAxe();
 	public Weapons moltenAxe = new MoltenAxe();
 	public Weapons waterAxe = new WaterAxe();
+	public Weapons obsidianAxe = new ObsidianAxe();
 	
 	// Load items
 	public Items healthPot = new HealthPot();
@@ -88,6 +89,7 @@ public class Storage {
 	public Recipes coinR = new CoinRecipe();
 	public Recipes bombR = new BombRecipe();
 	public Recipes healthPotR = new HealthPotRecipe();
+	public Recipes obsidianAxeR = new ObsidianAxeRecipe();
 	
 	// Set animation to enemies
 	public Image setAnimation(String img) {

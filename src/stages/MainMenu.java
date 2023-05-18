@@ -205,12 +205,13 @@ public class MainMenu extends JPanel implements ActionListener {
             s.fieryAxe.setAmount(intArray[12]);
             s.moltenAxe.setAmount(intArray[13]);
             s.waterAxe.setAmount(intArray[14]);
-            s.healthPot.setAmount(intArray[15]);
-            s.shield.setAmount(intArray[16]);
-            s.bomb.setAmount(intArray[17]);
-            s.poisonDart.setAmount(intArray[18]);
-            s.bigBomb.setAmount(intArray[19]);
-            s.biggerBomb.setAmount(intArray[20]);
+            s.obsidianAxe.setAmount(intArray[15]);
+            s.healthPot.setAmount(intArray[16]);
+            s.shield.setAmount(intArray[17]);
+            s.bomb.setAmount(intArray[18]);
+            s.poisonDart.setAmount(intArray[19]);
+            s.bigBomb.setAmount(intArray[20]);
+            s.biggerBomb.setAmount(intArray[21]);
             
             loadGame.setVisible(true);
         	yesLoad.setVisible(true);

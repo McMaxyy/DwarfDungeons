@@ -35,18 +35,18 @@ public class HomeScreen extends JPanel implements ActionListener {
     private Storage s = Storage.getInstance();
     private int xLoc1 = 607, yLoc1 = 300, itemsInRow1 = 0, xLoc2 = 642, yLoc2 = 500, itemsInRow2 = 0;
     private int xLocA = 660, yLocA = 90, itemsInRowA = 0;
-    private JButton bagW[] = new JButton[s.waterAxe.getID()];
+    private JButton bagW[] = new JButton[s.obsidianAxe.getID()];
     private JButton bagI[] = new JButton[s.biggerBomb.getID()];
     private JButton activeBag[] = new JButton[8];
     private boolean bagVisible = false, weaponAdded = false;
-    private JLabel weaponName[] = new JLabel[s.waterAxe.getID()];
+    private JLabel weaponName[] = new JLabel[s.obsidianAxe.getID()];
     private JLabel itemName[] = new JLabel[s.biggerBomb.getID()];
 
     public HomeScreen(GameWindow window) {
         this.window = window;        
         player.setUnlockedStage(1);
         player.setMaxHP(30);
-        player.setStrength(2);
+        player.setStrength(200);
         player.setLevelCap(10);
         player.setExp(0);
         player.setLevel(0);
@@ -230,6 +230,8 @@ public class HomeScreen extends JPanel implements ActionListener {
 			createWeaponInventory(s.moltenAxe.getID());
 		if(s.waterAxe.getAmount() > 0)
 			createWeaponInventory(s.waterAxe.getID());
+		if(s.obsidianAxe.getAmount() > 0)
+			createWeaponInventory(s.obsidianAxe.getID());
 		
 		// Check for items
 		if(s.healthPot.getAmount() > 0)
@@ -326,6 +328,15 @@ public class HomeScreen extends JPanel implements ActionListener {
 			weaponName[x - 1].setVisible(false);
 			add(weaponName[x - 1]);
 			break;
+		case 10:
+			bagW[x - 1].setIcon(new ImageIcon(waterBtn));
+			weaponName[x - 1] = new JLabel();
+			
+			weaponName[x - 1].setText(String.format("<html>Obsidian<br>Axe x%d</html>", s.obsidianAxe.getAmount()));
+			weaponName[x - 1].setBounds(xLoc1, yLoc1 - 35, 60, 40);
+			weaponName[x - 1].setVisible(false);
+			add(weaponName[x - 1]);
+			break;
 		}
 		bagW[x - 1].setActionCommand(temp + x);
 		bagW[x - 1].addActionListener(this);
@@ -336,7 +347,7 @@ public class HomeScreen extends JPanel implements ActionListener {
 		xLoc1 += 70;
 		itemsInRow1++;
 		if(itemsInRow1 == 5) {
-			xLoc1 = 642;
+			xLoc1 = 607;
 			yLoc1 += 90;
 			itemsInRow1 = 0;
 		}
@@ -539,6 +550,9 @@ public class HomeScreen extends JPanel implements ActionListener {
 		case "WaterAxe":
 			s.waterAxe.setAmount(s.waterAxe.getAmount() - 1);
 			break;
+		case "ObsidianAxe":
+			s.obsidianAxe.setAmount(s.obsidianAxe.getAmount() - 1);
+			break;
 		}
 	}
 	
@@ -571,7 +585,7 @@ public class HomeScreen extends JPanel implements ActionListener {
 	}
 
 	private void saveGame() {
-		int[] saveS = new int[21];
+		int[] saveS = new int[22];
 		saveS[0] = player.getStoryMaxHP();
 		saveS[1] = player.getStoryStrength();
 		saveS[2] = player.getCoins();
@@ -587,12 +601,13 @@ public class HomeScreen extends JPanel implements ActionListener {
 		saveS[12] = s.fieryAxe.getAmount();
 		saveS[13] = s.moltenAxe.getAmount();
 		saveS[14] = s.waterAxe.getAmount();
-		saveS[15] = s.healthPot.getAmount();
-		saveS[16] = s.shield.getAmount();
-		saveS[17] = s.bomb.getAmount();
-		saveS[18] = s.poisonDart.getAmount();
-		saveS[19] = s.bigBomb.getAmount();
-		saveS[20] = s.biggerBomb.getAmount();
+		saveS[15] = s.waterAxe.getAmount();
+		saveS[16] = s.healthPot.getAmount();
+		saveS[17] = s.shield.getAmount();
+		saveS[18] = s.bomb.getAmount();
+		saveS[19] = s.poisonDart.getAmount();
+		saveS[20] = s.bigBomb.getAmount();
+		saveS[21] = s.biggerBomb.getAmount();
 		
 		try (FileWriter writer = new FileWriter("savegame.json")) {
             gson.toJson(saveS, writer);
@@ -733,6 +748,11 @@ public class HomeScreen extends JPanel implements ActionListener {
             player.setActiveWeapon(s.waterAxe.getID());
             weaponAdded = true;
             addItemToActiveBag(waterBtn, "WaterAxe");
+            break;
+        case "weapon10":
+            player.setActiveWeapon(s.obsidianAxe.getID());
+            weaponAdded = true;
+            addItemToActiveBag(waterBtn, "ObsidianAxe");
             break;
             
         // Items in inventory

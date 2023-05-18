@@ -140,7 +140,7 @@ class ObsidianAxe extends Weapons{
 		setWeaponName("Obsidian Axe");
 		setAttackPower(16);
 		setID(10);
-		setAmount(0);
+		setAmount(1);
 		setSellValue(700);
 	}
 }

@@ -10,11 +10,12 @@ import constants.Player;
 import inventory.Storage;
 import main.GameWindow;
 
+@SuppressWarnings("serial")
 public class Blacksmith extends JPanel implements ActionListener{
 	private GameWindow window;
 	private Storage s = Storage.getInstance();
 	private Player player = new Player();
-	private JButton ironAxe, coin, bomb, healthPotion, returnButton;
+	private JButton ironAxe, coin, bomb, healthPotion, obsidianAxe, returnButton;
 	
 	public Blacksmith(GameWindow window) {
 		this.window = window;
@@ -45,6 +46,12 @@ public class Blacksmith extends JPanel implements ActionListener{
 			healthPotion.setEnabled(true);
 		else
 			healthPotion.setEnabled(false);
+		
+		if(s.bottledLava.getAmount() >= s.obsidianAxeR.getReqMat1() &&
+				s.bottledWater.getAmount() >= s.obsidianAxeR.getReqMat2())
+			obsidianAxe.setEnabled(true);
+		else
+			obsidianAxe.setEnabled(false);
 	}
 	
 	private void initComponents() {
@@ -87,6 +94,14 @@ public class Blacksmith extends JPanel implements ActionListener{
 		healthPotion.addActionListener(this);
 		healthPotion.setBounds(350, 200, 100, 50);
 		add(healthPotion);
+		
+		obsidianAxe = new JButton();
+		obsidianAxe.setText("ObsidianAxe");
+		obsidianAxe.setFocusable(false);
+		obsidianAxe.setActionCommand("ObsidianAxe");
+		obsidianAxe.addActionListener(this);
+		obsidianAxe.setBounds(450, 150, 100, 50);
+		add(obsidianAxe);
 	}
 
 	@Override
@@ -115,6 +130,12 @@ public class Blacksmith extends JPanel implements ActionListener{
 		case "HP":
 			s.healthPot.setAmount(s.healthPot.getAmount() + 1);
 			s.lifePowder.setAmount(s.lifePowder.getAmount() - s.healthPotR.getReqMat1());
+			checkAvailability();
+			break;
+		case "ObsidianAxe":
+			s.bottledLava.setAmount(s.bottledLava.getAmount() - s.obsidianAxeR.getReqMat1());
+			s.bottledWater.setAmount(s.bottledWater.getAmount() - s.obsidianAxeR.getReqMat2());
+			s.obsidianAxe.setAmount(s.obsidianAxe.getAmount() + 1);
 			checkAvailability();
 			break;
 		}

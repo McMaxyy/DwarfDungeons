@@ -56,8 +56,14 @@ public class LevelSelector extends JPanel implements ActionListener{
 		setStage();
 		setButtons();
 		
-		if(player.getUnlockedStage() > 1)
+		if(player.getUnlockedStage() > 2) {
 			stageOne.setEnabled(false);
+			stageTwo.setEnabled(false);
+		}
+		else if(player.getUnlockedStage() > 1)
+			stageOne.setEnabled(false);
+			
+		
 		
 		if(levelIndex > 1) {
 			stageOne.setEnabled(false);
