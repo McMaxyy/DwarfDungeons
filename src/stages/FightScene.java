@@ -39,8 +39,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	private Random rand = new Random();
 	private int enemySelectRand = rand.nextInt(2), weaponWon, abilityWon;
 	private int currentLevel, currentStage, turnCounter, abilityID, enemiesDefeated, rendLeft, 
-			weakLeft, poisonLeft, bubbleAmount, wallLeft;
-	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack, hardenActive,
+			weakLeft, poisonLeft, bubbleAmount, wallLeft, enemyBleedLeft;
+	private boolean playerWin, playerAttack, riposteActive, gameOver, enemyAttack, hardenActive, enemyHarden,
 			enemyDead, stunActive, bossActive, shieldActive, explosionActive, enemyConfused, playerStunned;
 	private Border blackline = BorderFactory.createLineBorder(Color.black);
 	private Image pImg, wImg, pAttackImg, wAttackImg, eImg, eAttackImg, backgroundImg;
@@ -300,7 +300,14 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	doAttack();
         	break;
         case "Turn":
-            enemyAttack();   
+            enemyAttack();
+            enemyHarden = false;
+            if(enemyBleedLeft > 0) {
+            	player.playerLoseHP(2);
+            	lblDamageDealt.setText("Player got hit by bleed for 2 damage");
+            	lblDamageDealt.repaint();
+            	enemyBleedLeft--;
+            }
             if(playerStunned) 
             	playerStunned = false;
             else
@@ -314,7 +321,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
             	lblDamageDealt.setText("Surrounded player with a protective bubble");
             	lblBubble.setText("" + player.getBubble());
             	wallLeft--;
-            }    
+            }  
             enableActionButtons();
             break;
         case "HP up":
@@ -1153,8 +1160,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	}	
 	
 	// Enemy attack function
-	private void enemyAttack() {	
-		int x = rand.nextInt(4);
+	private void enemyAttack() {		
 		if(rendLeft != 0) {
 			int temp = s.rend.getAttackPower() + player.getStrength() / 2;
 			enemy.enemyLoseHP(temp);
@@ -1176,12 +1182,14 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			poisonLeft--;			
 		}
 		
+		int x = rand.nextInt(6);
 		if(abilityID == 3)
 			x = 0;
 		
 		switch(x) {
 		case 0:
 		case 1:
+		case 2:
 			if(!enemyDead && !stunActive) {
 				t.schedule(new TimerTask() {
 		            @Override
@@ -1277,22 +1285,12 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		        }, 350);	// Timer value in milliseconds        									
 			}
 			break;
-		case 2:
-			enemy.setStrength(enemy.getStrength() + 1);
-			lblDamageDealt.setText("Enemy buffed itself");
-			lblDamageDealt.repaint();
-			break;
 		case 3:
-			if(rand.nextInt(2) == 0) {
-				playerStunned = true;
-				lblDamageDealt.setText("Enemy stunned the player");
-				lblDamageDealt.repaint();
-			}			
-			else {
-				lblDamageDealt.setText("Enemy failed to stun the player");
-				lblDamageDealt.repaint();
-			}
-			turnCounter = 0;
+		case 4:
+			enemyAbility(1);
+			break;
+		case 5:
+			enemyAbility(2);
 			break;
 		}
 		
@@ -1305,6 +1303,72 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	            }}, 350);
 		}
 		stunActive = false;
+	}
+	
+	private void enemyAbility(int ability) {
+		if(ability == 1) {
+			switch(enemy.getAbility1()) {
+			case "Stun":
+				enemyStun();
+				break;
+			case "Buff":
+				enemyBuff();
+				break;
+			case "Bleed":
+				enemyBleed();
+				break;
+			case "Harden":
+				enemyHarden();
+				break;
+			}
+		}
+		else {
+			switch(enemy.getAbility2()) {
+			case "Stun":
+				enemyStun();
+				break;
+			case "Buff":
+				enemyBuff();
+				break;
+			case "Bleed":
+				enemyBleed();
+				break;
+			case "Harden":
+				enemyHarden();
+				break;
+			}
+		}
+	}
+	
+	private void enemyHarden() {
+		enemyHarden = true;
+		lblDamageDealt.setText("Enemy hardened its body");
+		lblDamageDealt.repaint();
+	}
+	
+	private void enemyBleed() {
+		lblDamageDealt.setText("Enemy hit you with bleed");
+		lblDamageDealt.repaint();
+		enemyBleedLeft = 2;
+	}
+	
+	private void enemyBuff() {
+		enemy.setStrength(enemy.getStrength() + 1);
+		lblDamageDealt.setText("Enemy buffed itself");
+		lblDamageDealt.repaint();
+	}
+	
+	private void enemyStun() {
+		if(rand.nextInt(2) == 0) {
+			playerStunned = true;
+			lblDamageDealt.setText("Enemy stunned the player");
+			lblDamageDealt.repaint();
+		}			
+		else {
+			lblDamageDealt.setText("Enemy failed to stun the player");
+			lblDamageDealt.repaint();
+		}
+		turnCounter = 0;
 	}
 	
 	private void doAttack() {
@@ -1393,6 +1457,9 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 				x = x + s.bomb.getItemPower();
 			
 			// Damage enemy & update label
+			if(enemyHarden) {				
+				x = x / 2;
+			}				
 			enemy.enemyLoseHP(x);
 			enemy.enemyShowHP(lblEnemyHP);
 			lblEnemyHP.repaint();

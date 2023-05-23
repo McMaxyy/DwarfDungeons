@@ -16,6 +16,8 @@ public class Enemies {
 	private int coinValue;
 	private int currentStage;
 	private int currentLevel;
+	private String ability1;
+	private String ability2;
 	private static boolean bossActive, strongEnemyActive;
 	private String enemyName;
 	private Image enemyIdle, enemyAttack;
@@ -37,7 +39,7 @@ public class Enemies {
 			case 1:
 				switch(currentStage) {
 				case 1:
-					enemyName = "Baby spider";
+					enemyName = "Spider";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
 					maxHP = 30;
@@ -45,6 +47,8 @@ public class Enemies {
 					strength = 4;
 					expValue = 3;
 					coinValue = 5;
+					ability1 = "Stun";
+					ability1 = "Buff";
 					break;
 				case 2:
 					enemyName = "Wolf";
@@ -55,6 +59,8 @@ public class Enemies {
 					strength = 6;
 					expValue = 5;
 					coinValue = 8;
+					ability1 = "Bleed";
+					ability2 = "Buff";
 					break;
 				case 3:
 					if(rand.nextInt(2) == 0) {
@@ -66,6 +72,8 @@ public class Enemies {
 						strength = 6;
 						expValue = 7;
 						coinValue = 8;
+						ability1 = "Stun";
+						ability1 = "Buff";
 					}
 					else {
 						enemyName = "Wolf";
@@ -76,6 +84,8 @@ public class Enemies {
 						strength = 8;
 						expValue = 10;
 						coinValue = 12;
+						ability1 = "Bleed";
+						ability2 = "Buff";
 					}
 					break;
 				}
@@ -86,7 +96,7 @@ public class Enemies {
 			switch(s.gameLevel) {
 			case 1:
 				if(rand.nextInt(2) == 0) {
-					enemyName = "Baby spider";
+					enemyName = "Spider";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
 					maxHP = 35;
@@ -94,6 +104,8 @@ public class Enemies {
 					strength = 4;
 					expValue = 3;
 					coinValue = 5;
+					ability1 = "Stun";
+					ability1 = "Buff";
 				}
 				else {
 					enemyName = "Wolf";
@@ -104,6 +116,8 @@ public class Enemies {
 					strength = 6;
 					expValue = 5;
 					coinValue = 8;
+					ability1 = "Bleed";
+					ability2 = "Buff";
 				}
 				break;
 			}			
@@ -124,6 +138,8 @@ public class Enemies {
 					strength = 6;
 					expValue = 6;
 					coinValue = 7;
+					ability1 = "Stun";
+					ability2 = "Bleed";
 					break;
 				case 2:
 					enemyName = "Skeleton";
@@ -134,6 +150,8 @@ public class Enemies {
 					strength = 8;
 					expValue = 9;
 					coinValue = 10;
+					ability1 = "Harden";
+					ability2 = "Buff";
 					break;
 				case 3:
 					if(rand.nextInt(2) == 0) {
@@ -145,6 +163,8 @@ public class Enemies {
 						strength = 8;
 						expValue = 10;
 						coinValue = 12;
+						ability1 = "Stun";
+						ability2 = "Bleed";
 					}
 					else {
 						enemyName = "Skeleton";
@@ -155,6 +175,8 @@ public class Enemies {
 						strength = 9;
 						expValue = 14;
 						coinValue = 16;
+						ability1 = "Harden";
+						ability2 = "Buff";
 					}
 					break;
 				}
@@ -173,6 +195,8 @@ public class Enemies {
 					strength = 6;
 					expValue = 6;
 					coinValue = 7;
+					ability1 = "Stun";
+					ability2 = "Bleed";
 				}
 				else {
 					enemyName = "Skeleton";
@@ -183,6 +207,8 @@ public class Enemies {
 					strength = 8;
 					expValue = 9;
 					coinValue = 10;
+					ability1 = "Harden";
+					ability2 = "Buff";
 				}
 				break;
 			}			
@@ -202,6 +228,8 @@ public class Enemies {
 					strength = 8;
 					expValue = 15;
 					coinValue = 15;
+					ability1 = "Stun";
+					ability2 = "Harden";
 				}
 				break;
 			}		
@@ -217,6 +245,8 @@ public class Enemies {
 				strength = 8;
 				expValue = 15;
 				coinValue = 15;
+				ability1 = "Stun";
+				ability2 = "Harden";
 				break;
 			}			
 		}
@@ -363,6 +393,14 @@ public class Enemies {
 
 	public void setCurrentLevel(int currentLevel) {
 		this.currentLevel = currentLevel;
+	}
+
+	public String getAbility1() {
+		return ability1;
+	}
+
+	public String getAbility2() {
+		return ability2;
 	}
 	
 }
