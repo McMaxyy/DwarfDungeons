@@ -192,7 +192,10 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	if(rand.nextInt(4) != 0) {
         		weakLeft = 2;
             	lblDamageDealt.setText("Enemy weakened");
-        	}      	
+        	}    
+        	else {
+        		lblDamageDealt.setText("Failed to weaken enemy");
+        	}
         	turnCounter -= s.weaken.getAbilityCost();
         	enableActionButtons();
         	break;
@@ -300,11 +303,16 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	doAttack();
         	break;
         case "Turn":
-            enemyAttack();
-            enemyHarden = false;
+        	enemyHarden = false;
+            enemyAttack();           
             if(enemyBleedLeft > 0) {
-            	player.playerLoseHP(2);
-            	lblDamageDealt.setText("Player got hit by bleed for 2 damage");
+            	if(player.getBubble() > 0)
+            		bubbleHit(3);
+            	else {
+            		player.playerLoseHP(3);
+            		lblPlayerHP.repaint();
+            	}          	
+            	lblDamageDealt.setText("Player got hit by bleed for 3 damage");
             	lblDamageDealt.repaint();
             	enemyBleedLeft--;
             }
@@ -642,7 +650,6 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		}
 	}
 	
-	// Add the dropped weapon to the player's inventory
 	// Add weapon to inventory by switching out the current inventory slot
 	private void addWeapon(int index) {		
 		if(weaponWon > 0) {
@@ -694,7 +701,6 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		}
 	}
 	
-	// Set active weapon
 	// Set active weapon
 	private void setWeapon() {
 		switch(player.getActiveWeapon()) {
@@ -835,16 +841,24 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	// Check if enemy is dead (also give player rewards if enemy died)
 	public void isEnemyDead() {
 		if(enemy.getHp() <= 0) {
+			// Reset variables & status effects
 			legendary1Used = legendary2Used = legendary3Used = legendary4Used = false;
 			ab1Used = ab2Used = ab3Used = ab4Used = false;
 			enemyDead = true;
 			rendLeft = 0;
 			poisonLeft = 0;
+			weakLeft = 0;
+			enemyBleedLeft = 0;
+			stunActive = false;
+			hardenActive = false;
+			enemyHarden = false;			
+			shieldActive = false;
 			
 			// Normal enemy rewards
+			int x = rand.nextInt(5);
 			player.gainCoin(enemy.getCoinValue());
 			lblReward.setText("You got " + enemy.getCoinValue() + " coins");
-			if(rand.nextInt(15) != 0 && !bossActive) {	
+			if(x == 0 && !bossActive) {	
 				switch(s.gameLevel) {
 				case 1:
 					lblReward.setText("You got " + s.ironAxe.getWeaponName() + ". Add it to inv?");
@@ -866,9 +880,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			
 			// Check if the player's defeated 3 enemies, if not, spawn a new one
 			if(enemiesDefeated != 2 && currentLevel != 2 && 
-				!enemy.isStrongEnemyActive() && !enemy.isBossActive()) {
-				
-				enemyDead = false;
+				!enemy.isStrongEnemyActive() && !enemy.isBossActive()) {						
 				
 				lblReward.setVisible(true);
 				lblExp.setText("Gained " + enemy.getExpValue() + " exp");
@@ -878,7 +890,8 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    	            @Override
 	    	            public void run() {		    	            	
 	    	    			lblExp.setVisible(false);
-//	    	    			lblReward.setVisible(false);
+	    	    			if(x != 0)
+	    	    				lblReward.setVisible(false);
 	    	            }}, 1000);
 				
 				// Select new enemy
@@ -973,8 +986,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 								else {
 									lblReward.setText("You got 1x Bottled Water");
 									s.bottledWater.setAmount(s.bottledWater.getAmount() + 1);
-								}
-									
+								}									
 							}
 							break;
 						}
@@ -1162,7 +1174,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	// Enemy attack function
 	private void enemyAttack() {		
 		if(rendLeft != 0) {
-			int temp = s.rend.getAttackPower() + player.getStrength() / 2;
+			int temp = s.rend.getAttackPower();
 			enemy.enemyLoseHP(temp);
 			enemy.enemyShowHP(lblEnemyHP);
 			lblEnemyHP.repaint();
@@ -1186,11 +1198,11 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		if(abilityID == 3)
 			x = 0;
 		
-		switch(x) {
-		case 0:
-		case 1:
-		case 2:
-			if(!enemyDead && !stunActive) {
+		if(!enemyDead && !stunActive) {
+			switch(x) {
+			case 0:
+			case 1:
+			case 2:
 				t.schedule(new TimerTask() {
 		            @Override
 		            public void run() {
@@ -1200,7 +1212,9 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		            	// Check if enemy attack missed
 		    			if(abilityID != 3 && enemy.enemyAttack() && !enemyConfused) {
 		    				// Debuff effects
-		    				if(hardenActive) {
+		    				if(shieldActive)
+		    					temp = 0;
+		    				else if(hardenActive) {
 		    					temp = temp / 2;
 		    					if(weakLeft > 0) {						
 		    						temp = temp / 3;
@@ -1223,8 +1237,6 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		    					else
 		    						player.playerLoseHP(temp);	// Harden is active, enemy deals 50% dmg
 		    				}
-		    				else if(shieldActive)
-		    					temp = 0;
 		    				else if(weakLeft > 0) {
 		    					temp = temp / 3;
 		    					if (player.getBubble() > 0)
@@ -1260,7 +1272,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		    		    	shieldActive = false;
 		    	    	}
 		    			// Check if Riposte was successful
-		    			else if (abilityID == 3){
+		    			else if (abilityID == 3) {
 		    				int x = enemy.getStrength() / 2 + s.riposte.getAttackPower();			
 		    				enemy.enemyLoseHP(x);
 		    				enemy.enemyShowHP(lblEnemyHP);
@@ -1283,17 +1295,20 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		    			enemyDead = false;	    			
 		            }
 		        }, 350);	// Timer value in milliseconds        									
+				break;
+			case 3:
+			case 4:
+				enemyAbility(1);
+				break;
+			case 5:
+				enemyAbility(2);
+				break;
 			}
-			break;
-		case 3:
-		case 4:
-			enemyAbility(1);
-			break;
-		case 5:
-			enemyAbility(2);
-			break;
 		}
 		
+		if(enemyDead)
+			enemyDead = false;
+			
 		if(stunActive && !enemyConfused) {
 			t.schedule(new TimerTask() {
 	            @Override
@@ -1349,7 +1364,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	private void enemyBleed() {
 		lblDamageDealt.setText("Enemy hit you with bleed");
 		lblDamageDealt.repaint();
-		enemyBleedLeft = 2;
+		enemyBleedLeft = 3;
 	}
 	
 	private void enemyBuff() {
@@ -1967,7 +1982,88 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    	g.drawImage(currentCard, 500, 200, this);
 	    }
 	    
-	}
+	    // Show status effects above the enemy's HP bar
+	    // Bleed effect
+		if(rendLeft > 0) {
+			g.setColor(Color.RED);
+			g.fillRect(40, 220, 20, 20);
+		}
+		else {
+			g.setColor(Color.WHITE);
+			g.fillRect(40, 220, 20, 20);
+		}
+		
+		// Poison effect
+		if(poisonLeft > 0) {
+			g.setColor(Color.GREEN);
+			g.fillRect(70, 220, 20, 20);
+		}
+		else {
+			g.setColor(Color.WHITE);
+			g.fillRect(70, 220, 20, 20);
+		}
+		
+		// Weak effect
+		if(weakLeft > 0) {
+			g.setColor(Color.BLUE);
+			g.fillRect(100, 220, 20, 20);
+		}
+		else {
+			g.setColor(Color.WHITE);
+			g.fillRect(100, 220, 20, 20);
+		}
+		
+		// Stun effect
+		if(stunActive) {
+			g.setColor(Color.YELLOW);
+			g.fillRect(130, 220, 20, 20);
+		}
+		else {
+			g.setColor(Color.WHITE);
+			g.fillRect(130, 220, 20, 20);
+		}
+		
+		// Harden effect
+		if(enemyHarden) {
+			g.setColor(Color.GRAY);
+			g.fillRect(160, 220, 20, 20);
+		}
+		else {
+			g.setColor(Color.WHITE);
+			g.fillRect(160, 220, 20, 20);
+		}
+		
+		// Show status effects above the player's HP bar
+		// Bleed effect
+		if(enemyBleedLeft > 0) {
+			g.setColor(Color.RED);
+			g.fillRect(1000, 190, 20, 20);
+		}
+		else {
+			g.setColor(Color.WHITE);
+			g.fillRect(1000, 190, 20, 20);
+		}
+		
+		// Harden effect
+		if(hardenActive) {
+			g.setColor(Color.GRAY);
+			g.fillRect(1030, 190, 20, 20);
+		}
+		else {
+			g.setColor(Color.WHITE);
+			g.fillRect(1030, 190, 20, 20);
+		}
+		
+		// Block effect
+		if(shieldActive) {
+			g.setColor(Color.BLACK);
+			g.fillRect(1060, 190, 20, 20);
+		}
+		else {
+			g.setColor(Color.WHITE);
+			g.fillRect(1060, 190, 20, 20);
+		}	
+	}	
 
 	// Used for showing ability card upon hovering over the ability button
 	@Override

@@ -48,7 +48,7 @@ public class Enemies {
 					expValue = 3;
 					coinValue = 5;
 					ability1 = "Stun";
-					ability1 = "Buff";
+					ability2 = "Buff";
 					break;
 				case 2:
 					enemyName = "Wolf";
@@ -73,7 +73,7 @@ public class Enemies {
 						expValue = 7;
 						coinValue = 8;
 						ability1 = "Stun";
-						ability1 = "Buff";
+						ability2 = "Buff";
 					}
 					else {
 						enemyName = "Wolf";
@@ -105,7 +105,7 @@ public class Enemies {
 					expValue = 3;
 					coinValue = 5;
 					ability1 = "Stun";
-					ability1 = "Buff";
+					ability2 = "Buff";
 				}
 				else {
 					enemyName = "Wolf";

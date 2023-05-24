@@ -36,7 +36,7 @@ public class Merchant extends JPanel implements ActionListener{
 	public Merchant(GameWindow window, int levelIndex){
 		this.window = window;
 		currentLevel = levelIndex;
-		x = rand.nextInt(1,7);
+		x = rand.nextInt(1,17);
 		playerPurchased = hpPurchased = mpPurchased = weaponPurchased = abPurchased = false;
 		
 		hpPrice = rand.nextInt(7, 11);
