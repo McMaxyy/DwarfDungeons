@@ -6,9 +6,9 @@ import javax.swing.JLabel;
 import java.util.*;
 
 public class Player {
-	private static int maxHP = 30;
+	private static int maxHP = 60;
 	private static int hp;
-	private static int strength = 2;
+	private static int strength = 3;
 	private static int mana = 4;
 	private static int coins = 9999;
 	private static int level = 0;
@@ -19,8 +19,8 @@ public class Player {
 	private static int unlockedStage = 1;
 	private static int tempStr;
 	private static int merchantVisits;
-	private static int storyMaxHP = 30;
-	private static int storyStrength = 200;
+	private static int storyMaxHP = 60;
+	private static int storyStrength = 3;
 	private static int storyLevel = 0;
 	private static int storyExp = 0;
 	private static int storyCap = 10;

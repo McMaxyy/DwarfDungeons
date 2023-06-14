@@ -45,7 +45,7 @@ public class HomeScreen extends JPanel implements ActionListener {
     public HomeScreen(GameWindow window) {
         this.window = window;        
         player.setUnlockedStage(1);
-        player.setMaxHP(30);
+        player.setMaxHP(60);
         player.setStrength(200);
         player.setLevelCap(10);
         player.setExp(0);

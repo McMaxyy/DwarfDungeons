@@ -302,22 +302,24 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
         	abilityID = s.fortifiedAttack.getID();
         	doAttack();
         	break;
-        case "Turn":
+        case "Turn":        	
         	enemyHarden = false;
-            enemyAttack();           
-            if(enemyBleedLeft > 0) {
+        	enemyAttack();       
+            if(enemyBleedLeft > 0) {           	
             	if(player.getBubble() > 0)
             		bubbleHit(3);
             	else {
             		player.playerLoseHP(3);
             		lblPlayerHP.repaint();
-            	}          	
+            	}              	
             	lblDamageDealt.setText("Player got hit by bleed for 3 damage");
             	lblDamageDealt.repaint();
-            	enemyBleedLeft--;
-            }
-            if(playerStunned) 
+            	enemyBleedLeft--;         	
+            }            
+            if(playerStunned) {
             	playerStunned = false;
+            	lblDamageDealt.setText("Player stunned and cannot attack");
+            }           	
             else
             	turnCounter = player.getMana(); 
             ab1Used = ab2Used = ab3Used = ab4Used = false;
@@ -330,6 +332,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
             	lblBubble.setText("" + player.getBubble());
             	wallLeft--;
             }  
+            isPlayerDead();
             enableActionButtons();
             break;
         case "HP up":
@@ -746,21 +749,25 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		        if(player.getHp() > player.getMaxHP())
 		        	player.setHp(player.getMaxHP());
 		        player.playerShowHP(lblPlayerHP);
-		        lblPlayerHP.repaint();	        
+		        lblPlayerHP.repaint();	
+		        lblDamageDealt.setText("Player healed");
 		        break;
 		    case "Shield":
 		    	activeBag[x].setIcon(null);
 		    	shieldActive = true;
+		    	lblDamageDealt.setText("Preparing to block the next attack");
 		        break;
 		    case "Bomb":
 		    	activeBag[x].setIcon(null);
 		        enemy.enemyLoseHP(s.bomb.getItemPower());
 		        enemy.enemyShowHP(lblEnemyHP);
 		        lblEnemyHP.repaint();
+		        lblDamageDealt.setText("Enemy hit for " + s.bomb.getItemPower() + " damage");
 		        isEnemyDead();
 		        break;
 		    case "PoisonDart":
 		    	activeBag[x].setIcon(null);
+		    	lblDamageDealt.setText("Enemy poisoned");
 		        poisonLeft = 3;
 		        break;
 		    case "Dynamite":
@@ -768,6 +775,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		        enemy.enemyLoseHP(s.bigBomb.getItemPower());
 		        enemy.enemyShowHP(lblEnemyHP);
 		        lblEnemyHP.repaint();
+		        lblDamageDealt.setText("Enemy hit for " + s.bigBomb.getItemPower() + " damage");
 		        isEnemyDead();
 		        break;
 		    case "Bombs":
@@ -775,47 +783,58 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		        enemy.enemyLoseHP(s.biggerBomb.getItemPower());
 		        enemy.enemyShowHP(lblEnemyHP);
 		        lblEnemyHP.repaint();
+		        lblDamageDealt.setText("Enemy hit for " + s.biggerBomb.getItemPower() + " damage");
 		        isEnemyDead();
 		        break;
 		    case "IronAxe":
 		    	player.setActiveWeapon(1);
 		    	setWeapon();
+		    	lblDamageDealt.setText("Activated Iron Axe");
 				break;
 		    case "SilverAxe":
 		    	player.setActiveWeapon(2);
 				setWeapon();
+				lblDamageDealt.setText("Activated Silver Axe");
 				break;
 		    case "GoldAxe":
 		    	player.setActiveWeapon(3);
 				setWeapon();
+				lblDamageDealt.setText("Activated Gold Axe");
 				break;
 		    case "SteelAxe":
 		    	player.setActiveWeapon(4);
 				setWeapon();
+				lblDamageDealt.setText("Activated Steel Axe");
 				break;
 		    case "CopperAxe":
 		    	player.setActiveWeapon(5);
 				setWeapon();
+				lblDamageDealt.setText("Activated Copper Axe");
 				break;
 		    case "TitaniumAxe":
 		    	player.setActiveWeapon(6);
 				setWeapon();
+				lblDamageDealt.setText("Activated Titanium Axe");
 				break;
 		    case "FieryAxe":
 		    	player.setActiveWeapon(7);
 				setWeapon();
+				lblDamageDealt.setText("Activated Fiery Axe");
 				break;
 		    case "MoltenAxe":
 		    	player.setActiveWeapon(8);
 				setWeapon();
+				lblDamageDealt.setText("Activated Molten Axe");
 				break;
 		    case "WaterAxe":
 		    	player.setActiveWeapon(9);
 				setWeapon();
+				lblDamageDealt.setText("Activated Water Axe");
 				break;
 		    case "ObsidianAxe":
 		    	player.setActiveWeapon(10);
 				setWeapon();
+				lblDamageDealt.setText("Activated Obsidian Axe");
 				break;
 			}
 	}
@@ -842,9 +861,9 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	public void isEnemyDead() {
 		if(enemy.getHp() <= 0) {
 			// Reset variables & status effects
+			enemyDead = false;
 			legendary1Used = legendary2Used = legendary3Used = legendary4Used = false;
 			ab1Used = ab2Used = ab3Used = ab4Used = false;
-			enemyDead = true;
 			rendLeft = 0;
 			poisonLeft = 0;
 			weakLeft = 0;
@@ -1194,15 +1213,17 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 			poisonLeft--;			
 		}
 		
-		int x = rand.nextInt(6);
+		int x = rand.nextInt(10);	//Choose whether the enemy attacks or uses the first/second ability
 		if(abilityID == 3)
 			x = 0;
-		
 		if(!enemyDead && !stunActive) {
 			switch(x) {
 			case 0:
 			case 1:
 			case 2:
+			case 3:
+			case 4:
+			case 5:
 				t.schedule(new TimerTask() {
 		            @Override
 		            public void run() {
@@ -1270,9 +1291,13 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		    		    	isPlayerDead();
 		    		    	riposteActive = false;	
 		    		    	shieldActive = false;
-		    	    	}
-		    			// Check if Riposte was successful
-		    			else if (abilityID == 3) {
+		    	    	}		    			
+		    			else if(enemyConfused) {
+		    				lblDamageDealt.setText("Enemy confused and failed to attack");
+		    				lblDamageDealt.repaint();
+		    				enemyConfused = false;
+		    			}
+		    			else if (abilityID == 3) {	// Check if Riposte was successful
 		    				int x = enemy.getStrength() / 2 + s.riposte.getAttackPower();			
 		    				enemy.enemyLoseHP(x);
 		    				enemy.enemyShowHP(lblEnemyHP);
@@ -1280,12 +1305,7 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		    				lblDamageDealt.setText("You reflected the attack and hit them for " + x + " damage");
 		    				lblDamageDealt.repaint();			
 		    				isEnemyDead();
-		    			}
-		    			else if(enemyConfused) {
-		    				lblDamageDealt.setText("Enemy confused and failed to attack");
-		    				lblDamageDealt.repaint();
-		    				enemyConfused = false;
-		    			}
+		    			}		    			
 		    			else {
 		    				lblDamageDealt.setText("Enemy attack missed");
 		    				lblDamageDealt.repaint();
@@ -1295,12 +1315,13 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 		    			enemyDead = false;	    			
 		            }
 		        }, 350);	// Timer value in milliseconds        									
-				break;
-			case 3:
-			case 4:
+				break;				
+			case 6:
+			case 7:
 				enemyAbility(1);
 				break;
-			case 5:
+			case 8:
+			case 9:
 				enemyAbility(2);
 				break;
 			}
@@ -1926,14 +1947,11 @@ public class FightScene extends JPanel implements ActionListener, MouseListener,
 	    //Enemy HP bar
 	    g.setColor(Color.WHITE);
 	    g.fillRect(40, 270, 200, 30);
-	    hpProc = (float)enemy.getHp() / (float)enemy.getMaxHP();
-	    // Calculate the width of the rectangle based on hpProc
-	    width = (int)(hpProc * 200);
-		// Round the width down to the nearest 10
-		width = (width / 10) * 10;	
-		if (width < 10) {
+	    hpProc = (float)enemy.getHp() / (float)enemy.getMaxHP();	    
+	    width = (int)(hpProc * 200); // Calculate the width of the rectangle based on hpProc		
+		width = (width / 10) * 10;	// Round the width down to the nearest 10
+		if (width < 10)
 		     width = 0;
-		}	
 		g.setColor(Color.RED);
 		g.fillRect(40, 270, width, 30);
 	    

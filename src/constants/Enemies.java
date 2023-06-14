@@ -42,7 +42,7 @@ public class Enemies {
 					enemyName = "Spider";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
-					maxHP = 30;
+					maxHP = 40;
 					hp = maxHP;
 					strength = 4;
 					expValue = 3;
@@ -54,7 +54,7 @@ public class Enemies {
 					enemyName = "Wolf";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleWolf.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
-					maxHP = 40;
+					maxHP = 45;
 					hp = maxHP;
 					strength = 6;
 					expValue = 5;
@@ -67,7 +67,7 @@ public class Enemies {
 						enemyName = "Spider";
 						enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
 						enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
-						maxHP = 40;
+						maxHP = 50;
 						hp = maxHP;
 						strength = 6;
 						expValue = 7;
@@ -79,7 +79,7 @@ public class Enemies {
 						enemyName = "Wolf";
 						enemyIdle = s.setAnimation("res/EnemyAnimations/IdleWolf.gif");
 						enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
-						maxHP = 45;
+						maxHP = 55;
 						hp = maxHP;
 						strength = 8;
 						expValue = 10;
@@ -99,7 +99,7 @@ public class Enemies {
 					enemyName = "Spider";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSpoder.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSpoder.gif");
-					maxHP = 35;
+					maxHP = 40;
 					hp = maxHP;
 					strength = 4;
 					expValue = 3;
@@ -111,7 +111,7 @@ public class Enemies {
 					enemyName = "Wolf";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleWolf.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackWolf.gif");
-					maxHP = 40;
+					maxHP = 45;
 					hp = maxHP;
 					strength = 6;
 					expValue = 5;
@@ -133,7 +133,7 @@ public class Enemies {
 					enemyName = "Goblin";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
-					maxHP = 35;
+					maxHP = 40;
 					hp = maxHP;
 					strength = 6;
 					expValue = 6;
@@ -145,7 +145,7 @@ public class Enemies {
 					enemyName = "Skeleton";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
-					maxHP = 45;
+					maxHP = 50;
 					hp = maxHP;
 					strength = 8;
 					expValue = 9;
@@ -158,7 +158,7 @@ public class Enemies {
 						enemyName = "Goblin";
 						enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
 						enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
-						maxHP = 50;
+						maxHP = 45;
 						hp = maxHP;
 						strength = 8;
 						expValue = 10;
@@ -170,7 +170,7 @@ public class Enemies {
 						enemyName = "Skeleton";
 						enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
 						enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
-						maxHP = 55;
+						maxHP = 50;
 						hp = maxHP;
 						strength = 9;
 						expValue = 14;
@@ -190,7 +190,7 @@ public class Enemies {
 					enemyName = "Goblin";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleGoblin.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackGoblin.gif");
-					maxHP = 35;
+					maxHP = 40;
 					hp = maxHP;
 					strength = 6;
 					expValue = 6;
@@ -202,7 +202,7 @@ public class Enemies {
 					enemyName = "Skeleton";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSkelly.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSkelly.gif");
-					maxHP = 40;
+					maxHP = 50;
 					hp = maxHP;
 					strength = 8;
 					expValue = 9;
@@ -223,7 +223,7 @@ public class Enemies {
 					enemyName = "Fatlin";
 					enemyIdle = s.setAnimation("res/EnemyAnimations/IdleFatlin.gif");
 					enemyAttack = s.setAnimation("res/EnemyAnimations/AttackFatlin.gif");
-					maxHP = 50;
+					maxHP = 60;
 					hp = maxHP;
 					strength = 8;
 					expValue = 15;
@@ -266,6 +266,8 @@ public class Enemies {
 					strength = 10;
 					expValue = 25;
 					coinValue = 30;
+					ability1 = "Stun";
+					ability2 = "Harden";
 					break;
 				case 2:
 					enemyName = "Stronger Sbeve";
@@ -276,6 +278,8 @@ public class Enemies {
 					strength = 12;
 					expValue = 40;
 					coinValue = 50;
+					ability1 = "Buff";
+					ability2 = "Harden";
 					break;
 				case 3:
 					enemyName = "Angry Sbeve";
@@ -286,6 +290,8 @@ public class Enemies {
 					strength = 15;
 					expValue = 100;
 					coinValue = 100;
+					ability1 = "Bleed";
+					ability2 = "Buff";
 					break;
 				}
 				break;
@@ -302,6 +308,8 @@ public class Enemies {
 				strength = 12;
 				expValue = 40;
 				coinValue = 50;
+				ability1 = "Buff";
+				ability2 = "Harden";
 				break;
 			}			
 		}
