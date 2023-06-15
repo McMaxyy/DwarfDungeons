@@ -216,11 +216,17 @@ public class Mining extends JPanel implements ActionListener, KeyListener{
 	
 	private void update() {
 	    if (!matClicked) {
-	        y += 4;
+	        y += 5;
 	        material.setLocation(x, y);
 
 	        if (y + material.getHeight() > getHeight()) {
 	            fallingTimer.stop();
+	            material.setVisible(false);
+	            loseText.setVisible(true);
+	    		startMining.setVisible(true);
+	    		openGame.setVisible(false);
+	    		openGame.setEnabled(true);
+	    		repaint();
 	        } 
 	    }
 	}

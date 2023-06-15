@@ -120,6 +120,32 @@ public class Enemies {
 					ability2 = "Buff";
 				}
 				break;
+			case 2:
+				if(rand.nextInt(2) == 0) {
+					enemyName = "Troll";
+					enemyIdle = s.setAnimation("res/chr.png");
+					enemyAttack = s.setAnimation("res/chr.png");
+					maxHP = 60;
+					hp = maxHP;
+					strength = 6;
+					expValue = 10;
+					coinValue = 12;
+					ability1 = "Buff";
+					ability2 = "Buff";
+				}
+				else {
+					enemyName = "Rat";
+					enemyIdle = s.setAnimation("res/dragun.png");
+					enemyAttack = s.setAnimation("res/dragun.png");
+					maxHP = 50;
+					hp = maxHP;
+					strength = 5;
+					expValue = 8;
+					coinValue = 10;
+					ability1 = "Bleed";
+					ability2 = "Bleed";
+				}
+				break;
 			}			
 		}
 	}
@@ -211,6 +237,32 @@ public class Enemies {
 					ability2 = "Buff";
 				}
 				break;
+			case 2:
+				if(rand.nextInt(2) == 0) {
+					enemyName = "Goblin Mage";
+					enemyIdle = s.setAnimation("res/chr.png");
+					enemyAttack = s.setAnimation("res/chr.png");
+					maxHP = 50;
+					hp = maxHP;
+					strength = 9;
+					expValue = 10;
+					coinValue = 12;
+					ability1 = "Stun";
+					ability2 = "Buff";
+				}
+				else {
+					enemyName = "Golem";
+					enemyIdle = s.setAnimation("res/dragun.png");
+					enemyAttack = s.setAnimation("res/dragun.png");
+					maxHP = 70;
+					hp = maxHP;
+					strength = 6;
+					expValue = 11;
+					coinValue = 13;
+					ability1 = "Harden";
+					ability2 = "Stun";
+				}
+				break;
 			}			
 		}
 	}
@@ -247,6 +299,18 @@ public class Enemies {
 				coinValue = 15;
 				ability1 = "Stun";
 				ability2 = "Harden";
+				break;
+			case 2:
+				enemyName = "King Rat";
+				enemyIdle = s.setAnimation("res/dragun.png");
+				enemyAttack = s.setAnimation("res/dragun.png");
+				maxHP = 80;
+				hp = maxHP;
+				strength = 10;
+				expValue = 18;
+				coinValue = 20;
+				ability1 = "Bleed";
+				ability2 = "Stun";
 				break;
 			}			
 		}
@@ -310,6 +374,18 @@ public class Enemies {
 				coinValue = 50;
 				ability1 = "Buff";
 				ability2 = "Harden";
+				break;
+			case 2:
+				enemyName = "Angry Sbeve";
+				enemyIdle = s.setAnimation("res/EnemyAnimations/IdleSteve3.gif");
+				enemyAttack = s.setAnimation("res/EnemyAnimations/AttackSteve3.gif");
+				maxHP = 150;
+				hp = maxHP;
+				strength = 15;
+				expValue = 100;
+				coinValue = 100;
+				ability1 = "Bleed";
+				ability2 = "Buff";
 				break;
 			}			
 		}
